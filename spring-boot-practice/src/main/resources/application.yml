@@ -12,3 +12,7 @@ spring:
     driverClassName: org.h2.Driver
     username: sa
     password:
+
+logging:
+  level:
+    org.springframework.security: DEBUG
