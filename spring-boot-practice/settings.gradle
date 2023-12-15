@@ -1,1 +1,6 @@
 rootProject.name = 'spring-boot-practice'
+include 'real-world-software-development'
+include 'security'
+include 'test-driven-development'
+include 'untitled'
+
