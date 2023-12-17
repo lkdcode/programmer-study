@@ -37,4 +37,17 @@ public class BankStatementProcessor {
     public List<BankTransaction> findTransactionsGreaterThanEqual(final int amount) {
         return findTransactions(bankTransaction -> bankTransaction.getAmount() >= amount);
     }
+
+    public double calculateTotalAmount() {
+        return summarizeTransactions((acc, bankTransaction) -> bankTransaction.getAmount() + acc);
+    }
+
+    public double calculateTotalForCategory(String salary) {
+        return summarizeTransactions((acc, bankTransaction) -> {
+            if (bankTransaction.getDescription().equals(salary)) {
+                acc += bankTransaction.getAmount();
+            }
+            return acc;
+        });
+    }
 }
