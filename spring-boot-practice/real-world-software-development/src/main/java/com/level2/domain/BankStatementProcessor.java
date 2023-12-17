@@ -2,6 +2,7 @@ package com.level2.domain;
 
 import java.time.Month;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BankStatementProcessor {
     private final List<BankTransaction> bankTransactions;
@@ -10,19 +11,30 @@ public class BankStatementProcessor {
         this.bankTransactions = bankTransactions;
     }
 
-    public double calculateTotalAmount() {
-        return this.bankTransactions.stream().mapToDouble(BankTransaction::getAmount).sum();
+    public double summarizeTransactions(BankTransactionSummarizer bankTransactionSummarizer) {
+        double result = 0;
+
+        for (BankTransaction bankTransaction : bankTransactions) {
+            result = bankTransactionSummarizer.summarize(result, bankTransaction);
+        }
+
+        return result;
     }
 
     public double calculateTotalInMonth(Month month) {
-        return this.bankTransactions.stream().filter((e) -> {
-            return e.getDate().getMonth().equals(month);
-        }).mapToDouble(BankTransaction::getAmount).sum();
+        return summarizeTransactions((acc, bankTransaction) ->
+                bankTransaction.getDate().getMonth() == month
+                        ? acc + bankTransaction.getAmount()
+                        : acc);
     }
 
-    public double calculateTotalForCategory(String category) {
-        return this.bankTransactions.stream().filter((e) -> {
-            return e.getDescription().equals(category);
-        }).mapToDouble(BankTransaction::getAmount).sum();
+    public List<BankTransaction> findTransactions(final BankTransactionsFilter bankTransactionsFilter) {
+        return bankTransactions.stream()
+                .filter(bankTransactionsFilter::test)
+                .collect(Collectors.toList());
+    }
+
+    public List<BankTransaction> findTransactionsGreaterThanEqual(final int amount) {
+        return findTransactions(bankTransaction -> bankTransaction.getAmount() >= amount);
     }
 }
