@@ -1,6 +1,6 @@
 package com.practice.study2;
 
 @FunctionalInterface
-public interface Formula {
+interface Formula {
     int run(int a, int b);
 }
