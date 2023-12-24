@@ -1,4 +1,4 @@
-package com.study.chap02.step2;
+package com.chap02.step2;
 
 class Weight {
 

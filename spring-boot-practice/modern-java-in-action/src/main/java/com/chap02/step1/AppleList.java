@@ -1,4 +1,4 @@
-package com.study.chap02.step1;
+package com.chap02.step1;
 
 import java.util.ArrayList;
 import java.util.Arrays;

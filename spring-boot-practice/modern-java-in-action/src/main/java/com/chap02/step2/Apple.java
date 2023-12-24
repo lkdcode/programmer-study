@@ -1,4 +1,4 @@
-package com.study.chap02.step1;
+package com.chap02.step2;
 
 class Apple {
 
@@ -23,7 +23,7 @@ class Apple {
         return "Apple{" +
                 "weight=" + weight +
                 ", color=" + color +
-                "}\n";
+                "}";
     }
 
 }

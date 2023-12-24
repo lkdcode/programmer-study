@@ -1,4 +1,4 @@
-package com.study.chap02.step2;
+package com.chap02.step1;
 
 class Main {
     public static void main(String[] args) {
@@ -14,15 +14,10 @@ class Main {
                 , new Apple(new Weight(512), Color.RED)
         );
 
-        AppleIterator appleIterator = new AppleIterator(appleList.getAppleList());
+        AppleFilter appleFilter = new AppleFilter();
+        AppleList test = appleFilter.test(appleList, apple -> apple.getWeight().getWeight() > 150);
 
-        AppleRule appleRule = new AppleRule(
-                apple -> apple.getColor() == Color.RED
-                , System.out::println
-        );
+        System.out.println(test.toString());
 
-        AppleEngine appleEngine = new AppleEngine(appleIterator, appleRule);
-
-        appleEngine.run();
     }
 }
