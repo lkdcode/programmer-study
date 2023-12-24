@@ -1,4 +1,4 @@
-package com.study.chap02.step1;
+package com.chap02.step1;
 
 enum Color {
     PURPLE, RED, YELLOW, BLUE, WHITE, BLACK
