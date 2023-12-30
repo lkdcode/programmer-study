@@ -1,4 +1,4 @@
-rootProject.name = 'spring-boot-practice'
+rootProject.name = 'java-practice'
 include 'real-world-software-development'
 include 'security'
 include 'test-driven-development'
