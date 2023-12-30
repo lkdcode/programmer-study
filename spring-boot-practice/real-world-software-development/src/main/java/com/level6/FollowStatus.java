@@ -1,6 +1,6 @@
 package com.level6;
 
-enum FollowStatus {
+public enum FollowStatus {
     SUCCESS,
     INVALID_USER,
     ALREADY_FOLLOWING

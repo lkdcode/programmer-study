@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
-class User {
+public class User {
     private final String id;
     private final byte[] password;
     private final byte[] salt;

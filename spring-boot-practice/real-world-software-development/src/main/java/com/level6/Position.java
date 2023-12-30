@@ -1,6 +1,6 @@
 package com.level6;
 
-class Position {
+public class Position {
 
     public static final Position INITIAL_POSITION = new Position(-1);
     private final int value;
@@ -35,7 +35,7 @@ class Position {
         return value;
     }
 
-    Position next() {
+    public Position next() {
         return new Position(value + 1);
     }
 
