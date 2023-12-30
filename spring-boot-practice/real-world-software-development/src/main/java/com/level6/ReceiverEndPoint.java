@@ -1,5 +1,5 @@
 package com.level6;
 
-interface ReceiverEndPoint {
+public interface ReceiverEndPoint {
     void onTwoot(Twoot twoot);
 }

@@ -2,6 +2,8 @@ package com.level6;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Objects;
+
 class TwootrTest {
     @Test
     void shouldBeAbleToAuthenticateUser() {
@@ -22,7 +24,15 @@ class TwootrTest {
         // then
     }
 
-    private void log() {
+    @Test
+    void shouldReceiveTwootsFromFollowedUser() {
+        final String id = "1";
+
+        logon();
+        Objects.hashCode("");
+    }
+
+    private void logon() {
 
     }
 

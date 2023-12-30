@@ -12,7 +12,7 @@ class Twootr {
 
     Position onSendTwoot(String id, User user, String content) {
         final String userId = user.getId();
-        Twoot twoot = new Twoot(id, userId, content);
+        Twoot twoot = new Twoot(id, userId, content, Position.INITIAL_POSITION);
 
         user.followers()
                 .filter(User::isLoggedOn)
