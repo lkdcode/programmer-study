@@ -16,6 +16,7 @@ repositories {
 }
 
 dependencies {
+    testImplementation 'org.mockito:mockito-core:4.8.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.0'
     testImplementation 'org.assertj:assertj-core:3.19.0'
 }
