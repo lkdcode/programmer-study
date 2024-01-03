@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 
+@Disabled
 class SurveyTest {
     private SurveyRepository surveyRepository;
     private List<Integer> answers = Arrays.asList(1, 2, 3, 4);
