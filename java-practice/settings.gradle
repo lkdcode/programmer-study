@@ -3,4 +3,4 @@ include 'real-world-software-development'
 include 'security'
 include 'test-driven-development'
 include 'modern-java-in-action'
-
+include 'gof-with-java'
