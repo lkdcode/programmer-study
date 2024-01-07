@@ -1,4 +1,4 @@
-package practice;
+package practice.baseball;
 
 import org.junit.jupiter.api.RepeatedTest;
 
