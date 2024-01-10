@@ -1,4 +1,4 @@
-package src.main.java.com.programmersstudy.springbootpractice;
+package com.programmersstudy.springbootpractice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
