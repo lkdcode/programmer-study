@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/coffees")
+@RequestMapping("/chap03/coffees")
 public class RestApiDemoController {
     private List<Coffee> coffees = new ArrayList<>();
 
