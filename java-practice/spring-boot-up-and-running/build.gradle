@@ -36,6 +36,16 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     // --- chap05
 
+    // --- chap06
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'io.projectreactor:reactor-test'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+//    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    // --- chap06
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
