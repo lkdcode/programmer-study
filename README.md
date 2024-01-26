@@ -20,4 +20,7 @@
   <a href="https://www.yes24.com/Product/Goods/118710279">
     <img src="java-practice/spring-boot-up-and-running/docs/img.png" align="center" alt="Image2" width="200" height="262">
   </a>
+  <a href="https://www.yes24.com/Product/Goods/75189146">
+    <img src="java-practice/pragmatic-unit-testing-in-java-with-junit/docs/img.png" align="right" alt="Image2" width="200" height="262">
+  </a>
 </div>
