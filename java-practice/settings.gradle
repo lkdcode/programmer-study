@@ -7,4 +7,5 @@ include 'gof-with-java'
 include 'go-stop-prj'
 include 'spring-boot-up-and-running'
 include 'pragmatic-unit-testing-in-java-with-junit'
+include 'street-codeer'
 
