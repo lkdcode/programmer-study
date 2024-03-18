@@ -42,3 +42,9 @@
 </a>
 
 <br/><br/>
+
+<a href="https://www.yes24.com/Product/Goods/67350256">
+  <img src="java-practice/the-road-to-growing-together-with-agile/docs/img.png" align="center" alt="Image2" width="200" height="262">
+</a>
+
+<br/><br/>
