@@ -1,5 +1,6 @@
 package com.hexagonal.chap01.domain.entity;
 
+import com.hexagonal.chap01.Specification.IP;
 import com.hexagonal.chap01.Specification.Network;
 import com.hexagonal.chap01.domain.value.RouterId;
 import com.hexagonal.chap01.domain.value.RouterType;
@@ -43,5 +44,13 @@ public class Router {
 
     public List<Network> retrieveNetworks() {
         return null;
+    }
+
+    public Network createNetwork(IP address, String name, int cidr) {
+        return null;
+    }
+
+    public void addNetworkToSwitch(Network network) {
+
     }
 }
