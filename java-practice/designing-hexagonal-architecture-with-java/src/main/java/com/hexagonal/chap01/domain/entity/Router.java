@@ -1,5 +1,6 @@
 package com.hexagonal.chap01.domain.entity;
 
+import com.hexagonal.chap01.Specification.Network;
 import com.hexagonal.chap01.domain.value.RouterId;
 import com.hexagonal.chap01.domain.value.RouterType;
 
@@ -38,5 +39,9 @@ public class Router {
 
     public RouterType getRouterType() {
         return routerType;
+    }
+
+    public List<Network> retrieveNetworks() {
+        return null;
     }
 }
