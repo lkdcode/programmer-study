@@ -1,4 +1,4 @@
-package com.hexagonal.chap01.Specification;
+package com.hexagonal.chap01.domain.Specification;
 
 import com.hexagonal.chap01.domain.entity.Router;
 import com.hexagonal.chap01.domain.value.RouterType;

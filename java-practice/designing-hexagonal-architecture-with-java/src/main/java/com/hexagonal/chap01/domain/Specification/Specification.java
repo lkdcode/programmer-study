@@ -1,4 +1,4 @@
-package com.hexagonal.chap01.Specification;
+package com.hexagonal.chap01.domain.Specification;
 
 public interface Specification<T> {
     boolean isSatisfiedBy(T t);

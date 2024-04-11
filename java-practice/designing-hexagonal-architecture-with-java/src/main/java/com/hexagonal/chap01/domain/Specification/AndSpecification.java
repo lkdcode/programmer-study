@@ -1,4 +1,4 @@
-package com.hexagonal.chap01.Specification;
+package com.hexagonal.chap01.domain.Specification;
 
 public class AndSpecification<T> extends AbstractSpecification<T> {
     private final Specification<T> spec1;
