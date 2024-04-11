@@ -1,7 +1,7 @@
 package com.hexagonal.chap01.domain.entity;
 
-import com.hexagonal.chap01.Specification.IP;
-import com.hexagonal.chap01.Specification.Network;
+import com.hexagonal.chap01.domain.Specification.IP;
+import com.hexagonal.chap01.domain.Specification.Network;
 import com.hexagonal.chap01.domain.value.RouterId;
 import com.hexagonal.chap01.domain.value.RouterType;
 

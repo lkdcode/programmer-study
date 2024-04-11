@@ -1,5 +1,6 @@
-package com.hexagonal.chap01.Specification;
+package com.hexagonal.chap01.domain.service;
 
+import com.hexagonal.chap01.domain.Specification.*;
 import com.hexagonal.chap01.domain.entity.Router;
 
 public class NetworkOperation {
