@@ -1,0 +1,13 @@
+spring:
+
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG  # Hibernate를 통한 SQL 문을 DEBUG 레벨로 로깅합니다.
+    org.hibernate.type: TRACE # SQL 쿼리의 매개변수 값을 로깅합니다.
