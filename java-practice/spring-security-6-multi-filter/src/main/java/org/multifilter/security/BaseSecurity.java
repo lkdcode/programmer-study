@@ -14,8 +14,8 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @Component
 @RequiredArgsConstructor
 public class BaseSecurity extends AbstractHttpConfigurer<BaseSecurity, HttpSecurity> {
-    private final BaseAccessDeniedHandler customAccessDeniedHandler;
-    private final BaseAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final BaseAccessDeniedHandler baseAccessDeniedHandler;
+    private final BaseAuthenticationEntryPoint baseAuthenticationEntryPoint;
 
     private boolean flag;
 
@@ -31,8 +31,8 @@ public class BaseSecurity extends AbstractHttpConfigurer<BaseSecurity, HttpSecur
                     .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
 
                     .exceptionHandling(exceptionHandlingCustomizer -> exceptionHandlingCustomizer
-                            .accessDeniedHandler(customAccessDeniedHandler)
-                            .authenticationEntryPoint(customAuthenticationEntryPoint))
+                            .accessDeniedHandler(baseAccessDeniedHandler)
+                            .authenticationEntryPoint(baseAuthenticationEntryPoint))
             ;
         }
     }
@@ -41,4 +41,3 @@ public class BaseSecurity extends AbstractHttpConfigurer<BaseSecurity, HttpSecur
         this.flag = true;
     }
 }
-

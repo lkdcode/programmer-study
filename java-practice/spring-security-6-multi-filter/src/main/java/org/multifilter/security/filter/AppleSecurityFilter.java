@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class AppleSecurityFilter {
-    private static final String APPLE_API_PREFIX = "/apple"; // /apple
-    private static final String API = APPLE_API_PREFIX + "/**"; // /apple/**/get
+    private static final String APPLE_API_PREFIX = "/apple";
+    private static final String API = APPLE_API_PREFIX + "/**";
     private static final String[] ALLOW_LIST = {
             APPLE_API_PREFIX + "/get",
     };
@@ -20,7 +20,6 @@ public class AppleSecurityFilter {
     };
 
     private final BaseSecurity baseSecurity;
-
 
     public SecurityFilterChain doFilterChain(HttpSecurity http) throws Exception {
         return http
