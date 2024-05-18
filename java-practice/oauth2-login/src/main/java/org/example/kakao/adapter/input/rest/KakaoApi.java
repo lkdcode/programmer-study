@@ -2,6 +2,7 @@ package org.example.kakao.adapter.input.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.example.kakao.adapter.input.rest.dto.KakaoResponseDTO;
+import org.example.kakao.adapter.input.rest.dto.KakaoUserResponseDTO;
 import org.example.kakao.adapter.input.rest.propeties.KakaoProperties;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
@@ -11,39 +12,54 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
 
+import java.util.Objects;
+
 @RestController
 @RequestMapping("/kakao")
 @RequiredArgsConstructor
 public class KakaoApi {
-
     private final KakaoProperties kakaoProperties;
 
     @GetMapping("/callback")
     public void getCallback(
             @RequestParam(name = "code") final String code
     ) {
-        final String uri = kakaoProperties.getOauthUri();
-        final String grantType = kakaoProperties.getGrantType();
-        final String clientId = kakaoProperties.getClientId();
-        final String redirectUri = kakaoProperties.getRedirectUri();
-        final String clientSecret = kakaoProperties.getClientSecret();
+        final var uri = kakaoProperties.getOauthUri();
+        final var grantType = kakaoProperties.getGrantType();
+        final var clientId = kakaoProperties.getClientId();
+        final var redirectUri = kakaoProperties.getRedirectUri();
+        final var clientSecret = kakaoProperties.getClientSecret();
 
-        final RestClient restClient = RestClient.builder()
+        final var restClient = RestClient.builder()
                 .baseUrl(uri)
                 .build();
 
-        final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        final var map = new LinkedMultiValueMap<String, String>();
         map.add("grant_type", grantType);
         map.add("client_id", clientId);
         map.add("redirect_uri", redirectUri);
         map.add("code", code);
         map.add("client_secret", clientSecret);
 
-        var body = restClient.post()
+        final var body = restClient.post()
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(map)
                 .retrieve()
                 .body(KakaoResponseDTO.class);
+
+        final var token = Objects.requireNonNull(body).access_token();
+        getKakaoUserId(token);
+    }
+
+    private void getKakaoUserId(String accessToken) {
+        final var restClient = RestClient.builder()
+                .baseUrl(kakaoProperties.getUserUri())
+                .build();
+
+        final var body = restClient.post()
+                .header("Authorization", "Bearer " + accessToken)
+                .retrieve()
+                .body(KakaoUserResponseDTO.class);
 
         System.out.println(body);
     }

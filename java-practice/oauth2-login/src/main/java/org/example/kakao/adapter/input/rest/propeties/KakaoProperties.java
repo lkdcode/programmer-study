@@ -9,6 +9,11 @@ import org.springframework.stereotype.Component;
 public class KakaoProperties {
     @Value("${kakao.oauth_uri}")
     private String oauthUri;
+    @Value("${kakao.user_uri}")
+    private String userUri;
+
+
+
     @Value("${kakao.token.grant_type}")
     private String grantType;
     @Value("${kakao.token.client_id}")
