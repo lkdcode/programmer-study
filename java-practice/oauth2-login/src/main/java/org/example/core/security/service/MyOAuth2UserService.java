@@ -12,11 +12,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MyOAuth2UserService extends DefaultOAuth2UserService {
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        final OAuth2User user = super.loadUser(userRequest);
+        final var user = super.loadUser(userRequest);
 
-        final String registrationId = userRequest.getClientRegistration().getRegistrationId();
+        final var registrationId = userRequest.getClientRegistration().getRegistrationId();
         OAuth2Response oAuth2Response = null;
 
         if (registrationId.equals("naver")) {
