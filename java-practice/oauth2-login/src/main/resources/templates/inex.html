@@ -1,0 +1,30 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    Hello world Iam Thymeleaf
+    <h1 th:text="${message}">Default Message</h1>
+
+    <p th:if="${user.loggedIn}">Welcome, <span th:text="${user.name}">User</span>!</p>
+    <p th:unless="${user.loggedIn}">Please log in.</p>
+
+    <ul>
+        <li th:each="item : ${items}" th:text="${item.name}">Item Name</li>
+    </ul>
+
+    <a th:href="@{/items}">Items List</a>
+    <img th:src="@{/images/logo.png}" alt="Logo">
+
+    <form th:action="@{/submit}" method="post">
+        <input type="text" th:name="username" th:value="${user.name}">
+        <button type="submit">Submit</button>
+    </form>
+
+</body>
+</html>
