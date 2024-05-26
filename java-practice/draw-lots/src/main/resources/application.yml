@@ -2,22 +2,20 @@ server:
   port: 8080
 
 spring:
-  resources:
-    static-locations: classpath:/static/
+  output:
+    ansi:
+      enabled: always
 
-  thymeleaf:
-    prefix: classpath:templates/
-    suffix: .html
-    check-template-location: true
-    cache: false
+  application:
+    name: drawLots
 
-  mvc:
-    static-path-pattern: /static/**
+  profiles:
+    active: local
 
 logging:
   level:
-    org.springframework.web: DEBUG
+    #    org.springframework.web: DEBUG
 
     org.hibernate.SQL: DEBUG  # Hibernate를 통한 SQL 문을 DEBUG 레벨로 로깅합니다.
     org.hibernate.type: TRACE # SQL 쿼리의 매개변수 값을 로깅합니다.
-    root: debug
+#    root: debug
