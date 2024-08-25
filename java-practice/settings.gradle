@@ -14,4 +14,5 @@ include 'spring-data-jpa-study'
 include 'spring-security-6-multi-filter'
 include 'oauth2-login'
 include 'draw-lots'
+include 'readl-my-sql-first'
 
