@@ -19,3 +19,6 @@ include 'oop-object'
 include 'oop-object:chap01'
 include 'oop-object:chap02'
 include 'oop-object:chap03'
+include 'oop-object:chap04'
+findProject(':oop-object:chap04')?.name = 'chap04'
+
