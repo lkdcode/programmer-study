@@ -25,7 +25,11 @@ dependencies {
     testImplementation 'org.projectlombok:lombok:1.18.22'
 
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
     implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.4'
+
+    implementation 'org.springframework.boot:spring-boot-starter-quartz'
 
 //    runtimeOnly 'com.h2database:h2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
