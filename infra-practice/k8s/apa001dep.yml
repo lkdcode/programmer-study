@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apa001dep
+spec:
+  selector:
+    matchLabels:
+      app: psm330
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: psm330
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 90
