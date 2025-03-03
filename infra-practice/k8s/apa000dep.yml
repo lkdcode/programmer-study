@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apa000dep
+spec:
+  selector:
+    matchLabels:
+      app: psm330
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: psm330
+    spec:
+      containers:
+        - name: sum-user-api
+          image: first-boot:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
