@@ -1,0 +1,14 @@
+.Controller {
+  padding: 0px 10px 0px 10px;
+  background-color: rgb(240, 240, 240);
+  border-radius: 5px;
+  margin: 5px;
+}
+
+.Controller > * {
+  margin: 5px;
+}
+
+.Controller > *:hover {
+  cursor: pointer;
+}

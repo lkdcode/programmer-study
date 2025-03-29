@@ -1,0 +1,28 @@
+.TodoList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.TodoList > input {
+  border: none;
+
+  border-bottom: 1px solid gray;
+  width: 100%;
+
+  padding: 15px 0px;
+}
+
+.TodoList > input:focus {
+  border: none;
+
+  border-bottom: 1px solid rgb(37, 147, 255);
+  outline: none;
+}
+
+.TodoList > section {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 10px 0px;
+}
