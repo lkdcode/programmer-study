@@ -1,0 +1,8 @@
+.Controller > *:hover {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.Controller > * {
+  margin: 3px;
+}

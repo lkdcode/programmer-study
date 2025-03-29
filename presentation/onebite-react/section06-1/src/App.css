@@ -1,0 +1,12 @@
+.App {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.App .Title {
+  font-size: 25px;
+  padding: 0px 120px 0px 0px;
+}

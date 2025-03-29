@@ -1,0 +1,22 @@
+.TodoItem {
+  display: flex;
+  flex-direction: row;
+  padding: 20px 0px;
+  border-bottom: 1px solid gray;
+}
+
+.TodoItem .Todo_Title {
+  flex: 1;
+  margin: 0px 10px;
+}
+
+.TodoItem .Todo_Date {
+  color: gray;
+  margin: 0px 10px;
+}
+
+.TodoItem > button {
+  cursor: pointer;
+  border: none;
+  color: gray;
+}
