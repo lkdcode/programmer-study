@@ -202,3 +202,88 @@ MySQL의 모든 인덱스는 오름차순으로만 정렬돼 있기 때문에 `O
 
 `GROUP BY` + `ORDER BY` 절이 동시에 같은 인덱스를 사용하게 하려면 `GROUP BY` == `ORDER BY` 가 성립해야 된다.  
 `GRUOP BY`와 `ORDER BY`가 같이 사용된 쿼리에서는 둘 중 하나라도 인덱스를 이용할 수 없을 때는 둘 다 인덱스를 사용하지 못한다.  
+
+`WHERE`, `GROUP BY`, `ORDER BY` 에서 인덱스 사용은 다음과 같다.  
+인덱스 사용여부는 ⭕️, ❌로 표기한다. 중요한 부분은 `WHERE` 절이 인덱스를 사용할 수 있느냐인데,  
+이를 기준으로 다음과 같은 경우의 수를 뽑을 수 있다.  
+
+- `WHERE`: ⭕️  `GROUP BY`: ⭕️ `ORDER BY`: ⭕️ = 모두 인덱스 사용
+- `WHERE`: ⭕️  `GROUP BY`: ❌ `ORDER BY`: ❓ = WHERE 절만 인덱스 사용
+- `WHERE`: ⭕️  `GROUP BY`: ⭕️ `ORDER BY`: ❌ = WHERE 절만 인덱스 사용
+
+
+
+- `WHERE`: ❌  `GROUP BY`: ❌ `ORDER BY`: ❓ = 인덱스 사용 불가
+- `WHERE`: ❌  `GROUP BY`: ⭕️ `ORDER BY`: ❌ = 인덱스 사용 불가
+- `WHERE`: ❌  `GROUP BY`: ⭕️ `ORDER BY`: ⭕️ = GROUP BY, ORDER BY 절만 인덱스 사용   
+
+### WHERE 절의 비교 조건 사용 시 주의사항
+
+`NULL` 값이 포함된 레코드도 인덱스로 관리된다. 하나의 값으로 관리하는 것을 의미하지만, SQL 표준에서는 `NULL`의 정의를 비교할 수 없는 값이다.  
+동등 비교는 불가능하고, `IS NULL(또는 "<=>")` 연산자를 사용해야 한다.  
+
+- `...WHERE col_1 IS NULL;`: 인덱스 레인지 스캔
+- `...WHERE ISNULL(col_1 );`: 인덱스 레인지 스캔
+- `...WHERE ISNULL(col_1 )=1;`: 인덱스 사용 불가(인덱스 풀 스캔)
+- `...WHERE ISNULL(col_1 )=true;`: 인덱스 사용 불가(인덱스 풀 스캔)
+
+### 문자열이나 숫자 비교
+
+그 타입에 맞는 상숫값을 사용하라. (`col_1`: 숫자, `col_2`: 문자열)  
+
+- `...WHERE col_1 = 1000`: 인덱스 사용
+- `...WHERE col_1 = '1000'`: 문자열 상숫값을 숫자 타입으로 바꾸지만 특별한 성능 저하는 없다.
+- `...WHERE col_2 = 1000`: ❌ 옵티마이저는 숫자 타입에 우선 순위를 두어 `col_2` 컬럼의 데이터를 바꾸기에 인덱스 사용 불가
+- `...WHERE col_2 = '1000'`: 인덱스 사용
+
+타입에 주의!  
+
+### 날짜 비교
+
+`col_1`의 타입이 `DATE`, `DATETIME` 이고 인덱스가 있을 때.  
+`DATE` or `DATETIME` 과 문자열을 비교할 땐 `문자열 -> DATETIME` 타입의 값으로 변환해 비교를 수행한다.  
+함수를 호출해 `STR_TO_DATE('2025-04-02', '%Y-%m-%d')`로 바꾸지 않아도 내부적으로 변환을 수행한다.  
+
+반대로 `DATE_FORMAT(col_1, '%Y-%m-%d')` 함수를 호출하면 인덱스 컬럼의 값이 변경되므로 인덱스를 사용할 수 없다.  
+`DATE_ADD()` 함수나 `DATE_SUB()` 함수처럼 날짜 타입의 값을 더하거나 빼는 함수를 호출해 비교해도 인덱스를 사용할 수 없다.  
+
+### DATE 와 DATETIME 비교
+
+`DATETIME` 값에서 시간 부분만 떼어 내면 `DATE` 와 비교할 수 있는데, 함수를 호출하더라도 인덱스 영향은 없다.  
+`STR_TO_DATE('2025-04-02', '%Y-%m-%d')`를 호출하더라도 말이다. 하지만 `00:00:00` 시간으로 설정되므로 결과만 주의하자.  
+
+### DATETIME 과 TIMESTAMP 비교
+
+`DATE` or `DATETIME` 값과 `TIMESTAMP` 를 비교하면(타입 변환 없이) 마치 인덱스 레인지 스캔을 잘 쓰는 것처럼 보이지만,  
+실행계획도 그렇게 보이지만, 아니다.  
+
+`col_1` : `DATE` or `DATETIME` 일 때,  
+`col_2` : `TIMESTAMP` 일 때,  
+
+- `...WHERE col_1 > FROM_UNIXTIME(?)`: `FROM_UNIXTIME()` 함수를 호출해 `TIMESTAMP` -> `DATETIME` 으로 변환
+- `...WHERE col_2 > UNIX_TIMESTAMP(?)`: `UNIX_TIMESTAMP()` 함수를 호출해 `DATETIME` -> `TIMESTAMP` 으로 변환
+
+`DATE`와 `DATETIME` 의 비교는 위에서 언급했듯, 인덱스 영향이 없다.  
+
+# 🎯 벌크 데이터로 실험하기: 인덱스 컬럼의 타입과 비교 상숫값의 타입을 비교해보기
+
+### Short-Circuit evaluation
+
+`Short-Circuit evaluation(단락 평가)`은 조건문을 계산할 때 결과가 확정되면, 나머지는 계산하지 않는다.  
+
+- `if (A and B) {...}` : A 가 false 라면 B 는 호출되지 않는다.
+- `if (A or B) {...}`  : A 가 true 라면 B 는 호출되지 않는다.
+
+조건문의 결과가 (다소 엉뚱하더라도) 다음과 같을 때.  
+
+1. `...WHERE col_1 > 1000`: 결과가 30만건 
+2. `...WHERE col_1 < 500` : 결과가 0건
+
+- `...WHERE col_1 > 1000 AND col_1 < 500`: 30만건을 가져온 후 500 미만인지 체크한다. (결과값은 0개)
+- `...WHERE col_1 > 1000 AND col_1 < 500`: 500 미만인지 먼저 체크하므로 1000초과는 체크 안함. (결과값은 0개)
+
+`WHERE` 구문의 순서는 `Short-Circuit evaluation(단락 평가)` 과 밀접한 관계가 있으므로 쿼리 성능을 향상시키는데 도움을 준다.  
+
+하지만, 인덱스가 추가되면 이야기는 달라진다.  
+MySQL 8.0 부터는 옵티마이저가 `WHERE` 절에 사용된 복합 인덱스의 명시된 컬럼의 순서가 달라도 내부적으로 최적화되어 잘 사용한다는 사실을 알고 있다.  
+`Short-Circuit evaluation(단락 평가)`의 예상과 달리 인덱스 컬럼을 먼저 사용하여 최적화를 진행하게 된다.  
