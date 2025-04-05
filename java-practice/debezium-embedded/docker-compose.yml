@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  mariadb:
+    image: mariadb
+    container_name: mariadb-debezium
+    environment:
+      MYSQL_ROOT_PASSWORD: lkdcode123!@#
+      MYSQL_DATABASE: DebeziumTest
+      MYSQL_USER: lkdcode
+      MYSQL_PASSWORD: lkdcode123!@#
+    ports:
+      - "4444:3306"
+    command: [
+      "--server-id=223344",
+      "--log-bin=mysql-bin",
+      "--binlog-format=ROW",
+      "--binlog-row-image=FULL",
+      "--expire_logs_days=10",
+    ]
