@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:mariadb://127.0.0.1:4444/DebeziumTest
+    username: root
+    password: lkdcode123!@#
+    driver-class-name: org.mariadb.jdbc.Driver
+
+server:
+  port: 8090
+
+customer:
+  datasource:
+    host: localhost
+    port: 4444
+    database: DebeziumTest
+    username: root
+    password: lkdcode123!@#
