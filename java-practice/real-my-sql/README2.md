@@ -287,3 +287,119 @@ MySQL의 모든 인덱스는 오름차순으로만 정렬돼 있기 때문에 `O
 하지만, 인덱스가 추가되면 이야기는 달라진다.  
 MySQL 8.0 부터는 옵티마이저가 `WHERE` 절에 사용된 복합 인덱스의 명시된 컬럼의 순서가 달라도 내부적으로 최적화되어 잘 사용한다는 사실을 알고 있다.  
 `Short-Circuit evaluation(단락 평가)`의 예상과 달리 인덱스 컬럼을 먼저 사용하여 최적화를 진행하게 된다.  
+
+```sql
+...
+WHERE col_1 = ?
+    AND col_2 = ?
+    AND col_3 = ?
+    AND col_4 = ?
+```
+
+`col_2` 가 인덱스가 있는 커럶이라면 `col_2` 부터 평가하고 이후에 순서대로 평가하게 된다.  
+
+- 서브쿼리의 세미 조인1
+
+```sql
+SELECT *
+FROM employees e
+WHERE e.first_name = ?
+    AND e.last_name = ?
+    AND EXISTS (
+        SELECT 1 FROM salaries s
+        WHERE s.emp_no = e.emp_no AND s.to_date > ?
+        GROUP BY s.salary HAVING COUNT(*) > 1
+    )
+```
+
+- 서브쿼리의 세미 조인2
+
+```sql
+SELECT *
+FROM employees e
+WHERE e.first_name = ?
+    AND EXISTS (
+        SELECT 1 FROM salaries s
+        WHERE s.emp_no = e.emp_no AND s.to_date > ?
+        GROUP BY s.salary HAVING COUNT(*) > 1
+    )
+    AND e.last_name = ?
+```
+
+1. first_name 인덱스를 먼저 사용하여 범위를 최소화를 한다.
+2. `WHERE` 절에 서브쿼리 조건 먼저 평가한다.
+3. 이후 e.last_name 을 평가한다.
+
+
+
+| Variable_name     | 1번 쿼리 VALUE | 2번 쿼리 VALUE |
+|-------------------|-------------|-------------|
+| Handler_read_key  | 9           | 1807        | 
+| Handler_read_next | 247         | 2454        | 
+| Handler_rnd_next  | 8           | 1806        | 
+| Handler_write     | 7           | 1573        | 
+
+두 쿼리의 결과는 동일하지만 내부적으로 수행하는 동작에 대해서는 큰 차이가 있다.  
+복잡한 연산을 먼저하는 첫 번째 쿼리가 더 비효율적이다. 이는 *SHOW STATUS LIKE 'Handler%';* 결과를 통해 상태 값들을 볼 수 있는데,  
+
+`first_name` 컬럼은 인덱스가 있으므로 먼저 평가하게 되고, 나머지 조건들은 순서대로 평가하게 된다.  
+EXISTS(서브쿼리) 조건을 평가하면서 상당히 많은 레코드를 읽고, 임시테이블에 쓰는 작업을 한 것을 확인할 수 있다.
+
+인덱스를 사용할 수 있는 컬럼은 순서에 상관없이 먼저 평가되므로 고려하지 않아도 된다.  
+가장 많은 레코드들을 인덱스로 읽어온 후 비교적 덜 복잡한 연산을 우선순위로 두어 최적화를 진행할 수 있다.  
+
+#### LIMIT
+
+- `SELECT * FROM tb_1 LIMIT 0, 10`
+- `SELECT col_1 FROM tb_1 GROUP BY col_1 LIMIT 0, 10`
+- `SELECT DISTINCT col_1 FROM tb_1 LIMIT 0, 10`
+- `SELECT * FROM WHERE col_2 BETWEEN ? AND ? ORDER BY col_1 tb_1 LIMIT 0, 10`
+
+`GROUP BY`, `ORDER BY` 가 인덱스를 활용하지 못하는 경우에 쿼리 결과는 다음과 같다.  
+
+1. 테이블 풀스캔을 하지만, 스토리지 엔진으로부터 10개의 레코드를 읽어드리는 순간 종료되므로 상당히 빨리 끝날 수 있다.  
+2. `GROUP BY` 작업이 모두 완료되고 `LIMIT`을 수행하므로 `LIMIT`이 작업 내용을 크게 줄여주지는 못한다.
+3. `DISTINCT` 를 통해 유니크한 값을 읽어드리다 10개가 채워지면 종료되므로 (1번 처럼) 작업 성능을 크게 줄여줄 수 있다.
+4. `WHERE` 절에 해당하는 모든 컬럼을 읽은 후 `ORDER BY` 정렬을 하게 된다. 정렬 중 10건이 완성되는 순간 쿼리가 종료되지만 2번처럼 작업량을 크게 줄여주지는 못한다.
+
+`GROUP BY`, `ORDER BY`에서의 `LIMIT`은 대체적으로 크진 않지만, 작게나마 성능 향상은 있다고 볼 수 있다.  
+만약 `GROUP BY`, `ORDER BY` 가 인덱스를 활용할 수 있다면 `LIMIT`을 통해 꼭 필요한 만큼의 레코드를 읽으므로 성능 향상에 도움이 된다.  
+
+`LIMIT`에 `Offset` 쿼리를 줄 때 수치가 매우 커질 수 있다.  
+`... LIMIT 200000, 10` 200010건의 레코드를 읽은 후 200000건은 버리고 마지막 10건만 리턴하게 된다.  
+
+성능을 고려한다면 `WHERE` 절에 인데스 컬럼을 이용할 수 있다.  
+
+```sql
+-- 첫 페이지 조회
+SELECT * FROM tb_1 ORDER BY col_1 LIMIT 0, 10;
+
+-- 두 번째 페이지 조회
+SELECT * FROM tb_1 
+WHERE col_1 >= ? AND NOT (col_1 = ? AND col_2 = ?) -- 이전 페이지에서 제외 조건 
+ORDER BY col_1 LIMIT 0, 10;
+
+-- 마지막 페이지 조회
+SELECT * FROM tb_1 
+WHERE col_1 >= ? AND NOT (col_1 = ? AND col_2 = ?) -- 이전 페이지에서 제외 조건 
+ORDER BY col_1 LIMIT 0, 10;
+ 
+```
+
+`WHERE` 구문을 통해 인덱스가 걸려있는 컬럼을 활용해 제외 조건을 추가해주면 원하는 위치에서 10개만 읽는 형태의 쿼리를 작성할 수 있다.  
+단, 데이터 누락, 중복이 발생할 수 있으므로 `WHERE` 조건에 들어갈 컬럼 작성에 주의해야 한다.  
+
+#### COUNT()
+
+`COUNT(*)` 를 사용하더라도 모든 레코드를 가져오라는 의미가 아니라 레코드 자체를 의미하는 것이다.  
+MyISAM 에서는 테이블의 메타 정보에 전체 레코드 건수를 관리하므로 `SELECT COUNT(*)` 처럼 조건없는 쿼리는 결과를 바로 얻을 수 있다.  
+InnoDB 에서는 테이블을 직접 읽어야 되므로 큰 테이블에서 COUNT() 함수를 주의해야 한다.  
+
+대략적인 테이블 건수로 해결이 된다면 `SHOW TABLE STATUS` 명령으로 통계 정보를 참조하는 것도 좋은 방법이다.  
+
+`COUNT` 쿼리를 사용할 때 `ORDER BY`, `LEFT JOIN` 과 같은 레코드 건수를 가져오는 것과는 무관한 작업을 포함시키면 안 된다.  
+MySQL 8.0 부터는 `COUNT(*)` 쿼리에 적용된 `ORDER BY` 절은 옵티마이저가 무시하도록 개선됐다.  
+
+`COUNT` 쿼리는 서버에 부하를 많이 유발한다. 가령 게시물 목록을 보여주는  
+`SELECT COUNT(*) FROM articles WHERE board_id=1` 쿼리는 전체 테이블을 읽어야 하므로  
+게시글 전체 수를 보여주기 위해 다른 방법을 검토해볼만하다.  
