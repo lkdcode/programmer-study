@@ -10,9 +10,6 @@ const New = () => {
   const { onCreate } = useContext(DiaryDispatchContext);
 
   const onSubmit = (input) => {
-    console.log("=================");
-    console.log(input.emotionId);
-    console.log("=================");
     onCreate(input.createdDate.getTime(), input.emotionId, input.content);
     nav("/", { replace: true });
   };

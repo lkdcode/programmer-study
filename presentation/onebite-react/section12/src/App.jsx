@@ -66,13 +66,13 @@ function App() {
     });
   };
 
-  const onUpdate = (id, createdDate, emoitionId, content) => {
+  const onUpdate = (id, createdDate, emotionId, content) => {
     dispatch({
       type: "UPDATE",
       data: {
         id,
         createdDate,
-        emoitionId,
+        emotionId,
         content,
       },
     });

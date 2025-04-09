@@ -1,0 +1,16 @@
+.todoList_section {
+  display: flex;
+  flex-direction: column;
+}
+
+.search_box {
+  flex: 1;
+  padding: 15px 0px;
+  border: none;
+  border-bottom: 1px solid gray;
+}
+
+.search_box:focus {
+  outline: none;
+  border-bottom: 1px solid rgb(37, 147, 255);
+}

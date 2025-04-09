@@ -1,0 +1,25 @@
+.item_section {
+  display: flex;
+  gap: 20px;
+  padding: 20px 0px;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.397);
+  align-items: center;
+  justify-content: center;
+}
+
+.item_content {
+  flex: 1;
+}
+
+.item_date {
+  color: gray;
+}
+
+.item_button {
+  cursor: pointer;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  color: gray;
+  background-color: rgb(230, 230, 230);
+}
