@@ -19,6 +19,7 @@ const LoginContainer = ({ link }) => {
             variant="PRIMARY_INPUT"
           />
           <UnderBarInput
+            type="password"
             title="비밀번호"
             placeHolder="비밀번호를 입력해주세요."
             variant="PRIMARY_INPUT"
@@ -28,6 +29,7 @@ const LoginContainer = ({ link }) => {
           <Button name="로그인" variant="PRIMARY_BUTTON" />
           <Button name="로그인없이 시작하기" variant="DARK_BUTTON" />
           <UnderBarLink
+            link={link}
             title="회원가입을 하면 전적을 관리할 수 있어요."
             variant="PRIMARY_LINK"
           />

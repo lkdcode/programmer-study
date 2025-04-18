@@ -1,9 +1,16 @@
 import "../styles/UnderBarLink.css";
 
-const UnderBarLink = ({ title, variant }) => {
+const UnderBarLink = ({ link, title, variant }) => {
   return (
     <div className="underBarWrapper">
-      <div className={`underBarLink ${variant}`}>{title}</div>
+      <button
+        onClick={() => {
+          link();
+        }}
+        className={`underBarLink ${variant}`}
+      >
+        {title}
+      </button>
     </div>
   );
 };

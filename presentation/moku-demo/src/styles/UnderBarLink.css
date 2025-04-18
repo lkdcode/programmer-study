@@ -12,6 +12,9 @@
   width: fit-content;
   justify-content: center;
   cursor: pointer;
+
+  border: none;
+  background-color: transparent;
 }
 
 .PRIMARY_LINK {

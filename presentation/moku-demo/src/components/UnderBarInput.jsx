@@ -1,10 +1,14 @@
 import "../styles/UnderBarInput.css";
 
-const UnderBarInput = ({ title, placeHolder, variant }) => {
+const UnderBarInput = ({ type = "text", title, placeHolder, variant }) => {
   return (
     <div className="underBarInputWrapper">
       <div className="underBarInputTitle">{title}</div>
-      <input className={`underBarInput ${variant}`} placeholder={placeHolder} />
+      <input
+        type={type}
+        className={`underBarInput ${variant}`}
+        placeholder={placeHolder}
+      />
     </div>
   );
 };
