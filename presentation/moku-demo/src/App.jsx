@@ -1,12 +1,10 @@
 import "./App.css";
-import LeftContainer from "./components/LeftContainer";
-import RightContainer from "./components/RightContainer";
+import ContentContainer from "./components/ContentContainer";
 
 function App() {
   return (
-    <div className="App">
-      <LeftContainer />
-      <RightContainer />
+    <div>
+      <ContentContainer />
     </div>
   );
 }
