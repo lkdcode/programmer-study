@@ -1,4 +1,4 @@
-.signUpContainer {
+.statusContainer {
   flex: 1;
   height: 100%;
   width: 100%;
@@ -10,13 +10,12 @@
   justify-content: center;
 }
 
-.signUpWrapper {
-  height: 80%;
-
+.statusWrapper {
+  padding-right: 150px;
   display: flex;
-  flex-direction: column;
-  gap: 50px;
-  justify-content: space-evenly;
+  height: 100px;
+  padding-top: 50px;
+  padding-bottom: 15px;
 }
 
 .titleWrapper {
@@ -37,13 +36,26 @@
   margin: 0;
 }
 
-.inputWrapper {
+.scoreWrapper {
+  margin-bottom: 70px;
+
   display: flex;
   flex-direction: column;
-  gap: 20px;
+}
+
+.scoreGraph {
+  width: 400px;
+  height: 300px;
+}
+
+.score {
+  text-align: center;
+  font-size: 32px;
+  color: #001661;
 }
 
 .buttonWrapper {
+  padding-bottom: 15px;
   display: flex;
   flex-direction: column;
   gap: 20px;

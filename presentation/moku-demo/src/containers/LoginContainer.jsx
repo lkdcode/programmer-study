@@ -3,7 +3,7 @@ import Button from "../components/Button";
 import UnderBarLink from "../components/UnderBarLink";
 import UnderBarInput from "../components/UnderBarInput";
 
-const LoginContainer = ({ link }) => {
+const LoginContainer = ({ link, loginSubmit }) => {
   return (
     <div className="loginContainer">
       <div className="loginWrapper">
@@ -26,7 +26,7 @@ const LoginContainer = ({ link }) => {
           />
         </div>
         <div className="buttonWrapper">
-          <Button name="로그인" variant="PRIMARY_BUTTON" />
+          <Button name="로그인" variant="PRIMARY_BUTTON" event={loginSubmit} />
           <Button name="로그인없이 시작하기" variant="DARK_BUTTON" />
           <UnderBarLink
             link={link}
