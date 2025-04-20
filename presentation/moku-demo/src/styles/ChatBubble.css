@@ -1,0 +1,15 @@
+.ChatBubble {
+  width: 100%;
+  border: 1px solid red;
+}
+
+.message {
+  max-width: 250px;
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+
+  padding: 5px;
+  border-radius: 5px;
+  background-color: rgb(86, 212, 201, 0.8);
+}

@@ -3,7 +3,7 @@ import "../styles/StatusContainer.css";
 import Button from "../components/Button";
 import CustomActiveShapePieChart from "../components/CustomActiveShapePieChart";
 
-const StatusContainer = ({ logoutSubmit }) => {
+const StatusContainer = ({ matchSubmit, logoutSubmit }) => {
   return (
     <div className="statusContainer">
       <div className="statusWrapper">
@@ -20,7 +20,11 @@ const StatusContainer = ({ logoutSubmit }) => {
         <div className="score">37전 32승 5패</div>
       </div>
       <div className="buttonWrapper">
-        <Button name="시작하기" variant={"PRIMARY_BUTTON"} />
+        <Button
+          name="시작하기"
+          event={matchSubmit}
+          variant={"PRIMARY_BUTTON"}
+        />
         <Button name="로그아웃" event={logoutSubmit} variant={"DARK_BUTTON"} />
       </div>
     </div>
