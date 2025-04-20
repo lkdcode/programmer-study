@@ -1,0 +1,80 @@
+.matchChatCard {
+  width: 100%;
+  border-radius: 15px;
+  height: 550px;
+
+  background-color: #fdfdfd;
+  box-shadow: 4px 4px 4px rgb(0, 0, 0, 0.3);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  gap: 5px;
+}
+
+.messageWrapper {
+  border: 2px solid orange;
+  flex: 10;
+  width: 100%;
+
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.messageBox {
+  border: 1px solid #000;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.bubble {
+  border: 1px solid #000;
+
+  width: 100%;
+}
+
+.messageInput {
+  width: 100%;
+  flex: 1.5;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.messageArea {
+  width: 85%;
+  height: 65%;
+  margin-bottom: 5px;
+  resize: none;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 10px;
+  outline: none;
+  box-shadow: none;
+  transition: border 0.2s ease;
+
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.messageArea::-webkit-scrollbar {
+  display: none;
+}

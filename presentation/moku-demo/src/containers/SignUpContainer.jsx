@@ -4,7 +4,7 @@ import Button from "../components/Button";
 import UnderBarLink from "../components/UnderBarLink";
 import UnderBarInput from "../components/UnderBarInput";
 
-const SignUpContainer = ({ link }) => {
+const SignUpContainer = ({ matchSubmit, link }) => {
   return (
     <div className="signUpContainer">
       <div className="signUpWrapper">
@@ -38,7 +38,11 @@ const SignUpContainer = ({ link }) => {
         </div>
         <div className="buttonWrapper">
           <Button name="회원가입 하기" variant="PRIMARY_BUTTON" />
-          <Button name="로그인없이 시작하기" variant="DARK_BUTTON" />
+          <Button
+            event={matchSubmit}
+            name="로그인없이 시작하기"
+            variant="DARK_BUTTON"
+          />
           <UnderBarLink
             link={link}
             title="이미 회원이신가요? 바로 로그인하세요 !"

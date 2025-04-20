@@ -1,0 +1,17 @@
+.stone {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.STONE_WHITE {
+  background-color: #fdfdfd;
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+  border: 1px solid #8f8f8f;
+}
+
+.STONE_BLACK {
+  background-color: #000000;
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+  border: 1px solid #8f8f8f;
+}

@@ -11,7 +11,7 @@ const PAGE_STATE = {
   SUCCESS: "success",
 };
 
-const ContentContainer = () => {
+const ContentContainer = ({ matchSubmit }) => {
   const [pageState, setComponent] = useState(PAGE_STATE.LOGIN);
 
   const changeSignUp = () => {
@@ -27,16 +27,23 @@ const ContentContainer = () => {
   };
 
   return (
-    <div className="contentContainer">
+    <div className="contentWrapper">
       <LeftContainer />
 
       <div className="rightContent">
         {pageState === "success" ? (
-          <StatusContainer logoutSubmit={changeLogin} />
+          <StatusContainer
+            matchSubmit={matchSubmit}
+            logoutSubmit={changeLogin}
+          />
         ) : pageState === "signup" ? (
-          <SignUpContainer link={changeLogin} />
+          <SignUpContainer matchSubmit={matchSubmit} link={changeLogin} />
         ) : (
-          <LoginContainer link={changeSignUp} loginSubmit={successLogin} />
+          <LoginContainer
+            matchSubmit={matchSubmit}
+            link={changeSignUp}
+            loginSubmit={successLogin}
+          />
         )}
       </div>
     </div>

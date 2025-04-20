@@ -9,9 +9,16 @@
   font-size: 14px;
 }
 
+.OUTLINE_NONE:focus {
+  outline: none;
+}
+
 .PRIMARY_INPUT {
-  border-bottom: 1px solid rgba(254, 105, 65, 0.8);
   border-bottom: 1px solid #001661;
+}
+
+.PRIMARY_INPUT:focus {
+  border-bottom: 1px solid rgba(254, 105, 65, 0.8);
 }
 
 .PRIMARY_INPUT::placeholder {
@@ -24,6 +31,10 @@
 
 .SECONDARY_INPUT::placeholder {
   color: rgba(0, 22, 97, 0.8);
+}
+
+.SECONDARY_INPUT:focus {
+  border-bottom: 1px solid rgba(254, 105, 65, 0.8);
 }
 
 .underBarInputWrapper {

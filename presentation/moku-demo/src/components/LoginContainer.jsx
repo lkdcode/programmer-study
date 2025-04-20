@@ -1,7 +1,7 @@
 import "../styles/LoginContainer.css";
-import Button from "../components/Button";
-import UnderBarLink from "../components/UnderBarLink";
-import UnderBarInput from "../components/UnderBarInput";
+import Button from "./Button";
+import UnderBarLink from "./UnderBarLink";
+import UnderBarInput from "./UnderBarInput";
 
 const LoginContainer = ({ link }) => {
   return (
