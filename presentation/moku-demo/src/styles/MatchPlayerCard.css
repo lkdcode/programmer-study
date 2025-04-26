@@ -15,8 +15,12 @@
   gap: 5px;
 }
 
+.matchTurn {
+  color: #fe6941;
+}
+
 .playerImgWrapper {
-  border: 3px solid #999999;
+  border: 3px solid #fe6941;
   width: 60px;
   height: 60px;
   display: flex;
@@ -24,10 +28,6 @@
   align-items: center;
   border-radius: 50%;
   overflow: hidden;
-}
-
-.playerImgWrapper_MY_TURN {
-  border: 3px solid #fe6941;
 }
 
 .playerImg {
@@ -47,4 +47,27 @@
   justify-content: center;
   flex-direction: column;
   gap: 5px;
+}
+
+.matchNickname {
+  color: #001661;
+  font-size: 17px;
+}
+
+.matchRecord {
+  color: #fe6941;
+  font-size: 17px;
+}
+
+.matchRate {
+  color: #409d95;
+  font-size: 14px;
+}
+
+.notMatchTurn {
+  color: #999999;
+}
+
+.notMatchTurnImg {
+  border: 3px solid #999999;
 }

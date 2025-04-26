@@ -6,12 +6,16 @@
 
 .STONE_WHITE {
   background-color: #fdfdfd;
-  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: inset -5px -5px 3px rgba(0, 0, 0, 0.25);
   border: 1px solid #8f8f8f;
 }
 
 .STONE_BLACK {
-  background-color: #000000;
-  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+  /* background-color: #000000; */
+  /* box-shadow: inset -5px -5px 3px rgb(255, 255, 255, 0.25); */
+
+  background-color: rgb(45, 45, 45);
+  box-shadow: inset -5px -5px 5px rgb(0, 0, 0);
+
   border: 1px solid #8f8f8f;
 }
