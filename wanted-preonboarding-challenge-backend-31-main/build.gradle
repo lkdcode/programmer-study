@@ -23,26 +23,9 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation SpringBootStarter.WEB
-    implementation SpringBootStarter.DATA_JPA
-    implementation SpringBootStarter.VALIDATION
-
-    implementation DataSet.FLYWAY_CORE
-    implementation DataSet.FLYWAY_PSQL
-
-    runtimeOnly DataSet.PSQL_CONNECTOR
-
-    compileOnly SpringBootStarter.LOMBOK_COMPILE_ONLY
-    annotationProcessor SpringBootStarter.LOMBOK_ANNOTATION_PROCESSOR
-
-    testImplementation SpringBootStarter.TEST
-
-    testImplementation TestSet.TEST_CONTAINER
-    testImplementation TestSet.TEST_CONTAINER_PSQL
-    testImplementation TestSet.JUNIT
-    testRuntimeOnly TestSet.JUNIT_LAUNCHER
-}
+apply from: SpringBootStarter.PATH
+apply from: DataSet.PATH
+apply from: TestSet.PATH
 
 tasks.named('test') {
     useJUnitPlatform()
