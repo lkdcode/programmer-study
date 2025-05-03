@@ -2,10 +2,11 @@ package lkdcode.wanted.ecommerce.modules.products.domain.entity;
 
 import java.util.Objects;
 
-public record BrandId(
+public record ProductTagId(
     Long value
 ) {
-    public BrandId(Long value) {
+
+    public ProductTagId(Long value) {
         this.value = Objects.requireNonNull(value);
     }
 }

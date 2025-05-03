@@ -6,4 +6,5 @@ public enum ProductStatus {
     DELETED(),
 
     ;
+    public static final int LENGTH = 20;
 }
