@@ -5,7 +5,7 @@ import java.util.Objects;
 public record ProductOptionName(
     String value
 ) {
-    public static final int LENGTH = 3;
+    public static final int LENGTH = 100;
 
     public ProductOptionName(String value) {
         this.value = Objects.requireNonNull(value);

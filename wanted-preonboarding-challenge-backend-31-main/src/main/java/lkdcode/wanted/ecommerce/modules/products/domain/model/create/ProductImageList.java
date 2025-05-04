@@ -4,6 +4,8 @@ import lkdcode.wanted.ecommerce.modules.products.domain.value.image.ProductImage
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public record ProductImageList(
     List<ProductImageModel> list
@@ -19,5 +21,13 @@ public record ProductImageList(
                 .map(ProductImageModel::displayOrder)
                 .toList()
         );
+    }
+
+    public Stream<ProductImageModel> stream() {
+        return list.stream();
+    }
+
+    public void forEach(Consumer<ProductImageModel> action) {
+        list.forEach(action);
     }
 }

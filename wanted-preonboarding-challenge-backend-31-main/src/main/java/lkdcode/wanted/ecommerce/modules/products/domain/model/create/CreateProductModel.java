@@ -1,6 +1,9 @@
 package lkdcode.wanted.ecommerce.modules.products.domain.model.create;
 
 import lkdcode.wanted.ecommerce.modules.products.domain.value.tag.ProductTagList;
+import lombok.Builder;
+
+import java.util.Objects;
 
 public record CreateProductModel(
     ProductValues productValues,
@@ -13,4 +16,15 @@ public record CreateProductModel(
     ProductOptionGroupList optionGroupList,
     ProductTagList tagList
 ) {
+
+    @Builder
+    public CreateProductModel(ProductValues productValues, ProductCategoryList categoryList, ProductDetailModel detailModel, ProductImageList imageModel, ProductPriceModel priceModel, ProductOptionGroupList optionGroupList, ProductTagList tagList) {
+        this.productValues = Objects.requireNonNull(productValues);
+        this.categoryList = Objects.requireNonNull(categoryList);
+        this.detailModel = Objects.requireNonNull(detailModel);
+        this.imageModel = Objects.requireNonNull(imageModel);
+        this.priceModel = Objects.requireNonNull(priceModel);
+        this.optionGroupList = Objects.requireNonNull(optionGroupList);
+        this.tagList = Objects.requireNonNull(tagList);
+    }
 }

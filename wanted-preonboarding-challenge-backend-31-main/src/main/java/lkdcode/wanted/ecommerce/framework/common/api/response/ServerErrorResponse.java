@@ -13,7 +13,7 @@ public class ServerErrorResponse<T> {
         this.error = error;
     }
 
-    private static <T> ServerErrorResponse<T> from(T error) {
+    public static <T> ServerErrorResponse<T> from(T error) {
         return new ServerErrorResponse<>(error);
     }
 }
