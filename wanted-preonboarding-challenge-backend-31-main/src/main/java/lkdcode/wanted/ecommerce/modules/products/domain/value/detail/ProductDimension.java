@@ -4,9 +4,9 @@ import java.util.Map;
 import java.util.Objects;
 
 public record ProductDimension(
-    Map<String, Objects> value
+    Map<String, Object> value
 ) {
-    public ProductDimension(Map<String, Objects> value) {
+    public ProductDimension(Map<String, Object> value) {
         this.value = Objects.requireNonNull(value);
     }
 }

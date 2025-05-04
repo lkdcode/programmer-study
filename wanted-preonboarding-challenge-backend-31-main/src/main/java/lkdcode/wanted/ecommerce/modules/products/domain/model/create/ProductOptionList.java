@@ -1,0 +1,18 @@
+package lkdcode.wanted.ecommerce.modules.products.domain.model.create;
+
+import lkdcode.wanted.ecommerce.modules.products.domain.value.option.ProductOptionDisplayOrderList;
+
+import java.util.List;
+
+public record ProductOptionList(
+    List<ProductOptionModel> list
+) {
+
+    public ProductOptionDisplayOrderList getProductOptionDisplayOrderList() {
+        return new ProductOptionDisplayOrderList(list
+            .stream()
+            .map(ProductOptionModel::displayOrder)
+            .toList()
+        );
+    }
+}
