@@ -26,7 +26,7 @@ public class ImageValidatorAdapter implements ImageValidator {
         list.forEach(e -> {
             final var value = e.value();
             if (value != expected.getAndIncrement()) {
-                throw new ApplicationException(ApplicationResponseCode.FAIL);
+                throw new ApplicationException(ApplicationResponseCode.INVALID_IMAGE_DISPLAY_ORDER);
             }
         });
     }
@@ -35,7 +35,7 @@ public class ImageValidatorAdapter implements ImageValidator {
         final var set = new HashSet<>(list.list());
 
         if (set.size() != list.size()) {
-            throw new ApplicationException(ApplicationResponseCode.FAIL);
+            throw new ApplicationException(ApplicationResponseCode.DUPLICATE_IMAGE_DISPLAY_ORDER);
         }
     }
 }

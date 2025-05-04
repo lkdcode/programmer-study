@@ -18,7 +18,7 @@ public class BrandValidatorAdapter implements BrandValidator {
         final var entity = adapter.load(target.value());
 
         if (entity == null) {
-            throw new ApplicationException(ApplicationResponseCode.FAIL);
+            throw new ApplicationException(ApplicationResponseCode.NOT_FOUND_BRAND);
         }
     }
 }

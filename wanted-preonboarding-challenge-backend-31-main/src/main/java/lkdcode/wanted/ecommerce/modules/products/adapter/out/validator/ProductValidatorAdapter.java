@@ -17,7 +17,7 @@ public class ProductValidatorAdapter implements ProductValidator {
     public void validUniqueSlug(ProductSlug target) {
         final var exists = repository.existsSlug(target.value());
         if (exists) {
-            throw new ApplicationException(ApplicationResponseCode.FAIL);
+            throw new ApplicationException(ApplicationResponseCode.DUPLICATE_PRODUCT_SLUG);
         }
     }
 }
