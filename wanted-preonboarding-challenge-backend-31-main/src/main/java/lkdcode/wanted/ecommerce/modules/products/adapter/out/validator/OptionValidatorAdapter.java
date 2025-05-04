@@ -1,0 +1,65 @@
+package lkdcode.wanted.ecommerce.modules.products.adapter.out.validator;
+
+import lkdcode.wanted.ecommerce.framework.common.exception.ApplicationException;
+import lkdcode.wanted.ecommerce.framework.common.exception.ApplicationResponseCode;
+import lkdcode.wanted.ecommerce.modules.products.application.ports.out.validator.OptionValidator;
+import lkdcode.wanted.ecommerce.modules.products.domain.value.option.ProductOptionDisplayOrderList;
+import lkdcode.wanted.ecommerce.modules.products.domain.value.option.ProductOptionGroupDisplayOrderList;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.concurrent.atomic.AtomicInteger;
+
+@Service
+@RequiredArgsConstructor
+public class OptionValidatorAdapter implements OptionValidator {
+
+    @Override
+    public void validOptionGroup(ProductOptionGroupDisplayOrderList list) {
+        validDuplicate(list);
+        validIncrement(list);
+    }
+
+    private static void validIncrement(final ProductOptionGroupDisplayOrderList list) {
+        final var expected = new AtomicInteger(list.list().get(0).value());
+
+        list.forEach(e -> {
+            final var value = e.value();
+            if (value != expected.getAndIncrement()) {
+                throw new ApplicationException(ApplicationResponseCode.FAIL);
+            }
+        });
+    }
+
+    private static void validDuplicate(final ProductOptionGroupDisplayOrderList list) {
+        final var set = new HashSet<>(list.list());
+        if (set.size() != list.size()) {
+            throw new ApplicationException(ApplicationResponseCode.FAIL);
+        }
+    }
+
+    @Override
+    public void validOption(ProductOptionDisplayOrderList list) {
+        validDuplicate(list);
+        validIncrement(list);
+    }
+
+    private static void validIncrement(final ProductOptionDisplayOrderList list) {
+        final var expected = new AtomicInteger(list.list().get(0).value());
+
+        list.forEach(e -> {
+            final var value = e.value();
+            if (value != expected.getAndIncrement()) {
+                throw new ApplicationException(ApplicationResponseCode.FAIL);
+            }
+        });
+    }
+
+    private static void validDuplicate(final ProductOptionDisplayOrderList list) {
+        final var set = new HashSet<>(list.list());
+        if (set.size() != list.size()) {
+            throw new ApplicationException(ApplicationResponseCode.FAIL);
+        }
+    }
+}

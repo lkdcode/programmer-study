@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lkdcode.wanted.ecommerce.framework.common.jpa.entity.EntityValidator;
-import lkdcode.wanted.ecommerce.modules.products.adapter.infrastructure.jpa.entity.Product;
+import lkdcode.wanted.ecommerce.modules.products.adapter.infrastructure.jpa.entity.ProductJpaEntity;
 import lkdcode.wanted.ecommerce.modules.users.adapter.infrastructure.jpa.entity.User;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -28,7 +28,7 @@ public class Review extends EntityValidator<Review> {
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    private ProductJpaEntity product;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -43,7 +43,7 @@ public class Review extends EntityValidator<Review> {
     @Size(max = 255)
     private String title;
 
-    @Lob
+    @Column(columnDefinition = "text")
     private String content;
 
     @Column(name = "created_at")
@@ -59,7 +59,7 @@ public class Review extends EntityValidator<Review> {
     private Integer helpfulVotes = 0;
 
     @Builder
-    public Review(Long id, Product product, User user, Integer rating, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean verifiedPurchase, Integer helpfulVotes) {
+    public Review(Long id, ProductJpaEntity product, User user, Integer rating, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean verifiedPurchase, Integer helpfulVotes) {
         this.id = id;
         this.product = product;
         this.user = user;

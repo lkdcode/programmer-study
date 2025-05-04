@@ -4,6 +4,8 @@ import lkdcode.wanted.ecommerce.modules.products.domain.value.option.ProductOpti
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public record ProductOptionGroupList(
     List<ProductOptionGroupModel> list
@@ -19,5 +21,13 @@ public record ProductOptionGroupList(
                 .map(ProductOptionGroupModel::groupDisplayOrder)
                 .toList()
         );
+    }
+
+    public Stream<ProductOptionGroupModel> stream() {
+        return list.stream();
+    }
+
+    public void forEach(final Consumer<ProductOptionGroupModel> action) {
+        list.forEach(action);
     }
 }

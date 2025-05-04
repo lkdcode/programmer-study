@@ -1,0 +1,7 @@
+package lkdcode.wanted.ecommerce.modules.products.application.ports.out.validator;
+
+import lkdcode.wanted.ecommerce.modules.products.domain.entity.ProductSellerId;
+
+public interface SellerValidator {
+    void validId(final ProductSellerId target);
+}
