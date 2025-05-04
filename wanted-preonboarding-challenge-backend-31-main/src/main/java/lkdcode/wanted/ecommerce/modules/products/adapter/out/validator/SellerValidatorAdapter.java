@@ -16,7 +16,7 @@ public class SellerValidatorAdapter implements SellerValidator {
     @Override
     public void validId(ProductSellerId target) {
         if (adapter.load(target.value()) == null) {
-            throw new ApplicationException(ApplicationResponseCode.FAIL);
+            throw new ApplicationException(ApplicationResponseCode.NOT_FOUND_SELLER);
         }
     }
 }

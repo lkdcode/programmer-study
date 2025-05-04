@@ -1,8 +1,10 @@
 package lkdcode.wanted.ecommerce.framework.common.exception;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
+@Slf4j
 @Getter
 public class ApplicationException extends RuntimeException {
     private final ApplicationResponseCode responseCode;
@@ -14,5 +16,9 @@ public class ApplicationException extends RuntimeException {
 
     public HttpStatus getHttpStatus() {
         return this.responseCode.getHttpStatus();
+    }
+
+    public String getDescription(){
+        return responseCode.getDescription();
     }
 }

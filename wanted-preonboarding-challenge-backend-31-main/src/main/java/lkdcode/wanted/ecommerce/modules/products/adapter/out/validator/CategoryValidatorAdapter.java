@@ -18,7 +18,7 @@ public class CategoryValidatorAdapter implements CategoryValidator {
         target.forEach(model -> {
             final var entity = adapter.load(model.id().value());
             if (entity == null) {
-                throw new ApplicationException(ApplicationResponseCode.FAIL);
+                throw new ApplicationException(ApplicationResponseCode.NOT_FOUND_CATEGORY);
             }
         });
 
@@ -26,6 +26,6 @@ public class CategoryValidatorAdapter implements CategoryValidator {
             .filter(e -> e.isPrimary().value())
             .count();
 
-        if (count > 1) throw new ApplicationException(ApplicationResponseCode.FAIL);
+        if (count > 1) throw new ApplicationException(ApplicationResponseCode.INVALID_CATEGORY_PRIMARY);
     }
 }

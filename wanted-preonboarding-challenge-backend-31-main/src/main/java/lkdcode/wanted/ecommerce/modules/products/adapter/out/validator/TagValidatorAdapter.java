@@ -17,7 +17,7 @@ public class TagValidatorAdapter implements TagValidator {
     public void validList(ProductTagList list) {
         list.forEach(tag -> {
             if (adapter.load(tag.value()) == null) {
-                throw new ApplicationException(ApplicationResponseCode.FAIL);
+                throw new ApplicationException(ApplicationResponseCode.NOT_FOUND_TAG);
             }
         });
     }

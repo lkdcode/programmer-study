@@ -26,10 +26,9 @@ import java.util.HashMap;
 public class ApiAdvice {
 
     @ExceptionHandler(ApplicationException.class)
-    public ResponseEntity<?> handleBaseException(final ApplicationException e) {
-        return ResponseEntity
-            .status(e.getHttpStatus())
-            .body("FAIL!!!!!!" + e.getMessage());
+    public ResponseEntity<ClientErrorResponse<?>> handleBaseException(final ApplicationException e) {
+        return ResponseEntity.status(e.getHttpStatus())
+            .body(ClientErrorResponse.invalidInput(e.getDescription()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -52,11 +51,20 @@ public class ApiAdvice {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ClientErrorResponse<?>> handleConstraintViolationException(final ConstraintViolationException e) {
-        e.getConstraintViolations().forEach(violation ->
-            log.info("[   ConstraintViolationException    ] Property: {}, Invalid value: {}, Message: {}",
-                violation.getPropertyPath(), violation.getInvalidValue(), violation.getMessage()));
+        final var message = new HashMap<String, String>();
 
-        return null;
+        e.getConstraintViolations().forEach(violation -> {
+                final var invalidValue = violation.getInvalidValue();
+                final var defaultMessage = violation.getMessage();
+                log.info("[   ConstraintViolationException    ] Property: {}, Invalid value: {}, Message: {}",
+                    violation.getPropertyPath(), invalidValue, defaultMessage);
+
+                message.put(invalidValue.toString(), defaultMessage);
+            }
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(ClientErrorResponse.invalidInput(message));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -64,7 +72,8 @@ public class ApiAdvice {
         log.info("[   HttpMessageNotReadableException   ] cause: {}, message: {}",
             e.getCause() != null ? e.getCause().getMessage() : "N/A", e.getMessage());
 
-        return null;
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(ClientErrorResponse.invalidInput("HTTP 요청이 올바르지 않습니다."));
     }
 
     @ExceptionHandler(JsonMappingException.class)
@@ -72,7 +81,8 @@ public class ApiAdvice {
         log.info("[   JsonMappingException   ] Path: {}, Message: {}",
             e.getPathReference(), e.getOriginalMessage());
 
-        return null;
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(ClientErrorResponse.invalidInput("JSON 형식이 올바르지 않습니다."));
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)
@@ -80,7 +90,8 @@ public class ApiAdvice {
         log.info("[   MissingRequestHeaderException   ] missing header: {}, message: {}",
             e.getHeaderName(), e.getMessage());
 
-        return null;
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(ClientErrorResponse.invalidInput("HTTP 요청 헤더가 올바르지 않습니다."));
     }
 
     @ExceptionHandler(SQLException.class)
@@ -88,20 +99,23 @@ public class ApiAdvice {
         log.warn("[   SQLException   ] SQLState: {}, ErrorCode: {}, message: {}",
             e.getSQLState(), e.getErrorCode(), e.getMessage());
 
-        return null;
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(ServerErrorResponse.from("알 수 없는 에러 발생."));
     }
 
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<ServerErrorResponse<?>> handleDataAccessException(final DataAccessException e) {
         log.warn("[   DataAccessException   ] message: {}", e.getMessage(), e);
 
-        return null;
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(ServerErrorResponse.from("데이터 베이스 에러 발생"));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ServerErrorResponse<?>> handleException(final Exception e) {
         log.error("[   Exception   ] localizedMessage: {}, message: {}", e.getLocalizedMessage(), e.getMessage(), e);
 
-        return null;
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(ServerErrorResponse.from("알 수 없는 에러 발생."));
     }
 }

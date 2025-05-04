@@ -17,8 +17,8 @@ public class OptionValidatorAdapter implements OptionValidator {
 
     @Override
     public void validOptionGroup(ProductOptionGroupDisplayOrderList list) {
-        validDuplicate(list);
         validIncrement(list);
+        validDuplicate(list);
     }
 
     private static void validIncrement(final ProductOptionGroupDisplayOrderList list) {
@@ -27,7 +27,7 @@ public class OptionValidatorAdapter implements OptionValidator {
         list.forEach(e -> {
             final var value = e.value();
             if (value != expected.getAndIncrement()) {
-                throw new ApplicationException(ApplicationResponseCode.FAIL);
+                throw new ApplicationException(ApplicationResponseCode.INVALID_OPTION_GROUP_DISPLAY_ORDER);
             }
         });
     }
@@ -35,14 +35,14 @@ public class OptionValidatorAdapter implements OptionValidator {
     private static void validDuplicate(final ProductOptionGroupDisplayOrderList list) {
         final var set = new HashSet<>(list.list());
         if (set.size() != list.size()) {
-            throw new ApplicationException(ApplicationResponseCode.FAIL);
+            throw new ApplicationException(ApplicationResponseCode.DUPLICATE_OPTION_GROUP_DISPLAY_ORDER);
         }
     }
 
     @Override
     public void validOption(ProductOptionDisplayOrderList list) {
-        validDuplicate(list);
         validIncrement(list);
+        validDuplicate(list);
     }
 
     private static void validIncrement(final ProductOptionDisplayOrderList list) {
@@ -51,7 +51,7 @@ public class OptionValidatorAdapter implements OptionValidator {
         list.forEach(e -> {
             final var value = e.value();
             if (value != expected.getAndIncrement()) {
-                throw new ApplicationException(ApplicationResponseCode.FAIL);
+                throw new ApplicationException(ApplicationResponseCode.INVALID_OPTION_DISPLAY_ORDER);
             }
         });
     }
@@ -59,7 +59,7 @@ public class OptionValidatorAdapter implements OptionValidator {
     private static void validDuplicate(final ProductOptionDisplayOrderList list) {
         final var set = new HashSet<>(list.list());
         if (set.size() != list.size()) {
-            throw new ApplicationException(ApplicationResponseCode.FAIL);
+            throw new ApplicationException(ApplicationResponseCode.DUPLICATE_OPTION_DISPLAY_ORDER);
         }
     }
 }
