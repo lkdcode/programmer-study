@@ -19,6 +19,7 @@ public enum ApplicationResponseCode {
     NOT_FOUND_DETAIL("RESOURCE_NOT_FOUND", NOT_FOUND, "요청한 상품의 상세 정보를 찾을 수 없습니다."),
     NOT_FOUND_PRICE("RESOURCE_NOT_FOUND", NOT_FOUND, "요청한 상품의 가격 정보를 찾을 수 없습니다."),
     NOT_FOUND_BRAND("INVALID_INPUT", BAD_REQUEST, "해당 브랜드를 찾을 수 없습니다."),
+    NOT_FOUND_OPTION_GROUP("RESOURCE_NOT_FOUND", BAD_REQUEST, "해당 옵션 그룹을 찾을 수 없습니다."),
     INVALID_BRAND("FORBIDDEN", FORBIDDEN, "브랜드가 일치하지 않습니다."),
     NOT_FOUND_CATEGORY("INVALID_INPUT", BAD_REQUEST, "해당 카테고리를 찾을 수 없습니다."),
     NOT_FOUND_SELLER("INVALID_INPUT", BAD_REQUEST, "해당 판매자를 찾을 수 없습니다."),
