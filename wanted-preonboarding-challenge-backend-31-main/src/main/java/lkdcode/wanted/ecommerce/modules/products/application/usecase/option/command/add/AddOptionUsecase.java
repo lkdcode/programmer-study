@@ -1,18 +1,18 @@
-package lkdcode.wanted.ecommerce.modules.products.application.usecase.option.command;
+package lkdcode.wanted.ecommerce.modules.products.application.usecase.option.command.add;
 
+import lkdcode.wanted.ecommerce.modules.products.application.usecase.option.command.CommandOptionResult;
 import lkdcode.wanted.ecommerce.modules.products.domain.entity.ProductId;
 import lkdcode.wanted.ecommerce.modules.products.domain.entity.ProductOptionGroupId;
 import lkdcode.wanted.ecommerce.modules.products.domain.model.option.AddOptionModel;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 class AddOptionUsecase {
     private final ProductId productId;
     private final AddOptionModel model;
 
-    private AddOptionResult result;
+    private CommandOptionResult result;
 
     private AddOptionUsecase(ProductId productId, AddOptionModel model) {
         this.productId = productId;
@@ -28,12 +28,12 @@ class AddOptionUsecase {
         return this;
     }
 
-    public AddOptionUsecase addOption(final Function<AddOptionModel, AddOptionResult> add) {
+    public AddOptionUsecase addOption(final Function<AddOptionModel, CommandOptionResult> add) {
         this.result = add.apply(model);
         return this;
     }
 
-    public AddOptionResult done() {
+    public CommandOptionResult done() {
         return result;
     }
 }

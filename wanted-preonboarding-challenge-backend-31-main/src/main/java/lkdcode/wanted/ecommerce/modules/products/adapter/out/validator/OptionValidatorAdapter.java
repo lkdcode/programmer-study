@@ -2,10 +2,13 @@ package lkdcode.wanted.ecommerce.modules.products.adapter.out.validator;
 
 import lkdcode.wanted.ecommerce.framework.common.exception.ApplicationException;
 import lkdcode.wanted.ecommerce.framework.common.exception.ApplicationResponseCode;
+import lkdcode.wanted.ecommerce.modules.products.adapter.infrastructure.jpa.entity.ProductOptionGroupJpaEntity;
 import lkdcode.wanted.ecommerce.modules.products.adapter.infrastructure.jpa.repository.query.QueryProductOptionGroupJpaRepository;
+import lkdcode.wanted.ecommerce.modules.products.adapter.infrastructure.jpa.repository.query.QueryProductOptionJpaRepository;
 import lkdcode.wanted.ecommerce.modules.products.application.ports.out.validator.OptionValidator;
 import lkdcode.wanted.ecommerce.modules.products.domain.entity.ProductId;
 import lkdcode.wanted.ecommerce.modules.products.domain.entity.ProductOptionGroupId;
+import lkdcode.wanted.ecommerce.modules.products.domain.entity.ProductOptionId;
 import lkdcode.wanted.ecommerce.modules.products.domain.value.option.ProductOptionDisplayOrderList;
 import lkdcode.wanted.ecommerce.modules.products.domain.value.option.ProductOptionGroupDisplayOrderList;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +22,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class OptionValidatorAdapter implements OptionValidator {
 
     private final QueryProductOptionGroupJpaRepository optionGroupJpaRepository;
+    private final QueryProductOptionJpaRepository queryProductOptionJpaRepository;
 
     @Override
-    public void validOptionGroup(ProductOptionGroupDisplayOrderList list) {
+    public void validOption(ProductOptionGroupDisplayOrderList list) {
         validIncrement(list);
         validDuplicate(list);
     }
@@ -51,11 +55,24 @@ public class OptionValidatorAdapter implements OptionValidator {
     }
 
     @Override
-    public void validOptionGroup(ProductId productId, ProductOptionGroupId groupId) {
+    public void validOption(ProductId productId, ProductOptionGroupId groupId) {
         final var exists = optionGroupJpaRepository.existsId(productId.value(), groupId.value());
 
         if (!exists) {
             throw new ApplicationException(ApplicationResponseCode.NOT_FOUND_OPTION_GROUP);
+        }
+    }
+
+    @Override
+    public void validOption(ProductId productId, ProductOptionId optionId) {
+        final var groupIdList = optionGroupJpaRepository.findAllByProduct_id(productId.value())
+            .stream()
+            .map(ProductOptionGroupJpaEntity::getId)
+            .toList();
+
+        final var exists = queryProductOptionJpaRepository.existsInGroupIdList(groupIdList);
+        if (!exists) {
+            throw new ApplicationException(ApplicationResponseCode.NOT_FOUND_OPTION);
         }
     }
 

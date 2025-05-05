@@ -5,7 +5,7 @@ import lombok.Builder;
 import java.math.BigDecimal;
 
 @Builder
-public record AddOptionResult(
+public record CommandOptionResult(
     Long id,
     Long option_group_id,
     String name,
