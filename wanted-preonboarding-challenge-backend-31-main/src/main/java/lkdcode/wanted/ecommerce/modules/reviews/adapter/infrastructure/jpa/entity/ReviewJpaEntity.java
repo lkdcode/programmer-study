@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "reviews")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Review extends EntityValidator<Review> {
+public class ReviewJpaEntity extends EntityValidator<ReviewJpaEntity> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,7 +59,7 @@ public class Review extends EntityValidator<Review> {
     private Integer helpfulVotes = 0;
 
     @Builder
-    public Review(Long id, ProductJpaEntity product, User user, Integer rating, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean verifiedPurchase, Integer helpfulVotes) {
+    public ReviewJpaEntity(Long id, ProductJpaEntity product, User user, Integer rating, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean verifiedPurchase, Integer helpfulVotes) {
         this.id = id;
         this.product = product;
         this.user = user;
