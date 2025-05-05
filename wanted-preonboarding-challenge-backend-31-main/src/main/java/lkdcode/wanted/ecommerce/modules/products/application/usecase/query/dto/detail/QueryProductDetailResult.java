@@ -29,6 +29,7 @@ public record QueryProductDetailResult(
     List<QueryProductOptionGroup> option_groups,
     List<QueryProductImageDTO> images,
     List<QueryProductTagDTO> tags,
-    QueryProductRatingDTO rating
+    QueryProductRatingDTO rating,
+    List<QueryProductRelatedDTO> related_products
 ) {
 }
