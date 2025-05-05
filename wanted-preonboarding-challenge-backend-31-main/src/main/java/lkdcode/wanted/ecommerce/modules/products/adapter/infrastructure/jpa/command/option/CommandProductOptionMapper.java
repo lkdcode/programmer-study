@@ -2,7 +2,7 @@ package lkdcode.wanted.ecommerce.modules.products.adapter.infrastructure.jpa.com
 
 import lkdcode.wanted.ecommerce.modules.products.adapter.infrastructure.jpa.entity.ProductOptionGroupJpaEntity;
 import lkdcode.wanted.ecommerce.modules.products.adapter.infrastructure.jpa.entity.ProductOptionJpaEntity;
-import lkdcode.wanted.ecommerce.modules.products.application.usecase.option.command.AddOptionResult;
+import lkdcode.wanted.ecommerce.modules.products.application.usecase.option.command.CommandOptionResult;
 import lkdcode.wanted.ecommerce.modules.products.domain.model.option.AddOptionModel;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +19,8 @@ public class CommandProductOptionMapper {
             .build();
     }
 
-    public AddOptionResult convert(final ProductOptionJpaEntity target) {
-        return AddOptionResult.builder()
+    public CommandOptionResult convert(final ProductOptionJpaEntity target) {
+        return CommandOptionResult.builder()
             .id(target.getId())
             .option_group_id(target.getOptionGroup().getId())
             .name(target.getName())

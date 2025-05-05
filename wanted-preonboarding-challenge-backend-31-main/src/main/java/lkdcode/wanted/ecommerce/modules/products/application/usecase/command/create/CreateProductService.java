@@ -34,7 +34,7 @@ public class CreateProductService {
 
             .saveProductDetail(createPort::saveDetail)
 
-            .validProductOptionGroup(optionValidator::validOptionGroup)
+            .validProductOptionGroup(optionValidator::validOption)
             .validProductOption(optionValidator::validOption)
             .saveProductOption(createPort::saveOption)
 

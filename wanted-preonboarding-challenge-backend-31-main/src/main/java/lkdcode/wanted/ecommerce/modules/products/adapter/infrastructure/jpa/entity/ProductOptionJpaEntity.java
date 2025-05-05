@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lkdcode.wanted.ecommerce.framework.common.jpa.entity.EntityValidator;
+import lkdcode.wanted.ecommerce.modules.products.domain.model.option.UpdateOptionModel;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -56,6 +57,15 @@ public class ProductOptionJpaEntity extends EntityValidator<ProductOptionJpaEnti
         this.sku = sku;
         this.stock = stock;
         this.displayOrder = displayOrder;
+        super.validSelf();
+    }
+
+    public void update(UpdateOptionModel model) {
+        this.name = model.name().value();
+        this.additionalPrice = model.additionalPrice().value();
+        this.sku = model.sku().value();
+        this.stock = model.stock().value();
+        this.displayOrder = model.displayOrder().value();
         super.validSelf();
     }
 }

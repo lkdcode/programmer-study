@@ -7,9 +7,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface QueryProductOptionGroupJpaRepository extends Repository<ProductOptionGroupJpaEntity, Long> {
+
+    List<ProductOptionGroupJpaEntity> findAllByProduct_id(Long id);
 
     @Query(value = "SELECT EXISTS(SELECT 1 FROM product_option_groups WHERE product_id = :productId AND id = :groupId LIMIT 1)", nativeQuery = true)
     boolean existsId(@Param("productId") Long productId, @Param("groupId") Long groupId);

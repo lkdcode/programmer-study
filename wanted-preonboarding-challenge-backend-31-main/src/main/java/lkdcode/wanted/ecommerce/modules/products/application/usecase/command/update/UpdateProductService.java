@@ -35,7 +35,7 @@ public class UpdateProductService {
 
             .updateProductDetail(updatePort::updateDetail)
 
-            .validProductOptionGroup(optionValidator::validOptionGroup)
+            .validProductOptionGroup(optionValidator::validOption)
             .validProductOption(optionValidator::validOption)
             .updateProductOption(updatePort::updateOption)
 
