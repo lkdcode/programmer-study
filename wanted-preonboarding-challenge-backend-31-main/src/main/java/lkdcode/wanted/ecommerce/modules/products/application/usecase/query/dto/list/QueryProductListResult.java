@@ -1,4 +1,4 @@
-package lkdcode.wanted.ecommerce.modules.products.application.usecase.query.dto;
+package lkdcode.wanted.ecommerce.modules.products.application.usecase.query.dto.list;
 
 import lkdcode.wanted.ecommerce.modules.products.application.usecase.query.value.Pagination;
 import lombok.Builder;
@@ -6,7 +6,7 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record QueryProductResult(
+public record QueryProductListResult(
     List<QueryProductDTO> items,
     Pagination pagination
 ) {

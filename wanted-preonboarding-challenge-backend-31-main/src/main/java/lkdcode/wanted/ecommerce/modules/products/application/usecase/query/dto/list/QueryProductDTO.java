@@ -1,6 +1,8 @@
-package lkdcode.wanted.ecommerce.modules.products.application.usecase.query.dto;
+package lkdcode.wanted.ecommerce.modules.products.application.usecase.query.dto.list;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lkdcode.wanted.ecommerce.modules.products.application.usecase.query.dto.QueryProductBrandDTO;
+import lkdcode.wanted.ecommerce.modules.products.application.usecase.query.dto.QueryProductSellerDTO;
 import lkdcode.wanted.ecommerce.modules.products.domain.value.ProductStatus;
 import lombok.Builder;
 

@@ -28,7 +28,10 @@ public class ApiAdvice {
     @ExceptionHandler(ApplicationException.class)
     public ResponseEntity<ClientErrorResponse<?>> handleBaseException(final ApplicationException e) {
         return ResponseEntity.status(e.getHttpStatus())
-            .body(ClientErrorResponse.invalidInput(e.getDescription()));
+            .body(ClientErrorResponse.from(
+                e.getCode(),
+                e.getDescription()
+            ));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
