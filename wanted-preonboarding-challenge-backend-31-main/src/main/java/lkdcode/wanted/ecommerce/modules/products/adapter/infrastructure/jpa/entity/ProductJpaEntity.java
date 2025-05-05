@@ -88,4 +88,8 @@ public class ProductJpaEntity extends EntityValidator<ProductJpaEntity> {
         this.status = values.status();
         super.validSelf();
     }
+
+    public void delete() {
+        this.status = ProductStatus.DELETED;
+    }
 }

@@ -6,7 +6,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record CreateResponse(
+public record UpsertResponse(
     Long id,
     String name,
     String slug,
