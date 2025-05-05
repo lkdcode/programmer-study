@@ -9,8 +9,10 @@ import lkdcode.wanted.ecommerce.framework.query.QueryDslUtil;
 import lkdcode.wanted.ecommerce.modules.brand.adapter.infrastructure.jpa.entity.QBrandJpaEntity;
 import lkdcode.wanted.ecommerce.modules.category.adapter.infrastructure.jpa.entity.QCategoryJpaEntity;
 import lkdcode.wanted.ecommerce.modules.products.adapter.infrastructure.jpa.entity.*;
-import lkdcode.wanted.ecommerce.modules.products.application.ports.out.query.QueryProductOutPort;
-import lkdcode.wanted.ecommerce.modules.products.application.usecase.query.dto.*;
+import lkdcode.wanted.ecommerce.modules.products.application.ports.out.query.QueryProductListOutPort;
+import lkdcode.wanted.ecommerce.modules.products.application.usecase.query.dto.QueryProductBrandDTO;
+import lkdcode.wanted.ecommerce.modules.products.application.usecase.query.dto.QueryProductSellerDTO;
+import lkdcode.wanted.ecommerce.modules.products.application.usecase.query.dto.list.*;
 import lkdcode.wanted.ecommerce.modules.products.application.usecase.query.value.Pagination;
 import lkdcode.wanted.ecommerce.modules.products.application.usecase.query.value.ParamCondition;
 import lkdcode.wanted.ecommerce.modules.products.application.usecase.query.value.QueryParamConditions;
@@ -28,7 +30,7 @@ import java.util.List;
 import java.util.function.Function;
 
 @Service
-public class QueryProductAdapter extends QueryBase<ProductJpaEntity, QProductJpaEntity> implements QueryProductOutPort {
+public class QueryProductListAdapter extends QueryBase<ProductJpaEntity, QProductJpaEntity> implements QueryProductListOutPort {
     private static final QProductJpaEntity PRODUCT = QProductJpaEntity.productJpaEntity;
     private static final QProductPriceJpaEntity PRICE = QProductPriceJpaEntity.productPriceJpaEntity;
     private static final QProductOptionGroupJpaEntity PRODUCT_OPTION_GROUP = QProductOptionGroupJpaEntity.productOptionGroupJpaEntity;
@@ -40,15 +42,15 @@ public class QueryProductAdapter extends QueryBase<ProductJpaEntity, QProductJpa
     private static final QReviewJpaEntity REVIEW = QReviewJpaEntity.reviewJpaEntity;
     private static final QCategoryJpaEntity CATEGORY = QCategoryJpaEntity.categoryJpaEntity;
 
-    public QueryProductAdapter(JPAQueryFactory factory, QueryDslUtil queryDslUtil) {
+    public QueryProductListAdapter(JPAQueryFactory factory, QueryDslUtil queryDslUtil) {
         super(factory, queryDslUtil);
     }
 
     @Override
-    public QueryProductResult loadList(Pageable pageable, QueryParamConditions queryParamConditions) {
+    public QueryProductListResult loadList(Pageable pageable, QueryParamConditions queryParamConditions) {
         final var result = factory
             .select(
-                new QQueryProductAdapter_LoadListDTO(
+                new QQueryProductListAdapter_LoadListDTO(
                     PRODUCT.id.as("id"),
                     PRODUCT.name.as("name"),
                     PRODUCT.slug.as("slug"),
@@ -140,7 +142,7 @@ public class QueryProductAdapter extends QueryBase<ProductJpaEntity, QProductJpa
             .size(page.getSize())
             .build();
 
-        return QueryProductResult.builder()
+        return QueryProductListResult.builder()
             .items(result.stream()
                 .map(e -> QueryProductDTO.builder()
                     .name(e.name)

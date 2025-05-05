@@ -1,4 +1,4 @@
-package lkdcode.wanted.ecommerce.modules.products.application.usecase.query.dto;
+package lkdcode.wanted.ecommerce.modules.products.application.usecase.query.dto.list;
 
 import lombok.Builder;
 

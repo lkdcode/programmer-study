@@ -9,3 +9,23 @@ dependencies {
     annotationProcessor DataSet.QUERYDSL_ANNOTATION_API
     annotationProcessor DataSet.QUERYDSL_PERSISTENCE_API
 }
+
+def queryDslDir = 'src/main/generated/querydsl'
+
+sourceSets {
+    main {
+        java {
+            srcDir queryDslDir
+        }
+    }
+}
+
+tasks.named('compileJava').configure {
+    doFirst {
+        if (file(queryDslDir).exists()) {
+            options.annotationProcessorOptions.arguments = [
+                    'skipQuerydslProcessing': 'true'
+            ]
+        }
+    }
+}

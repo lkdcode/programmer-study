@@ -14,11 +14,15 @@ public class ApplicationException extends RuntimeException {
         this.responseCode = responseCode;
     }
 
+    public String getCode() {
+        return responseCode.getCode();
+    }
+
     public HttpStatus getHttpStatus() {
         return this.responseCode.getHttpStatus();
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return responseCode.getDescription();
     }
 }
