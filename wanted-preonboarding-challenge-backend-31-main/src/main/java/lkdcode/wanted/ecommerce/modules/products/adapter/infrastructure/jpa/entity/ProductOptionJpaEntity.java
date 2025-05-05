@@ -41,6 +41,7 @@ public class ProductOptionJpaEntity extends EntityValidator<ProductOptionJpaEnti
     @Column(length = 100)
     private String sku;
 
+    @Column
     private Integer stock = 0;
 
     @Column(name = "display_order")
