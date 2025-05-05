@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -59,7 +60,318 @@ public class QueryProductDetailAdapter extends QueryBase<ProductJpaEntity, QProd
 
     @Override
     public QueryProductDetailResult load(ProductId id) {
-        final var result = Objects.requireNonNull(factory
+        final var result = loadProductDetail(id);
+        final var categoryDTO = loadProductCategory(id);
+        final var optionDTO = loadProductOption(id);
+        final var imageDTO = loadProductImage(id);
+        final var tagDTO = loadProductTag(id);
+        final var reviewDTO = loadProductReview(id);
+        final var relatedDTO = loadRelatedDTO(id, categoryDTO);
+
+        return QueryProductDetailResult.builder()
+            .id(result.id)
+            .name(result.name)
+            .slug(result.slug)
+            .short_description(result.shortDescription)
+            .full_description(result.fullDescription)
+            .seller(convertSellerDTO(result))
+            .brand(convertBrandDTO(result))
+            .status(result.status)
+            .created_at(result.createdAt)
+            .updated_at(result.updatedAt)
+            .detail(convertDetailDTO(result))
+            .price(convertPriceDTO(result))
+            .categories(categoryDTO)
+            .option_groups(optionDTO)
+            .images(imageDTO)
+            .tags(tagDTO)
+
+            .rating(reviewDTO)
+            .related_products(relatedDTO)
+            .build();
+    }
+
+    private List<QueryProductRelatedDTO> loadRelatedDTO(ProductId id, List<QueryProductCategoryDTO> categoryDTO) {
+        final var categoryIdList = categoryDTO.stream()
+            .map(QueryProductCategoryDTO::id)
+            .distinct()
+            .toList();
+
+        return factory
+            .select(
+                new QQueryProductDetailAdapter_RelatedProductDTO(
+                    PRODUCT.id,
+                    PRODUCT.name,
+                    PRODUCT.slug,
+                    PRODUCT.shortDescription,
+
+                    IMAGE.url,
+                    IMAGE.altText,
+
+                    PRICE.basePrice,
+                    PRICE.salePrice,
+                    PRICE.currency
+                )
+            )
+            .distinct()
+            .from(PRODUCT)
+
+            .join(PRODUCT_CATEGORY)
+            .on(
+                PRODUCT_CATEGORY.category.id.in(categoryIdList)
+                    .and(PRODUCT_CATEGORY.product.eq(PRODUCT))
+                    .and(PRODUCT_CATEGORY.product.id.ne(id.value()))
+            )
+
+            .leftJoin(IMAGE)
+            .on(
+                IMAGE.product.eq(PRODUCT)
+                    .and(IMAGE.isPrimary.isTrue())
+            )
+
+            .leftJoin(PRICE)
+            .on(PRICE.product.eq(PRODUCT))
+
+            .fetch()
+            .stream()
+            .map(i -> QueryProductRelatedDTO.builder()
+                .id(i.id)
+                .name(i.name)
+                .slug(i.slug)
+                .short_description(i.shortDescription)
+                .primary_image(
+                    QueryProductRelatedDTO.Images.builder()
+                        .url(i.url)
+                        .alt_text(i.altText)
+                        .build()
+                )
+                .base_price(i.basePrice)
+                .sale_price(i.salePrice)
+                .currency(i.currency)
+                .build())
+            .toList();
+    }
+
+    private static QueryProductSellerDTO convertSellerDTO(ProductDTO result) {
+        return QueryProductSellerDTO.builder()
+            .id(result.sellerId)
+            .name(result.sellerName)
+            .description(result.sellerDescription)
+            .logo_url(result.sellerLogoUrl)
+            .rating(result.rating)
+            .contact_email(result.contactEmail)
+            .contact_phone(result.contactPhone)
+            .build();
+    }
+
+    private static QueryProductBrandDTO convertBrandDTO(ProductDTO result) {
+        return QueryProductBrandDTO.builder()
+            .id(result.brandId)
+            .name(result.brandName)
+            .description(result.brandDescription)
+            .logo_url(result.brandLogoUrl)
+            .website(result.website)
+            .build();
+    }
+
+    private static QueryProductPriceDTO convertPriceDTO(ProductDTO result) {
+        return QueryProductPriceDTO.builder()
+            .base_price(result.basePrice)
+            .sale_price(result.salePrice)
+            .currency(result.currency)
+            .tax_rate(result.taxRate)
+            .build();
+    }
+
+    private static QueryProductDetailDTO convertDetailDTO(ProductDTO result) {
+        return QueryProductDetailDTO.builder()
+            .weight(result.weight)
+            .dimensions(result.dimensions)
+            .materials(result.materials)
+            .country_of_origin(result.countryOfOrigin)
+            .warranty_info(result.warrantyInfo)
+            .care_instructions(result.careInstructions)
+            .additional_info(result.additionalInfo)
+            .build();
+    }
+
+    private QueryProductRatingDTO loadProductReview(ProductId id) {
+        final var reviewResult = factory
+            .selectFrom(REVIEW)
+            .where(REVIEW.product.id.eq(id.value()))
+
+            .fetch();
+
+        return QueryProductRatingDTO.builder()
+            .average(
+                reviewResult.stream()
+                    .mapToInt(ReviewJpaEntity::getRating)
+                    .average()
+                    .orElse(0)
+            )
+            .count(reviewResult.size())
+            .distribution(
+                reviewResult.stream()
+                    .collect(Collectors.groupingBy(
+                        e -> e.getRating().toString(),
+                        Collectors.counting()
+                    ))
+            )
+            .build();
+    }
+
+    private List<QueryProductTagDTO> loadProductTag(ProductId id) {
+        return factory
+            .select(
+                new QQueryProductDetailAdapter_TagDTO(
+                    TAG.id,
+                    TAG.name,
+                    TAG.slug
+                )
+            )
+            .from(PRODUCT_TAG)
+            .where(PRODUCT_TAG.product.id.eq(id.value()))
+
+            .leftJoin(TAG)
+            .on(TAG.eq(PRODUCT_TAG.tag))
+
+            .fetch()
+            .stream()
+            .map(e ->
+                QueryProductTagDTO.builder()
+                    .id(e.id)
+                    .name(e.name)
+                    .slug(e.slug)
+                    .build())
+            .toList();
+    }
+
+    private List<QueryProductImageDTO> loadProductImage(ProductId id) {
+        return factory
+            .select(
+                new QQueryProductDetailAdapter_ImageDTO(
+                    IMAGE.id,
+                    IMAGE.url,
+                    IMAGE.altText,
+                    IMAGE.isPrimary,
+                    IMAGE.displayOrder,
+                    IMAGE.option.id
+                )
+            )
+            .from(IMAGE)
+            .where(IMAGE.product.id.eq(id.value()))
+            .orderBy(IMAGE.id.asc())
+            .fetch()
+            .stream()
+            .map(e -> QueryProductImageDTO.builder()
+                .id(e.id)
+                .url(e.url)
+                .alt_text(e.altText)
+                .is_primary(e.isPrimary)
+                .display_order(e.displayOrder)
+                .option_id(e.optionId)
+                .build())
+            .toList();
+    }
+
+    private List<QueryProductOptionGroup> loadProductOption(ProductId id) {
+        return factory
+            .select(
+                new QQueryProductDetailAdapter_OptionGroupDTO(
+                    PRODUCT_OPTION_GROUP,
+                    PRODUCT_OPTION
+                )
+            )
+            .from(PRODUCT_OPTION_GROUP)
+            .where(PRODUCT_OPTION_GROUP.product.id.eq(id.value()))
+
+            .leftJoin(OPTION)
+            .on(OPTION.optionGroup.eq(PRODUCT_OPTION_GROUP))
+
+            .leftJoin(PRODUCT_OPTION)
+            .on(PRODUCT_OPTION.optionGroup.eq(PRODUCT_OPTION_GROUP))
+
+            .fetch().stream()
+            .collect(Collectors.groupingBy(
+                e -> e.group,
+                LinkedHashMap::new,
+                Collectors.mapping(i -> i.option, Collectors.toList())
+            ))
+            .entrySet()
+            .stream()
+            .map(e -> {
+                final var key = e.getKey();
+                final var value = e.getValue();
+                return QueryProductOptionGroup.builder()
+                    .id(key.getId())
+                    .name(key.getName())
+                    .display_order(key.getDisplayOrder())
+                    .options(
+                        value.stream()
+                            .map(i ->
+                                QueryProductOptionGroup.Options.builder()
+                                    .id(i.getId())
+                                    .name(i.getName())
+                                    .additional_price(i.getAdditionalPrice())
+                                    .sku(i.getSku())
+                                    .stock(i.getStock())
+                                    .display_order(i.getDisplayOrder())
+                                    .build()
+                            )
+                            .toList()
+                    )
+                    .build();
+            })
+            .toList();
+    }
+
+    private List<QueryProductCategoryDTO> loadProductCategory(ProductId id) {
+        return factory
+            .select(
+                new QQueryProductDetailAdapter_CategoryDTO(
+                    CATEGORY.id,
+                    CATEGORY.name,
+                    CATEGORY.slug,
+                    PRODUCT_CATEGORY.isPrimary,
+
+                    new QQueryProductDetailAdapter_CategoryDTO_Parent(
+                        PARENT_CATEGORY.id,
+                        PARENT_CATEGORY.name,
+                        PARENT_CATEGORY.slug
+                    )
+                )
+            )
+            .from(PRODUCT_CATEGORY)
+            .where(PRODUCT_CATEGORY.product.id.eq(id.value()))
+
+            .join(CATEGORY)
+            .on(CATEGORY.eq(PRODUCT_CATEGORY.category))
+
+            .leftJoin(PARENT_CATEGORY)
+            .on(PARENT_CATEGORY.eq(CATEGORY.parent))
+
+            .fetch()
+            .stream()
+            .map(e ->
+                QueryProductCategoryDTO.builder()
+                    .id(e.id)
+                    .name(e.name)
+                    .slug(e.slug)
+                    .is_primary(e.isPrimary)
+                    .parent(
+                        QueryProductCategoryDTO.ParentDTO.builder()
+                            .id(e.parent.id)
+                            .name(e.parent.name)
+                            .slug(e.parent.slug)
+                            .build()
+                    )
+                    .build()
+            )
+            .toList();
+    }
+
+    private ProductDTO loadProductDetail(ProductId id) {
+        return Objects.requireNonNull(factory
             .select(
                 new QQueryProductDetailAdapter_ProductDTO(
                     PRODUCT.id.as("id"),
@@ -117,239 +429,6 @@ public class QueryProductDetailAdapter extends QueryBase<ProductJpaEntity, QProd
 
             .fetchOne()
         );
-
-        final var categoryDTO = factory
-            .select(
-                new QQueryProductDetailAdapter_CategoryDTO(
-                    CATEGORY.id,
-                    CATEGORY.name,
-                    CATEGORY.slug,
-                    PRODUCT_CATEGORY.isPrimary,
-
-                    new QQueryProductDetailAdapter_CategoryDTO_Parent(
-                        PARENT_CATEGORY.id,
-                        PARENT_CATEGORY.name,
-                        PARENT_CATEGORY.slug
-                    )
-                )
-            )
-            .from(PRODUCT_CATEGORY)
-            .where(PRODUCT_CATEGORY.product.id.eq(id.value()))
-
-            .join(CATEGORY)
-            .on(CATEGORY.eq(PRODUCT_CATEGORY.category))
-
-            .leftJoin(PARENT_CATEGORY)
-            .on(PARENT_CATEGORY.eq(CATEGORY.parent))
-
-            .fetch()
-            .stream()
-            .map(e ->
-                QueryProductCategoryDTO.builder()
-                    .id(e.id)
-                    .name(e.name)
-                    .slug(e.slug)
-                    .is_primary(e.isPrimary)
-                    .parent(
-                        QueryProductCategoryDTO.ParentDTO.builder()
-                            .id(e.parent.id)
-                            .name(e.parent.name)
-                            .slug(e.parent.slug)
-                            .build()
-                    )
-                    .build()
-            )
-            .toList();
-
-        final var optionResult = factory
-            .select(
-                new QQueryProductDetailAdapter_OptionGroupDTO(
-                    PRODUCT_OPTION_GROUP,
-                    PRODUCT_OPTION
-                )
-            )
-            .from(PRODUCT_OPTION_GROUP)
-            .where(PRODUCT_OPTION_GROUP.product.id.eq(id.value()))
-
-            .leftJoin(OPTION)
-            .on(OPTION.optionGroup.eq(PRODUCT_OPTION_GROUP))
-
-            .leftJoin(PRODUCT_OPTION)
-            .on(PRODUCT_OPTION.optionGroup.eq(PRODUCT_OPTION_GROUP))
-
-            .fetch();
-
-        final var optionDTO = optionResult.stream()
-            .collect(Collectors.groupingBy(
-                e -> e.group,
-                LinkedHashMap::new,
-                Collectors.mapping(i -> i.option, Collectors.toList())
-            ))
-            .entrySet()
-            .stream()
-            .map(e -> {
-                final var key = e.getKey();
-                final var value = e.getValue();
-                return QueryProductOptionGroup.builder()
-                    .id(key.getId())
-                    .name(key.getName())
-                    .display_order(key.getDisplayOrder())
-                    .options(
-                        value.stream()
-                            .map(i ->
-                                QueryProductOptionGroup.Options.builder()
-                                    .id(i.getId())
-                                    .name(i.getName())
-                                    .additional_price(i.getAdditionalPrice())
-                                    .sku(i.getSku())
-                                    .stock(i.getStock())
-                                    .display_order(i.getDisplayOrder())
-                                    .build()
-                            )
-                            .toList()
-                    )
-                    .build();
-            })
-            .toList();
-
-        final var imageDTO = factory
-            .select(
-                new QQueryProductDetailAdapter_ImageDTO(
-                    IMAGE.id,
-                    IMAGE.url,
-                    IMAGE.altText,
-                    IMAGE.isPrimary,
-                    IMAGE.displayOrder,
-                    IMAGE.option.id
-                )
-            )
-            .from(IMAGE)
-            .where(IMAGE.product.id.eq(id.value()))
-            .orderBy(IMAGE.id.asc())
-            .fetch()
-            .stream()
-            .map(e -> QueryProductImageDTO.builder()
-                .id(e.id)
-                .url(e.url)
-                .alt_text(e.altText)
-                .is_primary(e.isPrimary)
-                .display_order(e.displayOrder)
-                .option_id(e.optionId)
-                .build())
-            .toList();
-
-        final var tagDTO = factory
-            .select(
-                new QQueryProductDetailAdapter_TagDTO(
-                    TAG.id,
-                    TAG.name,
-                    TAG.slug
-                )
-            )
-            .from(PRODUCT_TAG)
-            .where(PRODUCT_TAG.product.id.eq(id.value()))
-
-            .leftJoin(TAG)
-            .on(TAG.eq(PRODUCT_TAG.tag))
-
-            .fetch()
-            .stream()
-            .map(e ->
-                QueryProductTagDTO.builder()
-                    .id(e.id)
-                    .name(e.name)
-                    .slug(e.slug)
-                    .build())
-            .toList();
-
-        final var reviewResult = factory
-            .selectFrom(REVIEW)
-            .where(REVIEW.product.id.eq(id.value()))
-
-            .fetch();
-
-        final var reviewDTO = QueryProductRatingDTO.builder()
-            .average(
-                reviewResult.stream()
-                    .mapToInt(ReviewJpaEntity::getRating)
-                    .average()
-                    .orElse(0)
-            )
-            .count(reviewResult.size())
-            .distribution(
-                reviewResult.stream()
-                    .collect(Collectors.groupingBy(
-                        e -> e.getRating().toString(),
-                        Collectors.counting()
-                    ))
-            )
-            .build();
-
-
-        return QueryProductDetailResult.builder()
-            .id(result.id)
-            .name(result.name)
-            .slug(result.slug)
-            .short_description(result.shortDescription)
-            .full_description(result.fullDescription)
-            .seller(
-                QueryProductSellerDTO.builder()
-                    .id(result.sellerId)
-                    .name(result.sellerName)
-                    .description(result.sellerDescription)
-                    .logo_url(result.sellerLogoUrl)
-                    .rating(result.rating)
-                    .contact_email(result.contactEmail)
-                    .contact_phone(result.contactPhone)
-                    .build()
-            )
-            .brand(
-                QueryProductBrandDTO.builder()
-                    .id(result.brandId)
-                    .name(result.brandName)
-                    .description(result.brandDescription)
-                    .logo_url(result.brandLogoUrl)
-                    .website(result.website)
-                    .build()
-            )
-            .status(result.status)
-            .created_at(result.createdAt)
-            .updated_at(result.updatedAt)
-            .detail(
-                QueryProductDetailDTO.builder()
-                    .weight(result.weight)
-                    .dimensions(result.dimensions)
-                    .materials(result.materials)
-                    .country_of_origin(result.countryOfOrigin)
-                    .warranty_info(result.warrantyInfo)
-                    .care_instructions(result.careInstructions)
-                    .additional_info(result.additionalInfo)
-                    .build()
-            )
-            .price(
-                QueryProductPriceDTO.builder()
-                    .base_price(result.basePrice)
-                    .sale_price(result.salePrice)
-                    .currency(result.currency)
-                    .tax_rate(result.taxRate)
-                    .build()
-            )
-            .categories(
-                categoryDTO
-            )
-            .option_groups(
-                optionDTO
-            )
-            .images(
-                imageDTO
-            )
-            .tags(
-                tagDTO
-            )
-
-            .rating(reviewDTO)
-
-            .build();
     }
 
     public static class ProductDTO {
@@ -500,6 +579,28 @@ public class QueryProductDetailAdapter extends QueryBase<ProductJpaEntity, QProd
     }
 
     public static class RelatedProductDTO {
+        private final Long id;
+        private final String name;
+        private final String slug;
+        private final String shortDescription;
+        private final String url;
+        private final String altText;
+        private final BigDecimal basePrice;
+        private final BigDecimal salePrice;
+        private final String currency;
+
+        @QueryProjection
+        public RelatedProductDTO(Long id, String name, String slug, String shortDescription, String url, String altText, BigDecimal basePrice, BigDecimal salePrice, String currency) {
+            this.id = id;
+            this.name = name;
+            this.slug = slug;
+            this.shortDescription = shortDescription;
+            this.url = url;
+            this.altText = altText;
+            this.basePrice = basePrice;
+            this.salePrice = salePrice;
+            this.currency = currency;
+        }
     }
 
 

@@ -86,7 +86,7 @@ public class QueryProductListAdapter extends QueryBase<ProductJpaEntity, QProduc
             .leftJoin(IMAGE)
             .on(
                 IMAGE.product.eq(PRODUCT)
-                    .and(IMAGE.isPrimary.eq(true))
+                    .and(IMAGE.isPrimary.isTrue())
             )
 
             .leftJoin(BRAND)
