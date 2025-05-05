@@ -18,7 +18,7 @@ public interface QueryProductJpaRepository extends Repository<ProductJpaEntity, 
     @Query(value = "SELECT EXISTS(SELECT 1 FROM products WHERE id != :id AND slug = :slug LIMIT 1)", nativeQuery = true)
     boolean existsSlugForUpdate(@Param("id") Long id, @Param("slug") String slug);
 
-    @Query(value = "SELECT EXISTS(SELECT 1 FROM products WHERE id = :id LIMIT 1)", nativeQuery = true)
+    @Query(value = "SELECT EXISTS(SELECT 1 FROM products WHERE id = :id AND status != DELETED LIMIT 1)", nativeQuery = true)
     boolean existsId(@Param("id") Long id);
 
     default ProductJpaEntity loadById(final Long id) {

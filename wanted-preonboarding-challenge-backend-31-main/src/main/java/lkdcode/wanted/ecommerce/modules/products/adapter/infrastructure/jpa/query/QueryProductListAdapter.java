@@ -12,7 +12,9 @@ import lkdcode.wanted.ecommerce.modules.products.adapter.infrastructure.jpa.enti
 import lkdcode.wanted.ecommerce.modules.products.application.ports.out.query.QueryProductListOutPort;
 import lkdcode.wanted.ecommerce.modules.products.application.usecase.query.dto.QueryProductBrandDTO;
 import lkdcode.wanted.ecommerce.modules.products.application.usecase.query.dto.QueryProductSellerDTO;
-import lkdcode.wanted.ecommerce.modules.products.application.usecase.query.dto.list.*;
+import lkdcode.wanted.ecommerce.modules.products.application.usecase.query.dto.list.QueryPrimaryImage;
+import lkdcode.wanted.ecommerce.modules.products.application.usecase.query.dto.list.QueryProductDTO;
+import lkdcode.wanted.ecommerce.modules.products.application.usecase.query.dto.list.QueryProductListResult;
 import lkdcode.wanted.ecommerce.modules.products.application.usecase.query.value.Pagination;
 import lkdcode.wanted.ecommerce.modules.products.application.usecase.query.value.ParamCondition;
 import lkdcode.wanted.ecommerce.modules.products.application.usecase.query.value.QueryParamConditions;
@@ -78,7 +80,7 @@ public class QueryProductListAdapter extends QueryBase<ProductJpaEntity, QProduc
             )
 
             .from(PRODUCT)
-            .where(usingWhereCondition(queryParamConditions))
+            .where(usingWhereCondition(queryParamConditions, PRODUCT.status.ne(ProductStatus.DELETED)))
 
             .join(PRICE)
             .on(PRICE.product.eq(PRODUCT))
