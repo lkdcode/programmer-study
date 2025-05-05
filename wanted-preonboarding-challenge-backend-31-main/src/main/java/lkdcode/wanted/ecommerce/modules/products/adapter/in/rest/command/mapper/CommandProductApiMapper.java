@@ -1,7 +1,7 @@
 package lkdcode.wanted.ecommerce.modules.products.adapter.in.rest.command.mapper;
 
 import lkdcode.wanted.ecommerce.modules.products.adapter.in.rest.command.dto.request.create.UpsertProductDTO;
-import lkdcode.wanted.ecommerce.modules.products.adapter.in.rest.command.dto.response.CreateResponse;
+import lkdcode.wanted.ecommerce.modules.products.adapter.in.rest.command.dto.response.UpsertResponse;
 import lkdcode.wanted.ecommerce.modules.products.application.usecase.command.UpsertResult;
 import lkdcode.wanted.ecommerce.modules.products.domain.model.create.CreateProductModel;
 import lkdcode.wanted.ecommerce.modules.products.domain.model.update.UpdateProductModel;
@@ -34,8 +34,8 @@ public class CommandProductApiMapper {
         );
     }
 
-    public CreateResponse convert(final UpsertResult result) {
-        return CreateResponse.builder()
+    public UpsertResponse convert(final UpsertResult result) {
+        return UpsertResponse.builder()
             .id(result.id().value())
             .name(result.name().value())
             .slug(result.slug().value())
