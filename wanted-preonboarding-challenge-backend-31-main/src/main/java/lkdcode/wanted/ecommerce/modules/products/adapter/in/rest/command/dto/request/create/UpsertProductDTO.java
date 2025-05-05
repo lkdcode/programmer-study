@@ -13,7 +13,7 @@ import lkdcode.wanted.ecommerce.modules.products.domain.value.tag.ProductTagList
 
 import java.util.List;
 
-public record CreateProductDTO(
+public record UpsertProductDTO(
     @NotNull(message = "상품의 이름은 필수입니다.")
     @Size(max = ProductName.LENGTH, message = ProductName.LENGTH_ERROR_MESSAGE)
     String name,

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Size;
 import lkdcode.wanted.ecommerce.framework.common.jpa.entity.EntityValidator;
+import lkdcode.wanted.ecommerce.modules.products.domain.model.create.ProductPriceModel;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -54,6 +55,15 @@ public class ProductPriceJpaEntity extends EntityValidator<ProductPriceJpaEntity
         this.costPrice = costPrice;
         this.currency = currency;
         this.taxRate = taxRate;
+        super.validSelf();
+    }
+
+    public void update(final ProductPriceModel model) {
+        this.basePrice = model.basePrice().value();
+        this.salePrice = model.salePrice().value();
+        this.costPrice = model.costPrice().value();
+        this.currency = model.currency().value();
+        this.taxRate = model.taxRate().value();
         super.validSelf();
     }
 }

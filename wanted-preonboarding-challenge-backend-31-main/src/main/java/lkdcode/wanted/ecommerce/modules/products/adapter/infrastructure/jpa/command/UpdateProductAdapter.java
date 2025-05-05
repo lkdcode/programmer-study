@@ -6,10 +6,9 @@ import lkdcode.wanted.ecommerce.modules.products.adapter.external.seller.QuerySe
 import lkdcode.wanted.ecommerce.modules.products.adapter.external.tag.QueryTagAdapter;
 import lkdcode.wanted.ecommerce.modules.products.adapter.infrastructure.jpa.entity.ProductOptionJpaEntity;
 import lkdcode.wanted.ecommerce.modules.products.adapter.infrastructure.jpa.repository.command.*;
-import lkdcode.wanted.ecommerce.modules.products.adapter.infrastructure.jpa.repository.query.QueryProductJpaRepository;
-import lkdcode.wanted.ecommerce.modules.products.adapter.infrastructure.jpa.repository.query.QueryProductOptionJpaRepository;
-import lkdcode.wanted.ecommerce.modules.products.application.ports.out.command.CommandProductOutPort;
-import lkdcode.wanted.ecommerce.modules.products.application.usecase.command.create.SaveResult;
+import lkdcode.wanted.ecommerce.modules.products.adapter.infrastructure.jpa.repository.query.*;
+import lkdcode.wanted.ecommerce.modules.products.application.ports.out.command.UpdateProductOutPort;
+import lkdcode.wanted.ecommerce.modules.products.application.usecase.command.UpsertResult;
 import lkdcode.wanted.ecommerce.modules.products.domain.entity.ProductId;
 import lkdcode.wanted.ecommerce.modules.products.domain.model.create.*;
 import lkdcode.wanted.ecommerce.modules.products.domain.value.tag.ProductTagList;
@@ -18,11 +17,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CommandProductAdapter implements CommandProductOutPort {
+public class UpdateProductAdapter implements UpdateProductOutPort {
     private final CommandProductJpaRepository commandRepository;
     private final QueryProductJpaRepository queryRepository;
 
+    private final QueryProductDetailJpaRepository queryProductDetailJpaRepository;
+    private final QueryProductOptionGroupJpaRepository queryProductOptionGroupJpaRepository;
     private final QueryProductOptionJpaRepository queryProductOptionJpaRepository;
+    private final QueryProductPriceJpaRepository queryProductPriceJpaRepository;
 
     private final QueryBrandAdapter queryBrandAdapter;
     private final QuerySellerAdapter querySellerAdapter;
@@ -40,17 +42,17 @@ public class CommandProductAdapter implements CommandProductOutPort {
     private final CommandProductMapper mapper;
 
     @Override
-    public SaveResult save(ProductValues values) {
-        final var seller = querySellerAdapter.load(values.sellerId().value());
-        final var brand = queryBrandAdapter.load(values.brandId().value());
-        final var entity = mapper.convert(values, seller, brand);
-        final var saved = commandRepository.save(entity);
+    public UpsertResult update(ProductId productId, ProductValues values) {
+        final var target = queryRepository.loadById(productId.value());
+        target.update(values);
 
-        return mapper.convertSaveResult(saved);
+        return mapper.convertUpsertResult(target);
     }
 
     @Override
-    public void saveCategory(ProductId id, ProductCategoryList list) {
+    public void updateCategory(ProductId id, ProductCategoryList list) {
+        categoryJpaRepository.deleteAllByProduct_Id(id.value());
+
         final var productJpaEntity = queryRepository.loadById(id.value());
 
         list.forEach(model -> {
@@ -62,30 +64,37 @@ public class CommandProductAdapter implements CommandProductOutPort {
     }
 
     @Override
-    public void saveDetail(ProductId id, ProductDetailModel model) {
-        final var productJpaEntity = queryRepository.loadById(id.value());
-        final var entity = mapper.convert(productJpaEntity, model);
-        detailJpaRepository.save(entity);
+    public void updateDetail(ProductId id, ProductDetailModel model) {
+        final var target = queryProductDetailJpaRepository.loadByProductId(id.value());
+
+        target.update(model);
     }
 
     @Override
-    public void saveOption(ProductId id, ProductOptionGroupList list) {
+    public void updateOption(ProductId id, ProductOptionGroupList list) {
+        optionGroupJpaRepository.deleteAllByProduct_id(id.value());
+
         final var productJpaEntity = queryRepository.loadById(id.value());
 
         list.forEach(groupModel -> {
-
             final var groupEntity = mapper.convert(productJpaEntity, groupModel);
             final var savedGroupEntity = optionGroupJpaRepository.save(groupEntity);
+
+            optionGroupJpaRepository.flush();
 
             groupModel.optionListForEach(optionModel -> {
                 final var optionEntity = mapper.convert(savedGroupEntity, optionModel);
                 optionJpaRepository.save(optionEntity);
+
+                optionJpaRepository.flush();
             });
         });
     }
 
     @Override
-    public void saveImage(ProductId id, ProductImageList list) {
+    public void updateImage(ProductId id, ProductImageList list) {
+        imageJpaRepository.deleteAllByProduct_id(id.value());
+
         final var productJpaEntity = queryRepository.loadById(id.value());
 
         list.forEach(
@@ -106,14 +115,15 @@ public class CommandProductAdapter implements CommandProductOutPort {
     }
 
     @Override
-    public void savePrice(ProductId id, ProductPriceModel model) {
-        final var productJpaEntity = queryRepository.loadById(id.value());
-        final var entity = mapper.convert(productJpaEntity, model);
-        priceJpaRepository.save(entity);
+    public void updatePrice(ProductId id, ProductPriceModel model) {
+        final var priceEntity = queryProductPriceJpaRepository.loadByProductId(id.value());
+        priceEntity.update(model);
     }
 
     @Override
-    public void saveTag(ProductId id, ProductTagList list) {
+    public void updateTag(ProductId id, ProductTagList list) {
+        tagJpaRepository.deleteAllByProduct_id(id.value());
+
         final var productJpaEntity = queryRepository.loadById(id.value());
 
         list.stream()

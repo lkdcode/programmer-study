@@ -1,4 +1,4 @@
-package lkdcode.wanted.ecommerce.modules.products.application.usecase.command.create;
+package lkdcode.wanted.ecommerce.modules.products.application.usecase.command;
 
 import lkdcode.wanted.ecommerce.modules.products.domain.entity.ProductId;
 import lkdcode.wanted.ecommerce.modules.products.domain.value.ProductName;
@@ -8,7 +8,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public record SaveResult(
+public record UpsertResult(
     ProductId id,
     ProductName name,
     ProductSlug slug,
@@ -17,7 +17,7 @@ public record SaveResult(
 ) {
 
     @Builder
-    public SaveResult(ProductId id, ProductName name, ProductSlug slug, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public UpsertResult(ProductId id, ProductName name, ProductSlug slug, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = Objects.requireNonNull(id);
         this.name = Objects.requireNonNull(name);
         this.slug = Objects.requireNonNull(slug);

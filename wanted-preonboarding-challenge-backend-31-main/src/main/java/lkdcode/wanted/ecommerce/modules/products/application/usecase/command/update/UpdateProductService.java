@@ -1,18 +1,19 @@
-package lkdcode.wanted.ecommerce.modules.products.application.usecase.command.create;
+package lkdcode.wanted.ecommerce.modules.products.application.usecase.command.update;
 
 import jakarta.transaction.Transactional;
-import lkdcode.wanted.ecommerce.modules.products.application.ports.out.command.CreateProductOutPort;
+import lkdcode.wanted.ecommerce.modules.products.application.ports.out.command.UpdateProductOutPort;
 import lkdcode.wanted.ecommerce.modules.products.application.ports.out.validator.*;
 import lkdcode.wanted.ecommerce.modules.products.application.usecase.command.UpsertResult;
-import lkdcode.wanted.ecommerce.modules.products.domain.model.create.CreateProductModel;
+import lkdcode.wanted.ecommerce.modules.products.domain.entity.ProductId;
+import lkdcode.wanted.ecommerce.modules.products.domain.model.update.UpdateProductModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CreateProductService {
-    private final CreateProductOutPort createPort;
+public class UpdateProductService {
+    private final UpdateProductOutPort updatePort;
 
     private final ProductValidator productValidator;
     private final BrandValidator brandIdValidator;
@@ -22,30 +23,30 @@ public class CreateProductService {
     private final ImageValidator imageValidator;
     private final TagValidator tagValidator;
 
-    public UpsertResult create(final CreateProductModel model) {
-        return CreateProductUsecase.execute(model)
+    public UpsertResult update(final ProductId productId, final UpdateProductModel model) {
+        return UpdateProductUsecase.execute(productId, model)
             .validBrandId(brandIdValidator::validId)
-            .validSellerId(sellerIdValidator::validId)
-            .validUniqueSlug(productValidator::validUniqueSlug)
-            .saveProduct(createPort::save)
+            .validAuthoritySeller(sellerIdValidator::validAuthoritySeller)
+            .validUniqueSlug(productValidator::validUniqueSlugForUpdate)
+            .updateProduct(updatePort::update)
 
             .validProductCategoryList(categoryValidator::validList)
-            .saveProductCategory(createPort::saveCategory)
+            .updateProductCategory(updatePort::updateCategory)
 
-            .saveProductDetail(createPort::saveDetail)
+            .updateProductDetail(updatePort::updateDetail)
 
             .validProductOptionGroup(optionValidator::validOptionGroup)
             .validProductOption(optionValidator::validOption)
-            .saveProductOption(createPort::saveOption)
+            .updateProductOption(updatePort::updateOption)
 
             .validImageDisplayOrder(imageValidator::validImageDisplayOrder)
 
-            .saveImage(createPort::saveImage)
+            .updateImage(updatePort::updateImage)
 
-            .saveProductPrice(createPort::savePrice)
+            .updateProductPrice(updatePort::updatePrice)
 
             .validProductTag(tagValidator::validList)
-            .saveProductTag(createPort::saveTag)
+            .updateProductTag(updatePort::updateTag)
 
             .done();
     }
