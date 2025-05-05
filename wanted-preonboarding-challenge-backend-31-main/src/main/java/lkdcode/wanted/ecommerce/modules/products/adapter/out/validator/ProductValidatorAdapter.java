@@ -24,6 +24,15 @@ public class ProductValidatorAdapter implements ProductValidator {
     }
 
     @Override
+    public void validUniqueSlugForUpdate(ProductId id, ProductSlug target) {
+        final var exists = repository.existsSlugForUpdate(id.value(), target.value());
+
+        if (exists) {
+            throw new ApplicationException(ApplicationResponseCode.DUPLICATE_PRODUCT_SLUG);
+        }
+    }
+
+    @Override
     public void existsProduct(ProductId id) {
         final var exists = repository.existsId(id.value());
 

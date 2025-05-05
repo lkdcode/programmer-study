@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Size;
 import lkdcode.wanted.ecommerce.framework.common.jpa.entity.EntityValidator;
+import lkdcode.wanted.ecommerce.modules.products.domain.model.create.ProductDetailModel;
 import lkdcode.wanted.ecommerce.modules.products.domain.value.detail.ProductCountryOfOrigin;
 import lkdcode.wanted.ecommerce.modules.products.domain.value.detail.ProductWeight;
 import lombok.AccessLevel;
@@ -66,6 +67,17 @@ public class ProductDetailJpaEntity extends EntityValidator<ProductDetailJpaEnti
         this.warrantyInfo = warrantyInfo;
         this.careInstructions = careInstructions;
         this.additionalInfo = additionalInfo;
+        super.validSelf();
+    }
+
+    public void update(final ProductDetailModel model) {
+        this.weight = model.weight().value();
+        this.dimensions = model.additionalInfo().value();
+        this.materials = model.material().value();
+        this.countryOfOrigin = model.countryOfOrigin().value();
+        this.warrantyInfo = model.warrantyInfo().value();
+        this.careInstructions = model.careInstructions().value();
+        this.additionalInfo = model.additionalInfo().value();
         super.validSelf();
     }
 }

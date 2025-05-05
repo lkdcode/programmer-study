@@ -5,4 +5,6 @@ import org.springframework.data.repository.Repository;
 
 public interface CommandProductTagJpaRepository extends Repository<ProductTagJpaEntity, Long> {
     void save(ProductTagJpaEntity entity);
+
+    void deleteAllByProduct_id(Long productId);
 }

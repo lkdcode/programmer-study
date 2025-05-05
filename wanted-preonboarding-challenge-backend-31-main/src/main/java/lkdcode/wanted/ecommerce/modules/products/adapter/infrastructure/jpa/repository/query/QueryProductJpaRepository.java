@@ -15,11 +15,14 @@ public interface QueryProductJpaRepository extends Repository<ProductJpaEntity, 
     @Query(value = "SELECT EXISTS(SELECT 1 FROM products WHERE slug = :slug LIMIT 1)", nativeQuery = true)
     boolean existsSlug(@Param("slug") String slug);
 
+    @Query(value = "SELECT EXISTS(SELECT 1 FROM products WHERE id != :id AND slug = :slug LIMIT 1)", nativeQuery = true)
+    boolean existsSlugForUpdate(@Param("id") Long id, @Param("slug") String slug);
+
     @Query(value = "SELECT EXISTS(SELECT 1 FROM products WHERE id = :id LIMIT 1)", nativeQuery = true)
     boolean existsId(@Param("id") Long id);
 
     default ProductJpaEntity loadById(final Long id) {
         return findById(id)
-            .orElseThrow(() -> new ApplicationException(ApplicationResponseCode.FAIL));
+            .orElseThrow(() -> new ApplicationException(ApplicationResponseCode.NOT_FOUND_PRODUCT));
     }
 }

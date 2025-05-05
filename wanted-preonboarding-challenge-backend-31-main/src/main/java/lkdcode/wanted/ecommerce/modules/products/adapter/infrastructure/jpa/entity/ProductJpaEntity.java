@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lkdcode.wanted.ecommerce.framework.common.jpa.entity.EntityValidator;
 import lkdcode.wanted.ecommerce.modules.brand.adapter.infrastructure.jpa.entity.BrandJpaEntity;
+import lkdcode.wanted.ecommerce.modules.products.domain.model.create.ProductValues;
 import lkdcode.wanted.ecommerce.modules.products.domain.value.ProductName;
 import lkdcode.wanted.ecommerce.modules.products.domain.value.ProductShortDescription;
 import lkdcode.wanted.ecommerce.modules.products.domain.value.ProductSlug;
@@ -13,6 +14,8 @@ import lkdcode.wanted.ecommerce.modules.sellers.adapter.infrastructure.jpa.entit
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -20,6 +23,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "products")
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class ProductJpaEntity extends EntityValidator<ProductJpaEntity> {
 
     @Id
@@ -46,6 +50,7 @@ public class ProductJpaEntity extends EntityValidator<ProductJpaEntity> {
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
 
@@ -72,6 +77,15 @@ public class ProductJpaEntity extends EntityValidator<ProductJpaEntity> {
         this.seller = seller;
         this.brand = brand;
         this.status = status;
+        super.validSelf();
+    }
+
+    public void update(final ProductValues values) {
+        this.name = values.name().value();
+        this.slug = values.slug().value();
+        this.shortDescription = values.shortDescription().value();
+        this.fullDescription = values.fullDescription().value();
+        this.status = values.status();
         super.validSelf();
     }
 }

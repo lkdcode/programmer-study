@@ -3,7 +3,7 @@ package lkdcode.wanted.ecommerce.modules.products.adapter.infrastructure.jpa.com
 import lkdcode.wanted.ecommerce.modules.brand.adapter.infrastructure.jpa.entity.BrandJpaEntity;
 import lkdcode.wanted.ecommerce.modules.category.adapter.infrastructure.jpa.entity.CategoryJpaEntity;
 import lkdcode.wanted.ecommerce.modules.products.adapter.infrastructure.jpa.entity.*;
-import lkdcode.wanted.ecommerce.modules.products.application.usecase.command.create.SaveResult;
+import lkdcode.wanted.ecommerce.modules.products.application.usecase.command.UpsertResult;
 import lkdcode.wanted.ecommerce.modules.products.domain.entity.ProductId;
 import lkdcode.wanted.ecommerce.modules.products.domain.model.create.*;
 import lkdcode.wanted.ecommerce.modules.products.domain.value.ProductName;
@@ -96,8 +96,8 @@ class CommandProductMapper {
             .build();
     }
 
-    public SaveResult convertSaveResult(final ProductJpaEntity saved) {
-        return SaveResult.builder()
+    public UpsertResult convertUpsertResult(final ProductJpaEntity saved) {
+        return UpsertResult.builder()
             .id(new ProductId(saved.getId()))
             .name(new ProductName(saved.getName()))
             .slug(new ProductSlug(saved.getSlug()))

@@ -1,10 +1,11 @@
-package lkdcode.wanted.ecommerce.modules.products.application.usecase.command.create;
+package lkdcode.wanted.ecommerce.modules.products.application.usecase.command.update;
 
 import lkdcode.wanted.ecommerce.modules.products.application.usecase.command.UpsertResult;
 import lkdcode.wanted.ecommerce.modules.products.domain.entity.ProductBrandId;
 import lkdcode.wanted.ecommerce.modules.products.domain.entity.ProductId;
 import lkdcode.wanted.ecommerce.modules.products.domain.entity.ProductSellerId;
 import lkdcode.wanted.ecommerce.modules.products.domain.model.create.*;
+import lkdcode.wanted.ecommerce.modules.products.domain.model.update.UpdateProductModel;
 import lkdcode.wanted.ecommerce.modules.products.domain.value.ProductSlug;
 import lkdcode.wanted.ecommerce.modules.products.domain.value.image.ProductImageDisplayOrderList;
 import lkdcode.wanted.ecommerce.modules.products.domain.value.option.ProductOptionDisplayOrderList;
@@ -12,10 +13,11 @@ import lkdcode.wanted.ecommerce.modules.products.domain.value.option.ProductOpti
 import lkdcode.wanted.ecommerce.modules.products.domain.value.tag.ProductTagList;
 
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
-class CreateProductUsecase {
+class UpdateProductUsecase {
+    private final ProductId productId;
     private final ProductValues productValue;
 
     private final ProductCategoryList categoryList;
@@ -27,10 +29,11 @@ class CreateProductUsecase {
 
     private final ProductTagList tagList;
 
-    private UpsertResult result;
-    private ProductId productId;
 
-    private CreateProductUsecase(CreateProductModel model) {
+    private UpsertResult result;
+
+    private UpdateProductUsecase(ProductId productId, UpdateProductModel model) {
+        this.productId = productId;
         this.productValue = model.productValues();
 
         this.categoryList = model.categoryList();
@@ -43,56 +46,51 @@ class CreateProductUsecase {
         this.tagList = model.tagList();
     }
 
-    public static CreateProductUsecase execute(CreateProductModel model) {
-        return new CreateProductUsecase(model);
+    public static UpdateProductUsecase execute(ProductId productId, UpdateProductModel model) {
+        return new UpdateProductUsecase(productId, model);
     }
 
-    /* Product */
-    public CreateProductUsecase validBrandId(final Consumer<ProductBrandId> valid) {
-        valid.accept(productValue.brandId());
+    public UpdateProductUsecase validBrandId(final BiConsumer<ProductId, ProductBrandId> valid) {
+        valid.accept(productId, productValue.brandId());
         return this;
     }
 
-    public CreateProductUsecase validSellerId(final Consumer<ProductSellerId> valid) {
-        valid.accept(productValue.sellerId());
+    public UpdateProductUsecase validAuthoritySeller(final BiConsumer<ProductId, ProductSellerId> valid) {
+        valid.accept(productId, productValue.sellerId());
         return this;
     }
 
-    public CreateProductUsecase validUniqueSlug(final Consumer<ProductSlug> valid) {
-        valid.accept(productValue.slug());
+    public UpdateProductUsecase validUniqueSlug(final BiConsumer<ProductId, ProductSlug> valid) {
+        valid.accept(productId, productValue.slug());
         return this;
     }
 
-    public CreateProductUsecase saveProduct(final Function<ProductValues, UpsertResult> save) {
-        this.result = save.apply(productValue);
-        this.productId = this.result.id();
+    public UpdateProductUsecase updateProduct(final BiFunction<ProductId, ProductValues, UpsertResult> save) {
+        this.result = save.apply(productId, productValue);
         return this;
     }
 
-    /* Category */
-    public CreateProductUsecase validProductCategoryList(final Consumer<ProductCategoryList> valid) {
+    public UpdateProductUsecase validProductCategoryList(final Consumer<ProductCategoryList> valid) {
         valid.accept(categoryList);
         return this;
     }
 
-    public CreateProductUsecase saveProductCategory(final BiConsumer<ProductId, ProductCategoryList> save) {
+    public UpdateProductUsecase updateProductCategory(final BiConsumer<ProductId, ProductCategoryList> save) {
         save.accept(productId, categoryList);
         return this;
     }
 
-    /* Detail */
-    public CreateProductUsecase saveProductDetail(final BiConsumer<ProductId, ProductDetailModel> save) {
+    public UpdateProductUsecase updateProductDetail(final BiConsumer<ProductId, ProductDetailModel> save) {
         save.accept(productId, detailModel);
         return this;
     }
 
-    /* Option */
-    public CreateProductUsecase validProductOptionGroup(final Consumer<ProductOptionGroupDisplayOrderList> valid) {
+    public UpdateProductUsecase validProductOptionGroup(final Consumer<ProductOptionGroupDisplayOrderList> valid) {
         valid.accept(optionGroupList.getProductOptionGroupDisplayOrderList());
         return this;
     }
 
-    public CreateProductUsecase validProductOption(final Consumer<ProductOptionDisplayOrderList> valid) {
+    public UpdateProductUsecase validProductOption(final Consumer<ProductOptionDisplayOrderList> valid) {
         optionGroupList.list()
             .forEach(e ->
                 valid.accept(e.optionList().getProductOptionDisplayOrderList())
@@ -101,35 +99,32 @@ class CreateProductUsecase {
         return this;
     }
 
-    public CreateProductUsecase saveProductOption(final BiConsumer<ProductId, ProductOptionGroupList> save) {
+    public UpdateProductUsecase updateProductOption(final BiConsumer<ProductId, ProductOptionGroupList> save) {
         save.accept(productId, optionGroupList);
         return this;
     }
 
-    /* Image */
-    public CreateProductUsecase validImageDisplayOrder(final Consumer<ProductImageDisplayOrderList> valid) {
+    public UpdateProductUsecase validImageDisplayOrder(final Consumer<ProductImageDisplayOrderList> valid) {
         valid.accept(imageList.getProductImageDisplayOrderList());
         return this;
     }
 
-    public CreateProductUsecase saveImage(final BiConsumer<ProductId, ProductImageList> save) {
+    public UpdateProductUsecase updateImage(final BiConsumer<ProductId, ProductImageList> save) {
         save.accept(productId, imageList);
         return this;
     }
 
-    /* Price */
-    public CreateProductUsecase saveProductPrice(final BiConsumer<ProductId, ProductPriceModel> save) {
+    public UpdateProductUsecase updateProductPrice(final BiConsumer<ProductId, ProductPriceModel> save) {
         save.accept(productId, priceModel);
         return this;
     }
 
-    /* Tag */
-    public CreateProductUsecase validProductTag(final Consumer<ProductTagList> valid) {
+    public UpdateProductUsecase validProductTag(final Consumer<ProductTagList> valid) {
         valid.accept(tagList);
         return this;
     }
 
-    public CreateProductUsecase saveProductTag(final BiConsumer<ProductId, ProductTagList> save) {
+    public UpdateProductUsecase updateProductTag(final BiConsumer<ProductId, ProductTagList> save) {
         save.accept(productId, tagList);
         return this;
     }
