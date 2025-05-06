@@ -28,7 +28,7 @@ public class CommandImageApi {
         final var response = service.addImage(model);
 
         return ResponseEntity
-            .status(HttpStatus.OK)
+            .status(HttpStatus.CREATED)
             .body(
                 ApiResponse.success(
                     response,
