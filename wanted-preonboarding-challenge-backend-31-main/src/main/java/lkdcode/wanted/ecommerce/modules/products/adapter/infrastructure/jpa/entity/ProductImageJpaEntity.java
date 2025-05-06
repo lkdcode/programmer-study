@@ -58,4 +58,16 @@ public class ProductImageJpaEntity extends EntityValidator<ProductImageJpaEntity
         this.option = option;
         super.validSelf();
     }
+
+    public void primaryToggle() {
+        this.isPrimary = !this.isPrimary;
+    }
+
+    public void incrementOrder() {
+        this.displayOrder++;
+    }
+
+    public void decrementOrder() {
+        this.displayOrder--;
+    }
 }
