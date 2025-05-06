@@ -5,6 +5,7 @@ import lkdcode.wanted.ecommerce.framework.common.api.response.ApiResponse;
 import lkdcode.wanted.ecommerce.modules.products.adapter.in.rest.command.dto.request.option.AddOptionDTO;
 import lkdcode.wanted.ecommerce.modules.products.adapter.in.rest.command.dto.request.option.UpdateOptionDTO;
 import lkdcode.wanted.ecommerce.modules.products.application.usecase.option.command.add.AddOptionService;
+import lkdcode.wanted.ecommerce.modules.products.application.usecase.option.command.delete.DeleteOptionService;
 import lkdcode.wanted.ecommerce.modules.products.application.usecase.option.command.update.UpdateOptionService;
 import lkdcode.wanted.ecommerce.modules.products.domain.entity.ProductId;
 import lkdcode.wanted.ecommerce.modules.products.domain.entity.ProductOptionId;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class CommandOptionApi {
     private final AddOptionService addOptionService;
     private final UpdateOptionService updateOptionService;
+    private final DeleteOptionService deleteOptionService;
 
     @PostMapping("/api/products/{id}/options")
     public ResponseEntity<?> getAddOption(
@@ -56,7 +58,12 @@ public class CommandOptionApi {
     }
 
     @DeleteMapping("/api/products/{id}/options/{optionId}")
-    public ResponseEntity<?> getDeleteOption() {
+    public ResponseEntity<?> getDeleteOption(
+        @PathVariable(name = "id") final Long id,
+        @PathVariable(name = "optionId") final Long optionId
+    ) {
+        deleteOptionService.delete(new ProductId(id), new ProductOptionId(optionId));
+
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(
