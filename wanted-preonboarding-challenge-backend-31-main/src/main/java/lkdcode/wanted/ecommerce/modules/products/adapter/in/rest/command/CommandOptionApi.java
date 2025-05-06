@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lkdcode.wanted.ecommerce.framework.common.api.response.ApiResponse;
 import lkdcode.wanted.ecommerce.modules.products.adapter.in.rest.command.dto.request.option.AddOptionDTO;
 import lkdcode.wanted.ecommerce.modules.products.adapter.in.rest.command.dto.request.option.UpdateOptionDTO;
+import lkdcode.wanted.ecommerce.modules.products.application.usecase.option.command.CommandOptionResult;
 import lkdcode.wanted.ecommerce.modules.products.application.usecase.option.command.add.AddOptionService;
 import lkdcode.wanted.ecommerce.modules.products.application.usecase.option.command.delete.DeleteOptionService;
 import lkdcode.wanted.ecommerce.modules.products.application.usecase.option.command.update.UpdateOptionService;
@@ -22,7 +23,7 @@ public class CommandOptionApi {
     private final DeleteOptionService deleteOptionService;
 
     @PostMapping("/api/products/{id}/options")
-    public ResponseEntity<?> getAddOption(
+    public ResponseEntity<ApiResponse<CommandOptionResult>> getAddOption(
         @PathVariable(name = "id") Long id,
         @Valid @RequestBody final AddOptionDTO request
     ) {
@@ -39,7 +40,7 @@ public class CommandOptionApi {
     }
 
     @PutMapping("/api/products/{id}/options/{optionId}")
-    public ResponseEntity<?> getUpdateOption(
+    public ResponseEntity<ApiResponse<CommandOptionResult>> getUpdateOption(
         @PathVariable(name = "id") final Long id,
         @PathVariable(name = "optionId") final Long optionId,
         @Valid @RequestBody final UpdateOptionDTO request
@@ -58,7 +59,7 @@ public class CommandOptionApi {
     }
 
     @DeleteMapping("/api/products/{id}/options/{optionId}")
-    public ResponseEntity<?> getDeleteOption(
+    public ResponseEntity<ApiResponse<Void>> getDeleteOption(
         @PathVariable(name = "id") final Long id,
         @PathVariable(name = "optionId") final Long optionId
     ) {
@@ -70,18 +71,6 @@ public class CommandOptionApi {
                 ApiResponse.success(
                     null,
                     "상품 옵션이 성공적으로 삭제되었습니다."
-                )
-            );
-    }
-
-    @PostMapping("/api/products/{id}/images")
-    public ResponseEntity<?> getAddImage() {
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(
-                ApiResponse.success(
-                    null,
-                    "상품 이미지가 성공적으로 추가되었습니다."
                 )
             );
     }
