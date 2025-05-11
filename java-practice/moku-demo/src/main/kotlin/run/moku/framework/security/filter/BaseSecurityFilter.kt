@@ -6,12 +6,14 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import run.moku.framework.security.BaseSecurity
+import run.moku.framework.security.CorsSecurity
 
 @Configuration
 class BaseSecurityFilter(
-    val baseSecurity: BaseSecurity,
-    val jwtLoginFilter: JwtLoginFilter,
-    val jwtAuthenticationFilter: JwtAuthenticationFilter,
+    private val baseSecurity: BaseSecurity,
+    private val jwtLoginFilter: JwtLoginFilter,
+    private val jwtAuthenticationFilter: JwtAuthenticationFilter,
+    private val corsSecurity: CorsSecurity,
 ) {
 
     @Bean
@@ -19,6 +21,7 @@ class BaseSecurityFilter(
         http
             .securityMatcher(ALL_URL)
             .also { baseSecurity.init(it) }
+            .cors { it.configurationSource(corsSecurity.corsConfigurationSource()) }
             .authorizeHttpRequests {
                 it
                     .requestMatchers(*PERMIT_ALL_API).permitAll()
@@ -34,6 +37,7 @@ class BaseSecurityFilter(
 
     companion object {
         private const val ALL_URL = "/**"
+
         private val PERMIT_ALL_API = arrayOf(
             "/**",
         )

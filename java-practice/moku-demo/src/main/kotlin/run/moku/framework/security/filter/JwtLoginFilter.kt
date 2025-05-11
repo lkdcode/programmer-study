@@ -12,36 +12,33 @@ import org.springframework.security.core.AuthenticationException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.stereotype.Component
-import run.moku.modules.users.adapter.infrastructure.jpa.query.UserQueryJpaRepository
+import run.moku.framework.adapter.validator.throwIfNot
+import run.moku.framework.api.response.ApiResponseCode
+import run.moku.framework.api.response.ApiResponseService
+import run.moku.framework.security.auth.AuthenticationDTO
+import run.moku.framework.security.auth.LoginDTO
+import run.moku.framework.security.auth.UserDetailsServiceAdapter
+import run.moku.framework.security.cookie.CookieService
+import run.moku.framework.security.jwt.JwtService
 
 @Component
 class JwtLoginFilter(
+    private val userDetailsServiceAdapter: UserDetailsServiceAdapter,
+    private val apiResponseService: ApiResponseService,
     val objectMapper: ObjectMapper,
-    val userQueryJpaRepository: UserQueryJpaRepository,
     val passwordEncoder: PasswordEncoder,
+    val cookieService: CookieService,
+    val jwtService: JwtService,
+
     authenticationManager: AuthenticationManager
 ) : UsernamePasswordAuthenticationFilter(authenticationManager) {
 
     override fun attemptAuthentication(request: HttpServletRequest?, response: HttpServletResponse?): Authentication {
-        val body = objectMapper.readValue(request?.inputStream, Map::class.java) as Map<*, *>
+        val loginDTO = getBody(request)
+        val user = userDetailsServiceAdapter.loadUserByUsername(loginDTO.loginId)
+        checkCredentials(loginDTO, user)
 
-        val loginId = body[LOGIN_ID_KEY] as? String ?: throw BadCredentialsException("로그인 실패")
-        val password = body[PASSWORD_KEY] as? String ?: throw BadCredentialsException("로그인 실패")
-
-        val user = userQueryJpaRepository
-            .findByLoginId(loginId)
-            .takeIf { passwordEncoder.matches(password, it.password) }
-            ?: throw BadCredentialsException("로그인 실패")
-
-        return UsernamePasswordAuthenticationToken(user, null)
-    }
-
-    override fun unsuccessfulAuthentication(
-        request: HttpServletRequest?,
-        response: HttpServletResponse?,
-        failed: AuthenticationException?
-    ) {
-        println("unsuccessfulAuthentication")
+        return UsernamePasswordAuthenticationToken(user, user.authorities)
     }
 
     override fun successfulAuthentication(
@@ -50,11 +47,40 @@ class JwtLoginFilter(
         chain: FilterChain?,
         authResult: Authentication?
     ) {
-        println("successfulAuthentication")
+        val user = authResult?.principal as? AuthenticationDTO
+            ?: throw BadCredentialsException(ApiResponseCode.INVALID_CREDENTIALS.message)
+
+        val token = jwtService.createToken(user.loginId)
+        val cookie = cookieService.createCookieAsString(jwtService.authorizationHeader(), token)
+
+        response?.addHeader("Set-Cookie", cookie)
+
+        apiResponseService.writeResponse<Unit>(
+            response = response,
+            success = true,
+            apiResponseCode = ApiResponseCode.OK,
+        )
     }
 
-    companion object {
-        const val LOGIN_ID_KEY = "loginId"
-        const val PASSWORD_KEY = "password"
+    override fun unsuccessfulAuthentication(
+        request: HttpServletRequest?,
+        response: HttpServletResponse?,
+        failed: AuthenticationException?
+    ) {
+        apiResponseService.writeResponse<Unit>(
+            response = response,
+            success = false,
+            apiResponseCode = ApiResponseCode.INVALID_CREDENTIALS,
+        )
+    }
+
+    private fun getBody(request: HttpServletRequest?): LoginDTO =
+        objectMapper.readValue(request?.inputStream, LoginDTO::class.java)
+
+    private fun checkCredentials(target: LoginDTO, user: AuthenticationDTO) {
+        throwIfNot(
+            passwordEncoder.matches(target.password, user.encodedPassword),
+            BadCredentialsException(ApiResponseCode.INVALID_CREDENTIALS.message)
+        )
     }
 }
