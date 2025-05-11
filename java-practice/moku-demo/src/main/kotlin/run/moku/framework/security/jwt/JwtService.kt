@@ -5,15 +5,23 @@ import org.springframework.stereotype.Service
 
 @Service
 class JwtService(
-    private val jwtProperties: JwtProperties,
+    private val properties: JwtProperties,
+    private val creator: JwtCreator,
 ) {
 
-    fun isAuthenticatedRequest(request: HttpServletRequest): Boolean {
-        return false
-    }
+    fun createToken(username: String): String = creator.create(username)
+
+    fun validToken(token: String?) : Boolean {
+        println("token: ${token}")
 
 
-    fun getUsername(request: HttpServletRequest): String {
-        return ""
+
+        return true
     }
+
+    fun getUsername(token: String): String {
+        return "lkdcode"
+    }
+
+    fun authorizationHeader(): String = JwtValues.AUTHENTICATION_HEADER
 }

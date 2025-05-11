@@ -7,11 +7,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
+import run.moku.framework.security.auth.UserDetailsServiceAdapter
+import run.moku.framework.security.cookie.CookieService
 import run.moku.framework.security.jwt.JwtService
 
 @Component
 class JwtAuthenticationFilter(
-    val jwtService: JwtService,
+    private val jwtService: JwtService,
+    private val cookieService: CookieService,
+    private val userDetailsServiceAdapter: UserDetailsServiceAdapter,
 ) : OncePerRequestFilter() {
 
     override fun doFilterInternal(
@@ -19,12 +23,14 @@ class JwtAuthenticationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        jwtService
-            .takeIf { jwtService.isAuthenticatedRequest(request) }
-            ?.getUsername(request)
+        request
+            .let { cookieService.getCookieValue(it, jwtService.authorizationHeader()) }
+            .takeIf { jwtService.validToken(it) }
+            ?.let { jwtService.getUsername(it) }
             ?.let {
+                val authenticationToken = userDetailsServiceAdapter.loadUserByUsername(it)
                 saveAuthentication(
-                    UsernamePasswordAuthenticationToken(it, it)
+                    UsernamePasswordAuthenticationToken(authenticationToken, null)
                 )
             }
 
