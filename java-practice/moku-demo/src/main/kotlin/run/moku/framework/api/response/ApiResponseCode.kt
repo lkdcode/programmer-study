@@ -13,6 +13,10 @@ enum class ApiResponseCode(
     DELETED("S003", HttpStatus.NO_CONTENT, "리소스 삭제 요청에 성공했습니다."),
 
 
+    /* SECURITY */
+    INVALID_CREDENTIALS("SC001", HttpStatus.UNAUTHORIZED, "로그인에 실패했습니다."),
+
+
     /* CLIENT */
     CLIENT_INVALID_REQUEST("CC001", HttpStatus.BAD_REQUEST, "유효성 검증에 실패했습니다."),
     CLIENT_INVALID_DATA("CC002", HttpStatus.BAD_REQUEST, "유효하지 않은 데이터입니다."),
@@ -21,9 +25,13 @@ enum class ApiResponseCode(
     CLIENT_UNSUPPORTED_METHOD("CC005", HttpStatus.BAD_REQUEST, "지원하지 않는 HTTP 메서드입니다."),
     CLIENT_UNSUPPORTED_REQUEST("CC006", HttpStatus.BAD_REQUEST, "지원하지 않는 요청입니다."),
 
+
     /* USER */
     DUPLICATE_LOGIN_ID("U001", HttpStatus.CONFLICT, "이미 존재하는 로그인 아이디입니다."),
     DUPLICATE_NICKNAME("U002", HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다."),
+    NOT_FOUND_USER("U003", HttpStatus.NOT_FOUND, "해당 유저를 찾을 수 없습니다."),
+    MISMATCH_PASSWORD_AND_PASSWORD_CONFIRM("U004", HttpStatus.BAD_REQUEST, "비밀번호와 재확인 비밀번호가 일치하지 않습니다."),
+
 
     /* SERVER */
     SEVER_SQL_EXCEPTION("SE001", HttpStatus.INTERNAL_SERVER_ERROR, "데이터베이스 SQL 에러가 발생했습니다."),

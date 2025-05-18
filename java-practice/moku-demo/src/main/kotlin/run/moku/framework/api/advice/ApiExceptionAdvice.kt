@@ -37,9 +37,9 @@ class ApiExceptionAdvice {
             logging().info("Field: ${it.field}, Rejected value: ${it.rejectedValue}, Message: ${it.defaultMessage}")
 
             mapOf(
-                "Field" to it.field,
-                "Rejected value" to it.rejectedValue,
-                "Message" to it.defaultMessage
+                "field" to it.field,
+                "rejected value" to it.rejectedValue,
+                "message" to it.defaultMessage
             )
         }
 
