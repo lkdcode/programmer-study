@@ -14,10 +14,21 @@ class ApiResponse<T> private constructor(
 ) {
 
     companion object {
-        fun <T> success(
-            status: HttpStatus = HttpStatus.OK,
+
+        fun <T> of(
+            success: Boolean,
+            status: HttpStatus,
             message: String,
             code: String,
+            payload: T? = null
+        ): ResponseEntity<ApiResponse<T>> = ResponseEntity
+            .status(status)
+            .body(ApiResponse(success, code, message, payload))
+
+        fun <T> success(
+            status: HttpStatus = HttpStatus.OK,
+            message: String = ApiResponseCode.OK.message,
+            code: String? = null,
             payload: T? = null
         ): ResponseEntity<ApiResponse<T>> = ResponseEntity
             .status(status)
