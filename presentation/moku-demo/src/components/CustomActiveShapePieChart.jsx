@@ -1,10 +1,10 @@
 import React, { PureComponent } from "react";
 import { PieChart, Pie, Sector, ResponsiveContainer } from "recharts";
 
-const data = [
-  { name: "승리", value: 52 },
-  { name: "패배", value: 32 },
-];
+// const data = [
+//   { name: "승리", value: 52 },
+//   { name: "패배", value: 32 },
+// ];
 
 const renderActiveShape = (props) => {
   const RADIAN = Math.PI / 180;
@@ -91,6 +91,11 @@ export default class CustomActiveShapePieChart extends PureComponent {
   };
 
   render() {
+    const data = [
+      { name: "승리", value: this.props.data.winCount },
+      { name: "패배", value: this.props.data.loseCount },
+    ];
+
     return (
       <ResponsiveContainer width="100%" height="100%">
         <PieChart width={400} height={400}>
