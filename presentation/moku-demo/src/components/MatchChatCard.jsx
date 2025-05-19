@@ -1,6 +1,5 @@
 import "../styles/MatchChatCard.css";
 import ChatBubble from "./ChatBubble";
-import UnderBarInput from "../components/UnderBarInput";
 import { useEffect, useRef, useState } from "react";
 import { useUserStore } from "../hooks/userStore";
 
