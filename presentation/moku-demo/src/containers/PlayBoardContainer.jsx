@@ -1,11 +1,41 @@
 import "../styles/PlayBoardContainer.css";
 import Stone from "../components/Stone";
-
-const boardSize = Array.from({ length: 15 });
+import { useEffect, useRef, useState } from "react";
+import "../styles/MatchingContainer.css";
+import { useUserStore } from "../hooks/userStore";
 
 const PlayBoardContainer = () => {
-  const e = (row, col) => {
-    console.log(`${row} + ${col}`);
+  const client = useUserStore((state) => state.client);
+  const [moku, setMoku] = useState(
+    Array(15)
+      .fill()
+      .map(() => Array(15).fill({ turn: null, row: 0, col: 0 }))
+  );
+
+  useEffect(() => {
+    client.subscribe(`/topic/room.${localStorage.getItem("roomId")}`, (msg) => {
+      const chat = JSON.parse(msg.body);
+      if (chat.type !== "MOKU") {
+        return;
+      }
+
+      const result = JSON.parse(chat.content);
+      setMoku(result);
+    });
+  }, [client]);
+
+  useEffect(() => {}, [moku]);
+
+  const onClickMoku = (row, col) => {
+    if (moku[row][col].turn !== null) return;
+
+    client.publish({
+      destination: `/app/room.${localStorage.getItem("roomId")}`,
+      body: JSON.stringify({
+        type: `MOKU`,
+        content: `${row},${col}`,
+      }),
+    });
   };
 
   return (
@@ -17,17 +47,17 @@ const PlayBoardContainer = () => {
               <div className="playBoardBack_cell" key={`${row}-${col}`}>
                 <div
                   onClick={() => {
-                    e(row, col);
+                    onClickMoku(row, col);
                   }}
                   key={`${row}-${col}`}
-                  className="playBoardBack_cell_point"
+                  className={
+                    moku[row]?.[col]?.turn === null
+                      ? "playBoardBack_cell_point"
+                      : ""
+                  }
                 >
-                  {Math.random() < 0.5 ? (
-                    <Stone
-                      variant={
-                        Math.random() < 0.5 ? "STONE_WHITE" : "STONE_BLACK"
-                      }
-                    />
+                  {moku[row]?.[col]?.turn !== null ? (
+                    <Stone variant={moku[row][col].turn} />
                   ) : null}
                 </div>
               </div>

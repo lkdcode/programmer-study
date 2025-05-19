@@ -8,8 +8,6 @@ import { HTTP_API } from "../service/Api";
 import { useUserStore } from "../hooks/userStore";
 
 const MatchingContainer = ({ cancle, setJoin, setMatching }) => {
-  const roomId = useUserStore((state) => state.roomId);
-  const setRoomId = useUserStore((state) => state.setRoomId);
   const client = useRef(null);
   const { setClient } = useUserStore.getState();
 
@@ -29,7 +27,6 @@ const MatchingContainer = ({ cancle, setJoin, setMatching }) => {
           const matchingResult = JSON.parse(msg.body);
           console.log(`msg.body: ${msg.body}`);
 
-          setRoomId(matchingResult.roomId);
           localStorage.removeItem("roomId");
           localStorage.setItem("roomId", matchingResult.roomId);
 
