@@ -1,8 +1,6 @@
 package run.moku.modules.gomoku.domain.model
 
 import run.moku.modules.gomoku.domain.entity.board.BoardId
-import run.moku.modules.gomoku.domain.entity.player.BlackStonePlayer
-import run.moku.modules.gomoku.domain.entity.player.WhiteStonePlayer
 import run.moku.modules.gomoku.domain.value.MokuTurn
 import run.moku.modules.gomoku.domain.value.board.MokuBoard
 import run.moku.modules.gomoku.domain.value.play.MokuPlayHistory
@@ -16,10 +14,12 @@ class MokuPlayingModel private constructor(
     val mokuHistory: MokuPlayHistory = MokuPlayHistory.init(),
 ) {
 
-    fun playStone(playStone: MokuPlayStone) {
-        mokuBoard.record(playStone)
+    fun playStone(playStone: MokuPlayStone): MokuPlayStatusModel {
         mokuHistory.record(playStone)
         mokuTurn.change(playStone)
+        val result = mokuBoard.makeAJudgment(playStone)
+
+        return MokuPlayStatusModel(result, playStone.mokuPlayer)
     }
 
     companion object {
