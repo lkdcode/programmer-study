@@ -1,9 +1,9 @@
 package run.moku.modules.gomoku.domain.entity.player
 
-@JvmInline
-value class BlackStonePlayer(
-    private val mokuPlayer: MokuPlayer
-) {
+import run.moku.modules.gomoku.domain.value.MokuStone
 
-    fun getId() = mokuPlayer.id
+data class BlackStonePlayer(
+    val player: MokuPlayer
+) {
+    val stone: MokuStone = MokuStone.BLACK_STONE
 }

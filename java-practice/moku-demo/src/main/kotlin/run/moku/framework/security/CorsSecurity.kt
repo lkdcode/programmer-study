@@ -27,10 +27,22 @@ class CorsSecurity {
 
     companion object {
         private val ALLOWED_ORIGIN = listOf(
-            "http://127.0.0.1:5173",
-            "http://localhost:5173",
+            "http://dev-lkdcode.moku.run:5173",
+            "http://dev-lkdcode.moku.run",
+
+            "https://dev-lkdcode.moku.run",
+            "https://dev-lkdcode.moku.run:5173",
+//            "http://192.168.0.6:5173",
+//            "http://183.101.130.89:5173",
+//            "http://lkdcode.iptime.org:5173",
+//            "https://183.101.130.89:5173",
+//            "https://lkdcode.iptime.org:5173",
+//            "http://localhost:5173",
+//            "http://lkdcode.moku.run:5173",
+//            "http://lkdcode.moku.run:18080",
         )
 
+//        private val ALLOWED_HEADER = listOf("Content-Type", "Authorization", "X-Requested-With")
         private val ALLOWED_HEADER = listOf("*")
 
         private val ALLOWED_METHODS = listOf(
@@ -42,6 +54,7 @@ class CorsSecurity {
             "OPTIONS",
             "PATCH",
             "UPGRADE",
+            "PROPFIND",
         )
 
         private val EXPOSED_HEADER = listOf(

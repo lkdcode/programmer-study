@@ -1,6 +1,7 @@
 package run.moku.framework.security.filter
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import jakarta.annotation.PostConstruct
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -47,6 +48,8 @@ class JwtLoginFilter(
         chain: FilterChain?,
         authResult: Authentication?
     ) {
+
+        println("##########################")
         val user = authResult?.principal as? AuthenticationDTO
             ?: throw BadCredentialsException(ApiResponseCode.INVALID_CREDENTIALS.message)
 
@@ -60,6 +63,8 @@ class JwtLoginFilter(
             success = true,
             apiResponseCode = ApiResponseCode.OK,
         )
+
+        println("##################################$cookie")
     }
 
     override fun unsuccessfulAuthentication(
@@ -82,5 +87,11 @@ class JwtLoginFilter(
             passwordEncoder.matches(target.password, user.encodedPassword),
             BadCredentialsException(ApiResponseCode.INVALID_CREDENTIALS.message)
         )
+    }
+
+    @PostConstruct
+    fun initFilterUrl() {
+        // 빈이 모두 초기화된 시점에 호출되므로, 생성자 알림이 사라짐
+        setFilterProcessesUrl("/api/login")
     }
 }

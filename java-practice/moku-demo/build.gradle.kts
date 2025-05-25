@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin(PluginVersion.KOTLIN_JVM.id) version PluginVersion.KOTLIN_JVM.version
     kotlin(PluginVersion.KOTLIN_SPRING.id) version PluginVersion.KOTLIN_SPRING.version
@@ -7,12 +9,12 @@ plugins {
     id(PluginVersion.SPRING_DEPENDENCY_MANAGEMENT.id) version PluginVersion.SPRING_DEPENDENCY_MANAGEMENT.version
 }
 
-group = "com.example"
-version = "0.0.1-SNAPSHOT"
+group = Versioning.GROUP
+version = Versioning.VALUE
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(Versioning.JAVA_VER)
     }
 }
 
@@ -20,33 +22,18 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation(SpringBootStarter.WEB)
-    implementation(SpringBootStarter.DATA_JPA)
-    implementation(SpringBootStarter.VALIDATION)
+apply {
+    from(SpringBootStaterLibs.PATH)
+    from(SpringSecurityLibs.PATH)
 
-    implementation(KotlinSet.JACKSON_MODULE_KOTLIN)
-    implementation(KotlinSet.KOTLIN_REFLECT)
+    from(KotlinVersioning.PATH)
+    from(DatabaseLibs.PATH)
 
-    implementation(DataSource.FLYWAY_CORE)
-    implementation(DataSource.FLYWAY_MY_SQL)
-    runtimeOnly(DataSource.MY_SQL_CONNECTOR)
-
-    testImplementation(SpringBootStarter.TEST)
-    testImplementation(TestSet.JUNIT5)
-    testRuntimeOnly(TestSet.JUNIT_PLATFORM_LAUNCHER)
+    from(TestLibs.PATH)
 }
 
-kotlin {
-    compilerOptions {
-        freeCompilerArgs.addAll("-Xjsr305=strict")
-    }
-}
-
-allOpen {
-    annotation("jakarta.persistence.Entity")
-    annotation("jakarta.persistence.MappedSuperclass")
-    annotation("jakarta.persistence.Embeddable")
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions.jvmTarget = Versioning.JAVA_VER
 }
 
 tasks.withType<Test> {

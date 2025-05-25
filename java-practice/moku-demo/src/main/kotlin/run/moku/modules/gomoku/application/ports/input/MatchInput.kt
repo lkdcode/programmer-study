@@ -27,5 +27,9 @@ class MatchInput(
         return playCommandPort.start(player1, player2)
     }
 
+    fun remove(mokuPlayer: MokuPlayer) {
+        matchCommandPort.remove(mokuPlayer)
+    }
+
     fun getSize(): Int = matchQueryPort.getSize()
 }

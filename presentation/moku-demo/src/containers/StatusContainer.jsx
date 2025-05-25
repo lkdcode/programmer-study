@@ -13,7 +13,7 @@ const StatusContainer = ({ matchSubmit, logoutSubmit }) => {
 
   useEffect(() => {
     const getRecords = async () => {
-      const response = await get("/api/records");
+      const response = await get("/records");
 
       setRecords(response.data.payload);
     };

@@ -74,7 +74,7 @@ const SignUpContainer = ({ matchSubmit, link }) => {
             name="회원가입 하기"
             variant="PRIMARY_BUTTON"
             event={async () => {
-              const result = await post("/api/users", signUpDTO);
+              const result = await post("/users", signUpDTO);
               console.log(`result: ${result.success}`);
               if (result.success) {
                 alert("회원가입을 축하드립니다!\n바로 로그인하세요!");

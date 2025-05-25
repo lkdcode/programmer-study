@@ -28,7 +28,7 @@ class CookieService {
         maxAge: Int? = 60 * 60 * 1,
         isHttpOnly: Boolean? = true,
         secure: Boolean? = true,
-        strict: SameSite? = SameSite.LAX,
+        strict: SameSite? = SameSite.NONE,
     ): String =
         "${key}=${value}; Path=${path}; Max-Age=${maxAge}; HttpOnly=${isHttpOnly}; Secure=${secure}; SameSite=${strict}"
 

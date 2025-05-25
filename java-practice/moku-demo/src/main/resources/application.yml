@@ -1,5 +1,11 @@
 server:
-  port: 8080
+  port: 18080
+  ssl:
+    enabled: true
+    key-store: classpath:keystore.p12
+    key-store-password: lkdcode
+    key-store-type: PKCS12
+    key-alias: my-ssl-cert
 
 spring:
   profiles:
@@ -10,3 +16,13 @@ spring:
 
   flyway:
     enabled: true
+    locations: classpath:db/migration
+
+logging:
+  level:
+    org.springframework.boot.web.embedded.tomcat: TRACE
+    org.springframework.web: TRACE
+    org.springframework.security: TRACE
+    org.springframework.security.web: TRACE
+#    org.springframework.messaging: DEBUG
+#    org.springframework.web.socket: DEBUG

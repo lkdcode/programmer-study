@@ -35,7 +35,10 @@ const LoginContainer = ({ matchSubmit, link, loginSubmit }) => {
     const result = await post("/login", loginDTO);
 
     if (result.success) {
-      const result = await get("/api/users");
+      const result = await get("/users");
+
+      console.log("#################333");
+      console.log(result);
 
       const nickname = result.data.payload.nickname;
       const loginId = result.data.payload.loginId;

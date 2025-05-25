@@ -5,18 +5,18 @@ import run.moku.modules.gomoku.domain.value.MokuPlayResult
 import run.moku.modules.gomoku.domain.value.play.MokuPlayStone
 
 class MokuBoard private constructor(
-    private val board: Array<Array<MokuPlayer?>>
+    val value: Array<Array<MokuPlayer?>>
 ) {
     private var currentRow: Int = -1
     private var currentCol: Int = -1
     private var currentPlayer: MokuPlayer? = null
 
     fun makeAJudgment(playStone: MokuPlayStone): MokuPlayResult {
-        this.currentRow = playStone.getColumnIndex()
-        this.currentCol = playStone.getRowIndex()
+        this.currentRow = playStone.getRowIndex()
+        this.currentCol = playStone.getColumnIndex()
         this.currentPlayer = playStone.mokuPlayer
 
-        this.board[currentRow][currentCol] = currentPlayer
+        this.value[currentRow][currentCol] = currentPlayer
 
         return scanBoard()
     }
@@ -56,7 +56,7 @@ class MokuBoard private constructor(
         target in 0..<DEFAULT_INDEX
 
     private fun validStone(row: Int, col: Int): Boolean =
-        board[row][col] == currentPlayer
+        value[row][col] == currentPlayer
 
     companion object {
         private val LEFT_LINE = Point(0, -1)
