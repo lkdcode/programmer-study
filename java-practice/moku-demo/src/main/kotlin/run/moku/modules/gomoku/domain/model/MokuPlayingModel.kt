@@ -1,13 +1,14 @@
 package run.moku.modules.gomoku.domain.model
 
 import run.moku.modules.gomoku.domain.entity.board.BoardId
+import run.moku.modules.gomoku.domain.entity.player.MokuPlayer
 import run.moku.modules.gomoku.domain.value.MokuTurn
 import run.moku.modules.gomoku.domain.value.board.MokuBoard
 import run.moku.modules.gomoku.domain.value.play.MokuPlayHistory
 import run.moku.modules.gomoku.domain.value.play.MokuPlayStone
 
 class MokuPlayingModel private constructor(
-    private var mokuTurn: MokuTurn,
+    var mokuTurn: MokuTurn,
 
     val boardId: BoardId = BoardId.init(),
     val mokuBoard: MokuBoard = MokuBoard.init(),
@@ -15,11 +16,29 @@ class MokuPlayingModel private constructor(
 ) {
 
     fun playStone(playStone: MokuPlayStone): MokuPlayStatusModel {
-        mokuHistory.record(playStone)
         mokuTurn.change(playStone)
+        mokuHistory.record(playStone)
         val result = mokuBoard.makeAJudgment(playStone)
 
-        return MokuPlayStatusModel(result, playStone.mokuPlayer)
+        return MokuPlayStatusModel(result,this)
+    }
+
+    fun getBoardValue() {
+        val board = mokuBoard.value
+    }
+
+    fun getBoardIdValue() =
+        boardId.value
+
+    fun getCurrentPlayer() =
+        mokuTurn.currentPlayer
+
+    fun getBlackPlayer(): MokuPlayer {
+        return mokuTurn.blackStonePlayer.player
+    }
+
+    fun getWhitePlayer(): MokuPlayer {
+        return mokuTurn.whiteStonePlayer.player
     }
 
     companion object {

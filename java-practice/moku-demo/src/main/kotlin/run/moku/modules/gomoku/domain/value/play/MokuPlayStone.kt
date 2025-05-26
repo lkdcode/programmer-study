@@ -5,8 +5,8 @@ import run.moku.modules.gomoku.domain.value.board.ColumnIndex
 import run.moku.modules.gomoku.domain.value.board.RowIndex
 
 data class MokuPlayStone(
-    private val columnIndex: ColumnIndex,
     private val rowIndex: RowIndex,
+    private val columnIndex: ColumnIndex,
     val mokuPlayer: MokuPlayer
 ) {
 
