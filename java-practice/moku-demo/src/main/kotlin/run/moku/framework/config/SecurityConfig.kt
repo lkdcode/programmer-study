@@ -7,7 +7,7 @@ import org.springframework.security.authentication.ProviderManager
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
-import run.moku.framework.security.service.MokuUserDetailsService
+import run.moku.framework.security.auth.UserDetailsServiceAdapter
 
 @Configuration
 class SecurityConfig {
@@ -16,11 +16,11 @@ class SecurityConfig {
 
     @Bean
     fun authenticationManager(
-        userDetailsService: MokuUserDetailsService,
+        userDetailsServiceAdapter: UserDetailsServiceAdapter,
         passwordEncoder: PasswordEncoder,
     ): AuthenticationManager {
         val authProvider = DaoAuthenticationProvider()
-        authProvider.setUserDetailsService(userDetailsService)
+        authProvider.setUserDetailsService(userDetailsServiceAdapter)
         authProvider.setPasswordEncoder(passwordEncoder)
         return ProviderManager(authProvider)
     }

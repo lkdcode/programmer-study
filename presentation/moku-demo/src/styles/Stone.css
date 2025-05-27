@@ -4,13 +4,13 @@
   border-radius: 50%;
 }
 
-.STONE_WHITE {
+.WHITE_STONE {
   background-color: #fdfdfd;
   box-shadow: inset -5px -5px 3px rgba(0, 0, 0, 0.25);
   border: 1px solid #8f8f8f;
 }
 
-.STONE_BLACK {
+.BLACK_STONE {
   /* background-color: #000000; */
   /* box-shadow: inset -5px -5px 3px rgb(255, 255, 255, 0.25); */
 

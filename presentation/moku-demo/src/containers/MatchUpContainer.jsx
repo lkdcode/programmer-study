@@ -4,8 +4,8 @@ import "../styles/MatchUpContainer.css";
 const MatchUpContainer = () => {
   return (
     <div className="matchUpContainer">
-      <MatchPlayerCard turn={true} stoneColor="STONE_BLACK" />
-      <MatchPlayerCard turn={false} stoneColor="STONE_WHITE" />
+      <MatchPlayerCard turn={true} stoneColor="BLACK_STONE" />
+      <MatchPlayerCard turn={false} stoneColor="WHITE_STONE" />
     </div>
   );
 };

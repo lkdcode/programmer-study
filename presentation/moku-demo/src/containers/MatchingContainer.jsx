@@ -33,6 +33,9 @@ const MatchingContainer = ({ cancle, setJoin, setMatching }) => {
           localStorage.removeItem("id");
           localStorage.setItem("id", matchingResult.id);
 
+          localStorage.removeItem("stone");
+          localStorage.setItem("stone", matchingResult.stone);
+
           setTimeout(() => {
             setJoin(true);
             setMatching(true);
