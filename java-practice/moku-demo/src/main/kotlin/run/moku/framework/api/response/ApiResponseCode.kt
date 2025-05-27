@@ -1,6 +1,7 @@
 package run.moku.framework.api.response
 
 import org.springframework.http.HttpStatus
+import run.moku.modules.gomoku.domain.value.board.MokuBoard
 
 enum class ApiResponseCode(
     val code: String,
@@ -32,6 +33,13 @@ enum class ApiResponseCode(
     NOT_FOUND_USER("U003", HttpStatus.NOT_FOUND, "해당 유저를 찾을 수 없습니다."),
     MISMATCH_PASSWORD_AND_PASSWORD_CONFIRM("U004", HttpStatus.BAD_REQUEST, "비밀번호와 재확인 비밀번호가 일치하지 않습니다."),
 
+    /* Board */
+    BOARD_INVALID_ROW_SIZE("B001", HttpStatus.BAD_REQUEST,"바둑판 사이즈는 ${MokuBoard.DEFAULT_INDEX}x${MokuBoard.DEFAULT_INDEX} 입니다."),
+    BOARD_INVALID_COL_SIZE("B002", HttpStatus.BAD_REQUEST,"바둑판 사이즈는 ${MokuBoard.DEFAULT_INDEX}x${MokuBoard.DEFAULT_INDEX} 입니다."),
+
+
+    /* MOKU */
+    MOKU_INVALID_TURN("M001", HttpStatus.BAD_REQUEST,"차례가 아닙니다."),
 
     /* SERVER */
     SEVER_SQL_EXCEPTION("SE001", HttpStatus.INTERNAL_SERVER_ERROR, "데이터베이스 SQL 에러가 발생했습니다."),

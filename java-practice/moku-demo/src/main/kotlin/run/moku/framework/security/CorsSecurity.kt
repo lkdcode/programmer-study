@@ -28,6 +28,7 @@ class CorsSecurity {
     companion object {
         private val ALLOWED_ORIGIN = listOf(
             "http://127.0.0.1:5173",
+            "http://192.168.0.6:5173",
             "http://localhost:5173",
         )
 

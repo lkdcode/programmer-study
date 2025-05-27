@@ -2,8 +2,10 @@ package run.moku.modules.gomoku.adapter.input.web.controller
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.messaging.handler.annotation.DestinationVariable
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessagingTemplate
+import org.springframework.messaging.simp.annotation.SendToUser
 import org.springframework.stereotype.Controller
 import run.moku.modules.gomoku.application.ports.input.MatchInput
 import run.moku.modules.gomoku.application.ports.input.PlayInput
@@ -118,7 +120,17 @@ class MokuPlayController(
         }
     }
 
+    @MessageExceptionHandler
+    @SendToUser("/queue/errors")
+    fun handleException(ex: Throwable): ErrorMessageResponse {
+        return ErrorMessageResponse(ex.message)
+    }
+
     companion object {
+
+        data class ErrorMessageResponse(
+            val message: String?
+        )
 
         enum class MessageType {
             CHAT(),

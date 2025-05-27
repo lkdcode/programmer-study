@@ -4,11 +4,9 @@ import org.springframework.stereotype.Service
 import run.moku.modules.gomoku.application.ports.out.command.PlayCommandPort
 import run.moku.modules.gomoku.application.ports.out.query.PlayQueryPort
 import run.moku.modules.gomoku.application.ports.out.validator.PlayValidator
-import run.moku.modules.gomoku.application.usecase.PlayUsecase
+import run.moku.modules.gomoku.application.usecase.play.PlayUsecase
 import run.moku.modules.gomoku.application.usecase.play.checkTurn
 import run.moku.modules.gomoku.application.usecase.play.playStone
-import run.moku.modules.gomoku.application.usecase.play.record
-import run.moku.modules.gomoku.application.usecase.play.result
 import run.moku.modules.gomoku.domain.entity.board.BoardId
 import run.moku.modules.gomoku.domain.model.MokuPlayStatusModel
 import run.moku.modules.gomoku.domain.value.play.MokuPlayStone
@@ -24,8 +22,6 @@ class PlayInput(
         PlayUsecase.execute(boardId, playStone) {
             checkTurn(playValidator::checkTurn)
             playStone(playCommandPort::play)
-            record(playCommandPort::record)
-            result(playQueryPort::result)
         }
 
 //    fun getCurrentPlayer(boardId: BoardId) {

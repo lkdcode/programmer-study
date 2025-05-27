@@ -22,10 +22,13 @@ class PlayCommandAdapter(
                 repository.save(it)
             }
 
-    override fun play(boardId: BoardId, mokuPlayStone: MokuPlayStone) {
+    override fun play(boardId: BoardId, mokuPlayStone: MokuPlayStone): MokuPlayStatusModel {
+        val model = repository.loadById(boardId)
+        val result = model.playStone(mokuPlayStone)
 
+        repository.save(model)
 
-        TODO("Not yet implemented")
+        return result
     }
 
     override fun record(boardId: BoardId, mokuPlayStone: MokuPlayStone) {
