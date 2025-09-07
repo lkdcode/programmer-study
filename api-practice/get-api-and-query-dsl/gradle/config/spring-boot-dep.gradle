@@ -1,0 +1,6 @@
+dependencies {
+    implementation(SpringBootLibs.WEB)
+    implementation(SpringBootLibs.DATA_JPA)
+    implementation(SpringBootLibs.WEB)
+    implementation(SpringBootLibs.DATA_JPA)
+}

@@ -1,0 +1,29 @@
+server:
+  port: 18080
+
+spring:
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:13306/query
+    username: root
+    password: lkdcode
+
+  jpa:
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  sql:
+    init:
+      mode: always
+
+logging:
+  level:
+    root: INFO
