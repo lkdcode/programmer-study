@@ -1,0 +1,4 @@
+dependencies {
+    implementation(SpringBootLibs.WEB)
+    implementation(SpringBootLibs.JASYPT)
+}
