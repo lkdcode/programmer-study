@@ -1,0 +1,3 @@
+dependencies {
+    runtimeOnly(DatabaseLibs.MY_SQL_DB_CONNECTOR)
+}

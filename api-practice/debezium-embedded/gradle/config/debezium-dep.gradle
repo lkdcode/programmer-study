@@ -1,0 +1,6 @@
+dependencies {
+    implementation(DebeziumLibs.OPERATOR_API)
+    implementation(DebeziumLibs.EMBEDDED)
+    implementation(DebeziumLibs.MY_SQL_CONNECTOR)
+    implementation(DebeziumLibs.STORAGE_JDBC)
+}
