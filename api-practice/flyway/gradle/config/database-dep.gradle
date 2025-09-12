@@ -1,0 +1,5 @@
+dependencies {
+    implementation(DatabaseLibs.JDBC)
+
+    runtimeOnly(DatabaseLibs.MY_SQL_DB_CONNECTOR)
+}
