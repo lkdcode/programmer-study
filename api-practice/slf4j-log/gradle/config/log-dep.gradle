@@ -1,0 +1,6 @@
+dependencies {
+    implementation(LogLibs.SLF4J)
+
+    runtimeOnly(LogLibs.RUNTIME_SLF4J_SIMPLE)
+    runtimeOnly(LogLibs.RUNTIME_LOGABCK)
+}

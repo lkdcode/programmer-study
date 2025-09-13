@@ -1,0 +1,28 @@
+name: ⭐️ 프론트엔드가 보낸다!
+description: 백엔드에게 보낼 이슈를 작성해주세요.
+title: "[⭐️ ISSUE] "
+labels: ["⭐️ ISSUE"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        새로운 이슈를 작성해주세요! 
+
+  - type: textarea
+    id: text1
+    attributes:
+      label: ⭐️ 상세 내용
+      description: 요청할 이슈는 무엇인가요?
+      placeholder: 상세 설명을 작성해주세요.
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ### ⭐️ 이슈 발행 체크리스트
+        아래의 체크리스트를 확인해 주세요!
+
+        - [x] 유사한 이슈가 이미 존재하는지 확인했나요?
+        - [x] 해당 이슈가 현재의 문제를 해결하는 데 도움이 되나요?
+        - [x] 요청이 프로젝트의 목표와 부합하는지 확인했나요?
