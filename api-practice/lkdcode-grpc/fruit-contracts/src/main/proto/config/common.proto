@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package config;
+
+import public "google/protobuf/timestamp.proto";
+import public "google/protobuf/duration.proto";
+import public "google/protobuf/wrappers.proto";
+import public "google/protobuf/empty.proto";

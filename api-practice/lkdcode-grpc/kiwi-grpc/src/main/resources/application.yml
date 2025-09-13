@@ -1,0 +1,7 @@
+server:
+  port: 18080
+
+grpc:
+  server:
+    port: 15001
+    address: 0.0.0.0

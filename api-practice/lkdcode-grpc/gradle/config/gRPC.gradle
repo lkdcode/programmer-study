@@ -1,0 +1,27 @@
+dependencies {
+    implementation(GRPCLibs.GRPC_STUB)
+    implementation(GRPCLibs.GRPC_PROTOBUF)
+    implementation(GRPCLibs.GRPC_NETTY_SHADED)
+    implementation(GRPCLibs.GRPC_PROTOBUF_JAVA)
+    implementation(GRPCLibs.NET_DEVH_GRPC_SPRING_BOOT_STARTER)
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:4.32.0"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:1.75.0"
+        }
+    }
+    generateProtoTasks {
+        all().forEach {
+            it.plugins {
+                grpc {
+                    option "@generated=omit"
+                }
+            }
+        }
+    }
+}

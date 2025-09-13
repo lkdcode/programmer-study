@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package lkdcode.kiwi.request;
+
+import "config/common.proto";
+
+option java_multiple_files = true;
+option java_package = "lkdcode.grpc.kiwi.request";
+
+message KiwiRequest {
+  string name = 1;
+  int64 quantity = 2;
+  google.protobuf.Timestamp harvested_at = 3;
+}

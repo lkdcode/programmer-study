@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package lkdcode.kiwi.v2;
+
+import "kiwi/request/kiwi_request.proto";
+
+option java_multiple_files = true;
+option java_package = "lkdcode.grpc.kiwi.v2";
+option java_outer_classname = "KiwiRepositoryV2Proto";
+
+service KiwiRepository {
+  rpc save(lkdcode.kiwi.request.KiwiRequest) returns (SavedResult){}
+}
+
+message SavedResult {
+  int64 id = 1;
+}
