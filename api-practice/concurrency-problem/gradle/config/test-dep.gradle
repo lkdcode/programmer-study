@@ -1,0 +1,10 @@
+dependencies {
+    testImplementation(TestLibs.STARTER_TEST)
+    testImplementation(TestLibs.KOTLIN_JUNIT5)
+
+    testImplementation(TestLibs.JUNIT_JUPITER)
+    testImplementation(TestLibs.TEST_CONTAINER_MYSQL)
+    testImplementation(TestLibs.STARTER_TEST_CONTAINER)
+
+    testRuntimeOnly(TestLibs.JUNIT_PLATFORM_LAUNCHER)
+}

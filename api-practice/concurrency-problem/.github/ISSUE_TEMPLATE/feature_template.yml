@@ -1,0 +1,28 @@
+name: 🎯 Feature Template
+description: 새로운 기능을 요청할 때 이 템플릿을 사용하세요.
+title: "[🎯 Feature] "
+labels: ["🎯 Feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        새로운 기능에 대한 이슈를 작성해주세요.
+
+  - type: textarea
+    id: text1
+    attributes:
+      label: ⭐️ 기능 구현 설명
+      description: 어떤 기능 구현인가요?
+      placeholder: 상세 설명을 작성해주세요.
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ### 🎯 Feature 이슈 발행 체크리스트
+        아래의 체크리스트를 확인해 주세요!
+
+        - [x] 유사한 기능이 이미 존재하는지 확인했나요?
+        - [x] 이 기능이 현재의 문제를 해결하는 데 도움이 되나요?
+        - [x] 기능 요청이 프로젝트의 목표와 부합하는지 확인했나요?
