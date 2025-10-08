@@ -27,6 +27,7 @@ apply {
     from(SpringBootLibs.PATH)
     from(DatabaseLibs.PATH)
     from(TestLibs.PATH)
+    from(FlywayLibs.PATH)
 }
 
 kapt {

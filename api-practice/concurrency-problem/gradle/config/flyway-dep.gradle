@@ -1,0 +1,4 @@
+dependencies {
+    implementation(FlywayLibs.FLYWAY_CORE)
+    implementation(FlywayLibs.FLYWAY_MARIA_DB)
+}
