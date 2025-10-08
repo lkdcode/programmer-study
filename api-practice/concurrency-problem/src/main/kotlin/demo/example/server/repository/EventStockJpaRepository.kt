@@ -4,6 +4,7 @@ import demo.example.server.entity.EventStockJpaEntity
 import jakarta.persistence.LockModeType
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Lock
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
@@ -19,6 +20,20 @@ interface EventStockJpaRepository : JpaRepository<EventStockJpaEntity, Long> {
     @Query("SELECT s FROM EventStockJpaEntity s WHERE s.id = :id")
     fun findByIdForUpdate(@Param("id") id: Long): EventStockJpaEntity?
 
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query(
+        value= """
+UPDATE event_stock e
+SET e.stock = e.stock - 1
+WHERE e.id = :id
+  AND e.stock = :expectedStock
+        """,
+        nativeQuery = true
+    )
+    fun tryDecrement(
+        @Param("id") id: Long,
+        @Param("expectedStock") expectedStock: Int
+    ): Int
 }
 
 fun EventStockJpaRepository.loadById(id: Long): EventStockJpaEntity =
