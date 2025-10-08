@@ -38,7 +38,7 @@ sequenceDiagram
 비관적 락은 실패할 가능성이 높아서 비관적이다. 정상적으로 변경할 가능성이 떨어지므로 선점 잠금을 통해 동시성 문제에 대응한다.  
 Java/Kotlin 과 같은 애플리케이션 수준에서의 락과 MySQL 과 같은 데이터베이스 수준에서의 락으로 해결해보자.  
 
-## 🎯 2-1. Application 비관적 락
+### 🎯 2-1. Application 비관적 락
 
 크게 `synchronized` 와 `ReentrantLock` 을 사용해서 구현할 수 있다.  
 
@@ -48,11 +48,51 @@ Java/Kotlin 과 같은 애플리케이션 수준에서의 락과 MySQL 과 같�
 실행 결과는 항상 성공하게 되는데, 이유는 싱글톤 빈 + 단일 JVM 환경에서 비관적 락은 늘 성공한다.  
 실패를 유발하려면 멀티 빈, 멀티 JVM 등 분산 환경에서 사용하면 실패할 것이다.  
 
-## 🎯 2-2. Database 비관적 락
+### 🎯 2-2. Database 비관적 락
 
 DB 수준 비관적 락은 Row 를 잡고 직렬화 하게 만든다.  
+`SELECT .. FOR UPDATE` 같은 비관적 락은 데이터베이스 수준에서 동시성 문제를 해결해 주지만,  
+잠금을 획득하지 못한 다른 트랜잭션은 대기해야 하므로 처리량이 저하되는 단점이 있다.  
 
+```mermaid
+sequenceDiagram
+   트랜잭션1 ->> DB: SELECT * FROM.. FOR UPDATE 트랜잭션1 잠금 획득
+   트랜잭션2 ->> DB: SELECT * FROM.. FOR UPDATE 트랜잭션2 잠금 대기
+   트랜잭션1 ->> DB: UPDATE...
+   트랜잭션1 ->> DB: commit
+   트랜잭션2 ->> DB: UPDATE...
+   트랜잭션2 ->> DB: commit
+```
+
+또 2개 이상의 레코드에서 락을 가져갈 땐 데드락에 특히 신경을 써야 한다.  
 
 ## 🚀 3. 낙관적 락
 
-## 🚀 4.
+낙관적 락은 실패할 가능성이 적고 명시적으로 잠금을 사용하지 않는 대신 데이터를 조회하는 시점과 수정하려는 시점의 값을 비교하여 동시성 문제를 처리한다.
+
+### 🎯 2-1. Application 낙관적 락
+
+`version` 과 관련된 컬럼이 있다면 해당 컬럼을 이용하고 그게 아니라면 최초 조회했을 때와 값이 같은지 비교할만한 대상을 선택한 후 CAS<sup>Compare-And-Set</sup> 로 업데이트해주면 된다.  
+사용자는 매 요청마다 성공할 수는 없겠지만 대기 시간 없이 즉답하므로 오히려 사용자 경험이 낫다고 볼 수 있다.  
+
+CAS<sup>Compare-And-Set</sup> 은 원자적으로 수행되어야 하므로 한 방 SQL 이어야 한다.  
+조회하고 비교해서 UPDATE 하게 되면 그 짧은 시간동안에 정합성이 틀어질 수 있다.  
+사전 조회는 해도 되지만 비교 자체는 WHERE 절에서 DB 가 수행해야 한다.  
+Application 수준에서의 낙관적 락은 분산 시스템(DB 분산 제외)에서도 유용하게 사용이 가능하다.  
+
+```mermaid
+sequenceDiagram
+    트랜잭션1 ->> DB: Event 조회
+    트랜잭션2 ->> DB: Event 조회
+    트랜잭션1 ->> DB: Stock 수량 확인(93)
+    트랜잭션2 ->> DB: Stock 수량 확인(93)
+    트랜잭션1 ->> DB: 이벤트 신청<br/> UPDATE ...<br/>SET stock = stock - 1<br/> WHERE stock = 93
+    트랜잭션1 ->> DB: UPDATE 결과 1건 = 커밋
+    트랜잭션2 ->> DB: 이벤트 신청<br/> UPDATE ...<br/>SET stock = stock - 1<br/> WHERE stock = 93
+    트랜잭션2 ->> DB: UPDATE 결과 0건 = 롤백<br/>(92로 차감됐으므로)
+```
+
+### 🎯 2-2. Database 낙관적 락
+
+
+## 🚀 4. 단일 스레드

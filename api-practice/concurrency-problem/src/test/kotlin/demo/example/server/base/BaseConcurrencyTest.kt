@@ -6,8 +6,10 @@ import demo.example.server.repository.EventStockJpaRepository
 import demo.example.server.support.ExecutorSupport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.transaction.AfterTransaction
 
+@ActiveProfiles("test")
 @SpringBootTest
 abstract class BaseConcurrencyTest : MySqlContainers() {
 
