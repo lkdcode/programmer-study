@@ -2,7 +2,7 @@ package demo.example.server.concurrency
 
 import demo.example.server.base.BaseConcurrencyTest
 import demo.example.server.service.ApplicationCASService
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,8 +29,8 @@ class ApplicationCASServiceTest : BaseConcurrencyTest() {
         println("✅ 남은 재고: $stockLeft")
 
         assertAll(
-            { Assertions.assertThat(TOTAL_USERS).isEqualTo(successCount) },
-            { Assertions.assertThat(0).isEqualTo(stockLeft) }
+            { assertThat(TOTAL_USERS).isEqualTo(successCount) },
+            { assertThat(stockLeft).isZero() }
         )
     }
 }
