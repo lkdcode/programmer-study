@@ -4,6 +4,7 @@ dependencies {
 
     testImplementation(TestLibs.JUNIT_JUPITER)
     testImplementation(TestLibs.TEST_CONTAINER_MYSQL)
+    testImplementation(TestLibs.TEST_CONTAINER_REDIS)
     testImplementation(TestLibs.STARTER_TEST_CONTAINER)
 
     testRuntimeOnly(TestLibs.JUNIT_PLATFORM_LAUNCHER)

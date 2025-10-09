@@ -1,4 +1,5 @@
 dependencies {
     implementation(SpringBootLibs.STARTER)
     implementation(SpringBootLibs.DATA_JPA)
+    implementation(SpringBootLibs.DATA_REDIS)
 }
