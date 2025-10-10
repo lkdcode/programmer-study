@@ -2,11 +2,10 @@ package demo.example.server.concurrency
 
 import demo.example.server.base.BaseConcurrencyTest
 import demo.example.server.service.EventWithoutLockService
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.transaction.annotation.Transactional
 import java.util.concurrent.atomic.AtomicInteger
 
 class EventServiceTest : BaseConcurrencyTest() {
@@ -15,8 +14,7 @@ class EventServiceTest : BaseConcurrencyTest() {
     lateinit var eventWithoutLockService: EventWithoutLockService
 
     @Test
-    @Transactional
-    fun `재고 차감 누락 케이스`() {
+    fun `재고 차감 누락이 발생할 것이다`() {
         val seq = AtomicInteger(1)
 
         action {
@@ -31,8 +29,8 @@ class EventServiceTest : BaseConcurrencyTest() {
         println("✅ 남은 재고: $stockLeft")
 
         assertAll(
-            { Assertions.assertThat(TOTAL_USERS).isEqualTo(successCount) },
-            { Assertions.assertThat(stockLeft).isZero() }
+            { assertThat(TOTAL_USERS).isEqualTo(successCount) },
+            { assertThat(stockLeft).isNotEqualTo(BASE_STOCK - successCount) }
         )
     }
 }

@@ -14,7 +14,7 @@ class ApplicationCASServiceTest : BaseConcurrencyTest() {
     lateinit var applicationCASService: ApplicationCASService
 
     @Test
-    fun `ApplicationCAS 방식 케이스`() {
+    fun `Application CAS, 여러 요청 중 일부만 성공하더라도 재고 차감 누락은 발생하지 않을 것이다`() {
         val seq = AtomicInteger(0)
 
         action {
@@ -29,8 +29,8 @@ class ApplicationCASServiceTest : BaseConcurrencyTest() {
         println("✅ 남은 재고: $stockLeft")
 
         assertAll(
-            { assertThat(TOTAL_USERS).isEqualTo(successCount) },
-            { assertThat(stockLeft).isZero() }
+            { assertThat(TOTAL_USERS).isNotEqualTo(successCount) },
+            { assertThat(stockLeft).isEqualTo(BASE_STOCK - successCount) }
         )
     }
 }

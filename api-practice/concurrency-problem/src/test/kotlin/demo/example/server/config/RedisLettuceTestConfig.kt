@@ -7,6 +7,7 @@ import org.springframework.data.redis.connection.lettuce.LettuceClientConfigurat
 
 @TestConfiguration
 class RedisLettuceTestConfig : LettuceClientConfigurationBuilderCustomizer {
+
     override fun customize(builder: LettuceClientConfiguration.LettuceClientConfigurationBuilder) {
         val clientOptions = ClientOptions.builder()
             .autoReconnect(false)

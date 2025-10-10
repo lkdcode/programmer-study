@@ -3,13 +3,12 @@ package demo.example.server.concurrency
 import demo.example.server.base.BaseConcurrencyTest
 import demo.example.server.redis.EventQueueWorker
 import demo.example.server.service.RedisSingleThreadService
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
-import org.springframework.transaction.annotation.Transactional
 import java.util.concurrent.atomic.AtomicInteger
 
 class RedisSingleThreadServiceTest : BaseConcurrencyTest() {
@@ -30,8 +29,7 @@ class RedisSingleThreadServiceTest : BaseConcurrencyTest() {
     }
 
     @Test
-    @Transactional
-    fun `단일 스레드를 이용한 케이스`() {
+    fun `단일 스레드, 전체 요청이 성공하고 재고 차감 누락은 발생하지 않을 것이다`() {
         val seq = AtomicInteger(1)
 
         action {
@@ -48,8 +46,8 @@ class RedisSingleThreadServiceTest : BaseConcurrencyTest() {
         println("✅ 남은 재고: $stockLeft")
 
         assertAll(
-            { Assertions.assertThat(TOTAL_USERS).isEqualTo(successCount) },
-            { Assertions.assertThat(stockLeft).isEqualTo(BASE_STOCK - successCount) }
+            { assertThat(TOTAL_USERS).isEqualTo(successCount) },
+            { assertThat(stockLeft).isEqualTo(BASE_STOCK - successCount) }
         )
     }
 }
