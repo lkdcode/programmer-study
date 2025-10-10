@@ -1,24 +1,20 @@
 package demo.example.server.concurrency
 
 import demo.example.server.base.BaseConcurrencyTest
-import demo.example.server.service.ApplicationPessimisticLockService
-import demo.example.server.service.ApplicationPessimisticLockService2
 import demo.example.server.service.DatabasePessimisticLockService
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.transaction.annotation.Transactional
 import java.util.concurrent.atomic.AtomicInteger
 
-class DatabasePessimisticLockServiceTest  : BaseConcurrencyTest() {
+class DatabasePessimisticLockServiceTest : BaseConcurrencyTest() {
 
     @Autowired
     lateinit var databasePessimisticLockService: DatabasePessimisticLockService
 
     @Test
-    @Transactional
-    fun `데이터베이스 비관적 락 케이스`() {
+    fun `데이터베이스 비관적 락, 전체 요청이 성공하고 재고 차감 누락이 발생하지 않을 것이다`() {
         val seq = AtomicInteger(0)
 
         action {
@@ -33,8 +29,8 @@ class DatabasePessimisticLockServiceTest  : BaseConcurrencyTest() {
         println("✅ 남은 재고: $stockLeft")
 
         assertAll(
-            { Assertions.assertThat(TOTAL_USERS).isEqualTo(successCount) },
-            { Assertions.assertThat(0).isEqualTo(stockLeft) }
+            { assertThat(TOTAL_USERS).isEqualTo(successCount) },
+            { assertThat(stockLeft).isEqualTo(BASE_STOCK - successCount) }
         )
     }
 }

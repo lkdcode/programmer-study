@@ -5,19 +5,22 @@ import demo.example.server.container.RedisContainer
 import demo.example.server.repository.EventHistoryJpaRepository
 import demo.example.server.repository.EventStockJpaRepository
 import demo.example.server.support.ExecutorSupport
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.transaction.AfterTransaction
 
 @ContextConfiguration(
     initializers = [
-        MySqlContainer::class, RedisContainer::class
+        MySqlContainer::class,
+        RedisContainer::class,
     ]
 )
 @ActiveProfiles("test")
 @SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class BaseConcurrencyTest {
 
     @Autowired
@@ -28,14 +31,15 @@ abstract class BaseConcurrencyTest {
 
     val executorSupport: ExecutorSupport = ExecutorSupport()
 
-    @AfterTransaction
-    fun clearAndInit() {
+    @BeforeEach
+    fun clear() {
         eventStockRepository
             .findById(EVENT_ID)
             .ifPresent {
                 it.stock = BASE_STOCK
                 eventStockRepository.save(it)
             }
+
         eventHistoryJpaRepository.deleteAll()
     }
 
