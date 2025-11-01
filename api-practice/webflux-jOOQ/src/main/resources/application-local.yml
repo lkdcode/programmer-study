@@ -1,0 +1,16 @@
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:15432/lkdcode
+    username: lkdcode
+    password: lkdcode
+
+  flyway:
+    enabled: true
+    default-schema: public
+    schemas: public
+    url: jdbc:postgresql://localhost:15432/lkdcode
+    locations: classpath:db/migration
+
+  sql:
+    init:
+      mode: always
