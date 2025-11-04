@@ -1,4 +1,4 @@
-package lkdcode.server.flyway
+package lkdcode.server.jooq
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

@@ -1,4 +1,4 @@
-package lkdcode.server.flyway.config
+package lkdcode.server.jooq.config
 
 
 import org.flywaydb.core.Flyway
