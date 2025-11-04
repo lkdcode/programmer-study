@@ -18,11 +18,6 @@ object Kotlin {
 
 object Versioning {
     const val JAVA = 21
-    const val GROUP = "lkdcode.query"
+    const val GROUP = "lkdcode.jooq"
     const val VERSION = "0.0.1"
-}
-
-object JOOQ {
-    const val NS_STUDER_JOOQ = "nu.studer.jooq"
-    const val VERSION = "10.1.1"
 }

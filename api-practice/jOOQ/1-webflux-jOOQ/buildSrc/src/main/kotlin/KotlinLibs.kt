@@ -1,5 +1,5 @@
 object KotlinLibs {
-    const val PATH = "gradle/config/kotlin-dep.gradle"
+    const val PATH = "gradle/dep/kotlin-dep.gradle"
 
     const val JACKSON_MODULE_KOTLIN = "com.fasterxml.jackson.module:jackson-module-kotlin"
     const val KOTLIN_REFLECT = "org.jetbrains.kotlin:kotlin-reflect"

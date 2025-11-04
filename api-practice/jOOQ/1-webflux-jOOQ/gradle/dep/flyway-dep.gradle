@@ -1,0 +1,6 @@
+dependencies {
+    implementation(FlywayLibs.CORE)
+    implementation(FlywayLibs.POSTGRESQL)
+    implementation(FlywayLibs.POSTGRESQL_CONNECTOR)
+    implementation(FlywayLibs.PLUGIN)
+}
