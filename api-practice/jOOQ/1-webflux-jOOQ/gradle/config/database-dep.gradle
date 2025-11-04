@@ -1,0 +1,6 @@
+dependencies {
+    implementation(DatabaseLibs.JDBC)
+
+    runtimeOnly(DatabaseLibs.POSTGRESQL_CONNECTOR)
+    runtimeOnly(DatabaseLibs.R2DBC_POSTGRESQL)
+}
