@@ -1,5 +1,9 @@
 object JooqLibs {
-    const val PATH = "gradle/config/jooq-dep.gradle"
+    const val PATH = "gradle/dep/jooq-dep.gradle"
+    const val GRADLE_PATH = "gradle/config/jooq-config.gradle"
+
+    const val NS_STUDER_JOOQ = "nu.studer.jooq"
+    const val NS_STUDER_JOOQ_VERSION = "10.1.1"
 
     const val STRATEGY_NAME = "kr.co.hiveworks.framework.config.JPrefixGeneratorStrategy"
     const val TARGET_PACKAGE_NAME = "kr.co.hiveworks.jooq"
