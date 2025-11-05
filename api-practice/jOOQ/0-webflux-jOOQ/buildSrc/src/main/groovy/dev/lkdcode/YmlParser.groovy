@@ -4,7 +4,7 @@ package dev.lkdcode
 import org.gradle.api.Project
 import org.yaml.snakeyaml.Yaml
 
-class YmlService {
+class YmlParser {
     private static final SPRING = "spring"
     private static final SPRING_PROFILE_ACTIVE = "spring.profiles.active"
     private static final FLYWAY = "flyway"
@@ -17,7 +17,7 @@ class YmlService {
 
     private final Project project
 
-    YmlService(Project project) {
+    YmlParser(Project project) {
         this.project = project
     }
 

@@ -1,4 +1,4 @@
-import dev.lkdcode.YmlService
+import dev.lkdcode.YmlParser
 
 plugins {
     id(SpringBoot.ID) version SpringBoot.VERSION
@@ -34,10 +34,10 @@ apply {
     from(JooqLibs.PATH)
 }
 
-val databaseDriver: String = YmlService(project).flywayDriver
-val databaseUrl: String = YmlService(project).flywayUrl
-val databaseUser: String = YmlService(project).flywayUser
-val databasePassword: String = YmlService(project).flywayPassword
+val databaseDriver: String = YmlParser(project).flywayDriver
+val databaseUrl: String = YmlParser(project).flywayUrl
+val databaseUser: String = YmlParser(project).flywayUser
+val databasePassword: String = YmlParser(project).flywayPassword
 
 jooq {
     configurations {
