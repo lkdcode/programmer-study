@@ -5,11 +5,15 @@ spring:
     password: lkdcode
 
   flyway:
+    driver-class-name: org.postgresql.Driver
     enabled: true
     default-schema: public
     schemas: public
+    user: lkdcode
+    password: lkdcode
     url: jdbc:postgresql://localhost:15432/lkdcode
-    locations: classpath:db/migration
+    locations:
+      - classpath:db/migration
 
   sql:
     init:
