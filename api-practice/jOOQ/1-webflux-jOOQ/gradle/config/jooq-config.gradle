@@ -61,7 +61,6 @@ jooq {
                 generator.with {
                     name = 'org.jooq.codegen.KotlinGenerator'
 
-//                    strategy.name = "kr.co.hiveworks.jooq.HPrefixGeneratorStrategy"
 //                    strategy.name = JooqLibs.STRATEGY_NAME
 
                     database.with {

@@ -1,4 +1,0 @@
-dependencies {
-    implementation(SpringBootReactive.WEB_FLUX)
-    implementation(SpringBootReactive.R2DBC)
-}

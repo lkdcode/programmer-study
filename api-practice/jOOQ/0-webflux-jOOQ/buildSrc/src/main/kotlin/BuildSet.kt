@@ -21,8 +21,3 @@ object Versioning {
     const val GROUP = "lkdcode.query"
     const val VERSION = "0.0.1"
 }
-
-object JOOQ {
-    const val NS_STUDER_JOOQ = "nu.studer.jooq"
-    const val VERSION = "10.1.1"
-}
