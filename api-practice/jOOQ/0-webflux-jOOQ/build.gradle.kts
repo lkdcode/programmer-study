@@ -13,6 +13,7 @@ buildscript {
 }
 
 plugins {
+    java
     id(SpringBoot.ID) version SpringBoot.VERSION
     id(SpringBoot.DEPENDENCY_MANAGEMENT) version SpringBoot.DEPENDENCY_MANAGEMENT_VERSION
 
@@ -53,6 +54,17 @@ val databaseUrl: String = YmlParser(project).flywayUrl
 val databaseUser: String = YmlParser(project).flywayUser
 val databasePassword: String = YmlParser(project).flywayPassword
 
+
+val buildSrcClasspath = files(
+    rootProject.file("buildSrc/build/classes/kotlin/main"),
+    rootProject.file("buildSrc/build/classes/java/main")
+)
+
+dependencies {
+    jooqGenerator(buildSrcClasspath)
+    jooqGenerator("org.jetbrains.kotlin:kotlin-stdlib:2.0.21")
+}
+
 jooq {
     configurations {
         create("main") {
@@ -78,6 +90,18 @@ jooq {
                         isKotlinNotNullRecordAttributes = true
                         isKotlinNotNullInterfaceAttributes = true
                     }
+
+                    strategy.apply {
+                        name = "dev.lkdcode.jooq.LkdCodeGeneratorStrategy"
+                    }
+
+
+                    database.apply {
+                        name = "org.jooq.meta.postgres.PostgresDatabase"
+                        inputSchema = "public"
+                        excludes = "flyway_schema_history"
+                    }
+
                 }
             }
         }
@@ -134,8 +158,4 @@ tasks.register("printGradleClassloaders") {
         dump("System(Application) CL", ClassLoader.getSystemClassLoader())
         dump("Platform CL", ClassLoader.getPlatformClassLoader())
     }
-}
-
-plugins {
-    id(JooqLibs.NS_STUDER_JOOQ) version JooqLibs.VERSION
 }
