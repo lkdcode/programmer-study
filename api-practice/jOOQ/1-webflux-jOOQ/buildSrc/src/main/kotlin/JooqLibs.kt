@@ -1,11 +1,11 @@
 object JooqLibs {
     const val PATH = "gradle/dep/jooq-dep.gradle"
-    const val GRADLE_PATH = "gradle/config/jooq-config.gradle"
+    const val CONFIG_PATH = "gradle/config/jooq-config.gradle"
 
     const val NS_STUDER_JOOQ = "nu.studer.jooq"
-    const val NS_STUDER_JOOQ_VERSION = "10.1.1"
+    const val VERSION = "10.1.1"
 
-    const val STRATEGY_NAME = "dev.lkdcode.framework.config.JPrefixGeneratorStrategy"
+    const val STRATEGY_NAME = "dev.lkdcode.jooq.LkdCodeGeneratorStrategy"
     const val TARGET_PACKAGE_NAME = "dev.lkdcode.jooq"
     const val DEFAULT_DIRECTORY = "generated/jooq"
 

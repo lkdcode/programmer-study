@@ -8,8 +8,12 @@ spring:
     enabled: true
     default-schema: public
     schemas: public
+    driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:15432/lkdcode
-    locations: classpath:db/migration
+    user: lkdcode
+    password: lkdcode
+    locations:
+      - classpath:db/migration
 
   sql:
     init:

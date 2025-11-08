@@ -1,46 +1,23 @@
-import org.yaml.snakeyaml.Yaml
+import dev.lkdcode.yml.YmlParser
 
 
-ext['jooq.version'] = JooqLibs.JOOQ_VERSION
+def ymlParser = new YmlParser(project)
 
-def profile = (findProperty('spring.profiles.active') as String) ?: 'local'
-def ymlFile = file("src/main/resources/application-${profile}.yml")
-
-Map yml = (new Yaml().load(ymlFile.text) as Map) ?: [:]
-
-
-def nav = { Map m, Object... keys ->
-    def cur = m
-    for (k in keys) {
-        if (!(cur instanceof Map)) return null
-        cur = cur[k as String]
-        if (cur == null) return null
-    }
-    return cur
-}
-
-def jdbcUrl = String.valueOf(nav(yml, 'spring', 'flyway', 'url'))
-def jdbcUser = String.valueOf(nav(yml, 'spring', 'r2dbc', 'username'))
-def jdbcPass = String.valueOf(nav(yml, 'spring', 'r2dbc', 'password'))
-
-def buildSrcClasspath = files(
-        rootProject.file("buildSrc/build/classes/kotlin/main"),
-        rootProject.file("buildSrc/build/classes/java/main")
-)
+def jdbcUrl =  ymlParser.getFlywayUrl()
+def jdbcUser =  ymlParser.getFlywayUser()
+def jdbcPass =  ymlParser.getFlywayPassword()
 
 dependencies {
-    implementation("org.postgresql:postgresql:42.7.4")
+//    implementation("org.postgresql:postgresql:42.7.4")
 
     // ✅ Flyway core
-    implementation("org.flywaydb:flyway-core:10.20.0")
-//    jooqGenerator(project(":jooq-config"))
-    implementation(JooqLibs.JOOQ_CODEGEN)
+//    implementation("org.flywaydb:flyway-core:10.20.0")
+    jooqGenerator(project(":jooq-config"))
+//    implementation(JooqLibs.JOOQ_CODEGEN)
 //    jooqGenerator(files(project.rootProject.file("buildSrc/build/libs").listFiles()?.find { it.name.endsWith(".jar") }))
     // 또는 더 안전하게:
-    jooqGenerator(files(project.rootProject.file("buildSrc/build/classes/kotlin/main")))
 //    jooqGenerator(buildscript.configurations["classpath"])
 //    jooqGenerator("org.jooq:jooq-codegen:3.18.7")
-    jooqGenerator(buildSrcClasspath)
 }
 
 jooq {
@@ -61,7 +38,7 @@ jooq {
                 generator.with {
                     name = 'org.jooq.codegen.KotlinGenerator'
 
-//                    strategy.name = JooqLibs.STRATEGY_NAME
+                    strategy.name = JooqLibs.STRATEGY_NAME
 
                     database.with {
                         name = 'org.jooq.meta.postgres.PostgresDatabase'

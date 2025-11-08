@@ -4,7 +4,7 @@ object JooqLibs {
     const val NS_STUDER_JOOQ = "nu.studer.jooq"
     const val VERSION = "10.1.1"
 
-    const val STRATEGY_NAME = "dev.lkdcode.framework.config.JPrefixGeneratorStrategy"
+    const val STRATEGY_NAME = "dev.lkdcode.framework.config.LkdCodeGeneratorStrategy"
     const val TARGET_PACKAGE_NAME = "dev.lkdcode.jooq"
     const val DEFAULT_DIRECTORY = "generated/jooq"
 
