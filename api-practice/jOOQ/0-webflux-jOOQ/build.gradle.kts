@@ -66,6 +66,8 @@ dependencies {
 }
 
 jooq {
+    version = JooqLibs.JOOQ_VERSION
+
     configurations {
         create("main") {
             jooqConfiguration.apply {
@@ -92,9 +94,8 @@ jooq {
                     }
 
                     strategy.apply {
-                        name = "dev.lkdcode.jooq.LkdCodeGeneratorStrategy"
+                        name = JooqLibs.STRATEGY_NAME
                     }
-
 
                     database.apply {
                         name = "org.jooq.meta.postgres.PostgresDatabase"
@@ -102,6 +103,22 @@ jooq {
                         excludes = "flyway_schema_history"
                     }
 
+                    generate.apply {
+                        isJavaTimeTypes = true
+                        isDeprecated = false
+                        isFluentSetters = true
+                        isRecords = true
+                        isDaos = false
+
+                        isKotlinNotNullPojoAttributes = true
+                        isKotlinNotNullRecordAttributes = true
+                        isKotlinNotNullInterfaceAttributes = true
+                    }
+
+                    target.apply {
+                        packageName = JooqLibs.TARGET_PACKAGE_NAME
+                        directory = layout.buildDirectory.dir(JooqLibs.DEFAULT_DIRECTORY).get().asFile.path
+                    }
                 }
             }
         }
