@@ -1,26 +1,24 @@
-package lkdcode.server.jooq.config
+package dev.lkdcode.config
 
 
 import org.flywaydb.core.Flyway
 import org.springframework.boot.autoconfigure.flyway.FlywayProperties
-import org.springframework.boot.autoconfigure.r2dbc.R2dbcProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@EnableConfigurationProperties(R2dbcProperties::class, FlywayProperties::class)
+@EnableConfigurationProperties(FlywayProperties::class)
 class FlywayInit {
 
     @Bean(initMethod = "migrate")
     fun flyway(
         flywayProperties: FlywayProperties,
-        r2dbcProperties: R2dbcProperties,
     ): Flyway = Flyway.configure()
         .dataSource(
             flywayProperties.url,
-            r2dbcProperties.username,
-            r2dbcProperties.password
+            flywayProperties.user,
+            flywayProperties.password
         )
         .locations(*flywayProperties.locations.toTypedArray())
         .baselineOnMigrate(true)
