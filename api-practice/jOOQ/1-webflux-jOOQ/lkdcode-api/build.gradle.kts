@@ -24,13 +24,6 @@ apply {
     from(JooqLibs.CONFIG_PATH)
 }
 
-configurations {
-    // ⭐ compileOnly와 annotationProcessor가 런타임에 포함되도록
-    implementation {
-        extendsFrom(configurations.annotationProcessor.get())
-    }
-}
-
 tasks.named("generateJooq") {
     dependsOn("flywayMigrate")
 }

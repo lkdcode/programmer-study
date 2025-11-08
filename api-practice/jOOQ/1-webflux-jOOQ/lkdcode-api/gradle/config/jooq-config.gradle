@@ -3,21 +3,13 @@ import dev.lkdcode.yml.YmlParser
 
 def ymlParser = new YmlParser(project)
 
-def jdbcUrl =  ymlParser.getFlywayUrl()
-def jdbcUser =  ymlParser.getFlywayUser()
-def jdbcPass =  ymlParser.getFlywayPassword()
+def jdbcDriver = ymlParser.getFlywayDriver()
+def jdbcUrl = ymlParser.getFlywayUrl()
+def jdbcUser = ymlParser.getFlywayUser()
+def jdbcPass = ymlParser.getFlywayPassword()
 
 dependencies {
-//    implementation("org.postgresql:postgresql:42.7.4")
-
-    // ✅ Flyway core
-//    implementation("org.flywaydb:flyway-core:10.20.0")
     jooqGenerator(project(":jooq-config"))
-//    implementation(JooqLibs.JOOQ_CODEGEN)
-//    jooqGenerator(files(project.rootProject.file("buildSrc/build/libs").listFiles()?.find { it.name.endsWith(".jar") }))
-    // 또는 더 안전하게:
-//    jooqGenerator(buildscript.configurations["classpath"])
-//    jooqGenerator("org.jooq:jooq-codegen:3.18.7")
 }
 
 jooq {
@@ -29,7 +21,7 @@ jooq {
 
             jooqConfiguration.with {
                 jdbc.with {
-                    driver = 'org.postgresql.Driver'
+                    driver = jdbcDriver
                     url = jdbcUrl
                     user = jdbcUser
                     password = jdbcPass

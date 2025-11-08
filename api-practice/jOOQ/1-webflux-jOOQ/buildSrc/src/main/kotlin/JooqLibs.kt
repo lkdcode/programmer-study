@@ -7,7 +7,7 @@ object JooqLibs {
 
     const val STRATEGY_NAME = "dev.lkdcode.jooq.LkdCodeGeneratorStrategy"
     const val TARGET_PACKAGE_NAME = "dev.lkdcode.jooq"
-    const val DEFAULT_DIRECTORY = "generated/jooq"
+    const val DEFAULT_DIRECTORY = "generated-lkdcode/jooq"
 
     const val JOOQ_VERSION = "3.20.8"
 
