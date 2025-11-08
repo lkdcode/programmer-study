@@ -10,13 +10,17 @@ class LkdCodeGeneratorStrategy : DefaultGeneratorStrategy() {
 
     override fun getJavaClassName(definition: Definition, mode: GeneratorStrategy.Mode): String =
         if (mode == GeneratorStrategy.Mode.DEFAULT || mode == GeneratorStrategy.Mode.RECORD) {
-            "J" + super.getJavaClassName(definition, mode)
+            DEFAULT_PREFIX + super.getJavaClassName(definition, mode)
         } else super.getJavaClassName(definition, mode)
 
     override fun getJavaIdentifier(definition: Definition?): String =
         when (definition) {
-            is TableDefinition -> "J" + super.getJavaIdentifier(definition)
+            is TableDefinition -> DEFAULT_PREFIX + super.getJavaIdentifier(definition)
 
             else -> super.getJavaIdentifier(definition)
         }
+
+    companion object {
+        private const val DEFAULT_PREFIX = "J"
+    }
 }
