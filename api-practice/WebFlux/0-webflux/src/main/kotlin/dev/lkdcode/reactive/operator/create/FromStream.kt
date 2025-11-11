@@ -1,16 +1,13 @@
-package dev.lkdcode.reactive.operator
+package dev.lkdcode.reactive.operator.create
 
 import reactor.core.publisher.Flux
+import java.util.stream.Stream
+
 
 fun main() {
     Flux
-        .fromIterable(listOf(1, 2, 3, 4, 5, 6, 7, 8))
-        .log()
-        .subscribe()
-
-    Flux
-        .fromIterable(
-            listOf(
+        .fromStream(
+            Stream.of(
                 "A" to 1,
                 "B" to 2,
                 "C" to 3,
@@ -22,7 +19,5 @@ fun main() {
             )
         )
         .log()
-        .subscribe {
-            println("${it.first} to ${it.second}")
-        }
+        .subscribe()
 }
