@@ -1,0 +1,63 @@
+version: "3.9"
+
+name: lkdcode-message-server
+services:
+  kafka:
+    image: apache/kafka-native:4.1.0
+    container_name: lkdcode-kafka
+    ports:
+      - "19092:9092"
+    environment:
+      KAFKA_LISTENERS: CONTROLLER://localhost:9091,HOST://0.0.0.0:9092,DOCKER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: HOST://localhost:9092,DOCKER://kafka:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,DOCKER:PLAINTEXT,HOST:PLAINTEXT
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9091
+      KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    volumes:
+      - kafka_data:/bitnami/kafka
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:7.0
+    container_name: lkdcode-monogodb
+    restart: unless-stopped
+    ports:
+      - "17017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: lkdcode
+      MONGO_INITDB_ROOT_PASSWORD: lkdcode
+    volumes:
+      - mongodata:/data/db
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: lkdcode-postgreSQL
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: lkdcode
+      POSTGRES_PASSWORD: lkdcode
+      POSTGRES_DB: lkdcode
+    ports:
+      - "15555:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: lkdcode-redis
+    restart: unless-stopped
+    command: [ "redis-server", "--requirepass", "lkdcode" ]
+    ports:
+      - "16379:6379"
+    volumes:
+      - redisdata:/data
+
+volumes:
+  pgdata:
+  mongodata:
+  redisdata:
+  kafka_data:
