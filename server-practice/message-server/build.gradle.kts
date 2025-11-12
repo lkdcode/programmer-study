@@ -1,4 +1,6 @@
 plugins {
+    java
+
     id(SpringBoot.ID) version SpringBoot.VERSION
     id(SpringBoot.DEPENDENCY_MANAGEMENT) version SpringBoot.DEPENDENCY_MANAGEMENT_VERSION
 
@@ -9,26 +11,18 @@ plugins {
     kotlin(Kotlin.WITH_LOMBOK) version Kotlin.KOTLIN_VERSION
 }
 
-group = Versioning.GROUP
-version = Versioning.VERSION
-
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(Versioning.JAVA)
     }
 }
 
-repositories {
-    mavenCentral()
-}
+allprojects {
+    group = Versioning.GROUP
+    version = Versioning.VERSION
 
-apply {
-//    from(SpringBootReactive.PATH)
-//    from(DatabaseLibs.PATH)
-//    from(FlywayLibs.PATH)
-//    from(KotlinLibs.PATH)
-}
-
-kapt {
-    generateStubs = true
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
 }
