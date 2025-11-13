@@ -1,4 +1,4 @@
-package lkdcode.server.dev.lkdcode.adapter.input.rest.command
+package dev.lkdcode.adapter.input.rest.command
 
 import dev.lkdcode.application.ports.input.command.CreatePostDTO
 import dev.lkdcode.application.ports.input.command.CreatePostUsecase
