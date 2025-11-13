@@ -1,21 +1,14 @@
 plugins {
-    kotlin("jvm")
-}
+    id(SpringBoot.ID)
+    id(SpringBoot.DEPENDENCY_MANAGEMENT)
 
-group = "lkdcode.server"
-version = "0.0.1"
-
-repositories {
-    mavenCentral()
+    kotlin(Kotlin.WITH_JVM)
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
-}
+    implementation(project(":message-domain:domain-post"))
 
-tasks.test {
-    useJUnitPlatform()
-}
-kotlin {
-    jvmToolchain(21)
+    implementation("org.springframework:spring-context")
+    implementation("org.springframework:spring-tx")
+    implementation("org.springframework:spring-aop")
 }

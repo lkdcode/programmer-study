@@ -1,0 +1,3 @@
+dependencies {
+    implementation(SpringWebFluxLibs.WEB_FLUX)
+}
