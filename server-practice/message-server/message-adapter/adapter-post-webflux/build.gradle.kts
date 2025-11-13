@@ -16,5 +16,4 @@ apply {
 dependencies {
     implementation(project(":message-domain:domain-post"))
     implementation(project(":message-application:application-post"))
-    implementation(project(":message-adapter:adapter-post"))
 }
