@@ -25,3 +25,4 @@ include("message-adapter:adapter-post-webflux")
 findProject(":message-adapter:adapter-post-webflux")?.name = "adapter-post-webflux"
 include("message-boot:boot-post-webflux")
 findProject(":message-boot:boot-post-webflux")?.name = "boot-post-webflux"
+include("jsp")
