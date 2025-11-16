@@ -13,8 +13,3 @@ apply {
     from(SpringWebFluxLibs.PATH)
     from(KafkaLibs.PATH)
 }
-
-dependencies {
-    implementation(project(":message-domain:domain-post"))
-    implementation(project(":message-application:application-post"))
-}

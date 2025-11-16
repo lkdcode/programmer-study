@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono
 
 @Service
 class SocketBroadcast(
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
 ) {
 
     fun init(sessionId: String) {

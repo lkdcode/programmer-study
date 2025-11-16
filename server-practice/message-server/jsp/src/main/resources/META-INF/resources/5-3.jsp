@@ -17,7 +17,7 @@
     <title>회원 정보 결과</title>
 </head>
 <body>
-    <h2>입력하신 정보</h2>
+    <h2>입력 정보</h2>
     이름 : <%= name %><br>
     전화번호 : <%= phone %><br>
     성별 : <%= gender %><br>
