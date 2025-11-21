@@ -1,3 +1,6 @@
 package dev.lkdcode.infrastructure.websocket.enum
 
-enum class ChannelType
+enum class ChannelType {
+    DM(),
+    GM(),
+}

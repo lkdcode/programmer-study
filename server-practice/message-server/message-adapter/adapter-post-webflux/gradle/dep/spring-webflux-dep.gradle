@@ -3,4 +3,5 @@ dependencies {
 
     implementation(SpringWebFluxLibs.REACTIVE_STREAMS)
     implementation(SpringWebFluxLibs.REACTOR_CORE)
+    implementation(SpringWebFluxLibs.SECURITY)
 }
