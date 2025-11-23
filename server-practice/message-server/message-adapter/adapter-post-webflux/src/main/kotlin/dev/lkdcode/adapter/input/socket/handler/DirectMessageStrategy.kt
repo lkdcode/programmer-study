@@ -5,8 +5,9 @@ import dev.lkdcode.infrastructure.websocket.request.SocketRequest
 import reactor.core.publisher.Mono
 
 
-interface DirectMessageStrategy {
-    fun <T> execute(
+interface DirectMessageStrategy<T> {
+
+    fun execute(
         auth: UserAuthentication,
         sessionId: String,
         socketRequest: SocketRequest,
