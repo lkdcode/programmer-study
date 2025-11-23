@@ -1,2 +1,20 @@
-package dev.lkdcode.adapter.input.socket.strategy 
+package dev.lkdcode.adapter.input.socket.strategy
 
+import dev.lkdcode.adapter.input.socket.handler.DirectMessageStrategy
+import dev.lkdcode.infrastructure.security.UserAuthentication
+import dev.lkdcode.infrastructure.websocket.request.SocketRequest
+import org.springframework.stereotype.Service
+import reactor.core.publisher.Mono
+
+
+@Service
+class PubStrategy : DirectMessageStrategy<Void> {
+
+    override fun execute(
+        auth: UserAuthentication,
+        sessionId: String,
+        socketRequest: SocketRequest
+    ): Mono<Void> {
+        TODO("Not yet implemented")
+    }
+}
