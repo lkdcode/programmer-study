@@ -19,11 +19,11 @@ class DirectMessageHandler(
     private val pingStrategy: PingStrategy,
 ) {
 
-    fun <T> handling(
+    fun handling(
         auth: UserAuthentication,
         sessionId: String,
         socketRequest: SocketRequest,
-    ): Mono<T> =
+    ): Mono<Any?> =
         when (socketRequest.operationType) {
             OperationType.PUB -> pubStrategy.execute(auth, sessionId, socketRequest)
             OperationType.SUB -> subStrategy.execute(auth, sessionId, socketRequest)
