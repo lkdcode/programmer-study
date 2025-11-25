@@ -10,5 +10,7 @@ plugins {
 }
 
 apply {
+    from(SpringWebFluxLibs.PATH)
+    from(KotlinLibs.PATH)
     from(SpringSecurityLibs.PATH)
 }
