@@ -1,0 +1,4 @@
+spring:
+  config:
+    import:
+      - classpath:/secret/jwt/jwt-config.yml
