@@ -1,4 +1,4 @@
-package dev.lkdcode.security.jwt
+package dev.lkdcode.security.jwt.policy
 
 import dev.lkdcode.security.jwt.spec.JwtSpec
 import org.springframework.cache.CacheManager
