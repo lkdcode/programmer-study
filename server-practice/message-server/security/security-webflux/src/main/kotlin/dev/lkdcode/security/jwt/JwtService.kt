@@ -44,11 +44,10 @@ class JwtService(
     )
 
     fun getUsername(
-        jwtProperties: JwtProperties,
         token: String,
     ): String {
         val parsed = parser.removePrefix(token)
-        return parser.getUsername(jwtProperties, parsed!!)
+        return parser.getUsername(accessTokenProperties, parsed!!)
     }
 
     fun remove(token: String) {

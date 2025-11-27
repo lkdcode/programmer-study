@@ -27,3 +27,5 @@ include("message-boot:boot-post-webflux")
 findProject(":message-boot:boot-post-webflux")?.name = "boot-post-webflux"
 include("jsp")
 include("message-infrastructure")
+include("security:security-mvc")
+include("security:security-webflux")
