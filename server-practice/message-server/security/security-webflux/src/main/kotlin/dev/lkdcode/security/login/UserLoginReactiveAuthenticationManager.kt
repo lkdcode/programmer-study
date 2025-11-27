@@ -23,16 +23,16 @@ class UserLoginReactiveAuthenticationManager(
 
         return securityUserRepository
             .findById(loginId)
-            .switchIfEmpty(Mono.error(BadCredentialsException("Invalid")))
+            .switchIfEmpty(Mono.error(BadCredentialsException("Invalid Authentication")))
             .filter { passwordEncoder.matches(password, it.password) }
             .switchIfEmpty(
                 Mono.defer {
-                    authenticationPolicy.failure(loginId)
-                        .then(Mono.error(BadCredentialsException("Invalid")))
+                    authenticationPolicy.onFailure(loginId)
+                        .then(Mono.error(BadCredentialsException("Invalid Authentication")))
                 }
             )
             .filterWhen { authenticationPolicy.isAttemptAllowed(loginId) }
-            .switchIfEmpty(Mono.error(BadCredentialsException("Invalid")))
+            .switchIfEmpty(Mono.error(BadCredentialsException("Invalid Authentication")))
             .map { UsernamePasswordAuthenticationToken(it.loginId, null, it.role) }
     }
 }

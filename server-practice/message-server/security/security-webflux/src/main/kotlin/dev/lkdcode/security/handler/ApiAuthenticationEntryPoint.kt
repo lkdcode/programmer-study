@@ -13,5 +13,4 @@ class ApiAuthenticationEntryPoint(
 
     override fun commence(exchange: ServerWebExchange, ex: AuthenticationException): Mono<Void> =
         Mono.empty()
-
 }
