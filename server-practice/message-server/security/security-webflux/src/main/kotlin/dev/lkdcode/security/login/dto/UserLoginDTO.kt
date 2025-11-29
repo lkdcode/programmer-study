@@ -1,4 +1,4 @@
-package dev.lkdcode.security.login
+package dev.lkdcode.security.login.dto
 
 data class UserLoginDTO(
     val loginId: String,
