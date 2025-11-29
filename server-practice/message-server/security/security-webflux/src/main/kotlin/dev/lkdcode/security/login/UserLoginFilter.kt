@@ -9,16 +9,17 @@ import org.springframework.stereotype.Component
 
 @Component
 class UserLoginFilter(
-    private val adminReactiveAuthenticationManager: UserLoginReactiveAuthenticationManager,
     private val adminLoginConverter: UserLoginConverter,
+    private val userLoginSuccessHandler: UserLoginSuccessHandler,
     private val userAuthenticationFailureHandler: UserAuthenticationFailureHandler,
+    private val adminReactiveAuthenticationManager: UserLoginReactiveAuthenticationManager,
 ) {
 
     fun adminAuthenticationWebFilter(): AuthenticationWebFilter =
         AuthenticationWebFilter(adminReactiveAuthenticationManager)
             .apply {
                 setServerAuthenticationConverter(adminLoginConverter)
-//                setAuthenticationSuccessHandler()
+                setAuthenticationSuccessHandler(userLoginSuccessHandler)
                 setAuthenticationFailureHandler(userAuthenticationFailureHandler)
                 setRequiresAuthenticationMatcher(
                     ServerWebExchangeMatchers.pathMatchers(HttpMethod.POST, "/api/login")

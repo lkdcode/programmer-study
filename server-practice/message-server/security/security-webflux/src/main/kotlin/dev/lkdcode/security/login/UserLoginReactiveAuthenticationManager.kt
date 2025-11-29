@@ -1,5 +1,6 @@
 package dev.lkdcode.security.login
 
+import dev.lkdcode.security.authentication.UserAuthentication
 import dev.lkdcode.security.login.policy.AuthenticationPolicy
 import dev.lkdcode.security.login.repository.SecurityUserRepository
 import org.springframework.security.authentication.BadCredentialsException
@@ -33,6 +34,10 @@ class UserLoginReactiveAuthenticationManager(
             )
             .filterWhen { authenticationPolicy.isAttemptAllowed(loginId) }
             .switchIfEmpty(Mono.error(BadCredentialsException("Invalid Authentication")))
-            .map { UsernamePasswordAuthenticationToken(it.loginId, null, it.role) }
+            .map {
+                UsernamePasswordAuthenticationToken(
+                    it, null, it.role
+                )
+            }
     }
 }
