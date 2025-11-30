@@ -1,8 +1,8 @@
-package kr.co.hiveworks.framework.api.client
+package dev.lkdcode.api.client
 
-import kr.co.hiveworks.framework.api.exception.ApiException
-import kr.co.hiveworks.framework.api.response.ApiResponseCode
-import kr.co.hiveworks.framework.log.logInfo
+import dev.lkdcode.api.exception.ApiException
+import dev.lkdcode.api.response.ApiResponseCode
+import dev.lkdcode.log.logInfo
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpHeaders
