@@ -8,13 +8,13 @@ import reactor.core.publisher.Mono
 
 
 @Service
-class PingStrategy : DirectMessageStrategy<Void> {
+class PingStrategy : DirectMessageStrategy {
 
     override fun execute(
         auth: UserAuthentication,
         sessionId: String,
         socketRequest: SocketRequest
-    ): Mono<Void> {
+    ): Mono<PubDTO> {
         TODO("Not yet implemented")
     }
 }
