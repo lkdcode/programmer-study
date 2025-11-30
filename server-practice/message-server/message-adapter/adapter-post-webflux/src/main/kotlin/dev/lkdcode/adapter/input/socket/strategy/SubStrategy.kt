@@ -11,13 +11,13 @@ import reactor.core.publisher.Mono
 @Service
 class SubStrategy(
     private val directMessageGuard: DirectMessageGuard,
-) : DirectMessageStrategy<Void> {
+) : DirectMessageStrategy {
 
     override fun execute(
         auth: UserAuthentication,
         sessionId: String,
         socketRequest: SocketRequest
-    ): Mono<Void> = Mono
+    ): Mono<PubDTO> = Mono
         .fromCallable { directMessageGuard.requireMemberOfMessageRoom() }
-        .then()
+        .then(Mono.just(PubDTO(1)))
 }

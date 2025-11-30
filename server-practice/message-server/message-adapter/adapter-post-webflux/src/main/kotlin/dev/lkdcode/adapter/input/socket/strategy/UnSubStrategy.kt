@@ -8,13 +8,13 @@ import reactor.core.publisher.Mono
 
 
 @Service
-class UnSubStrategy : DirectMessageStrategy<Void> {
+class UnSubStrategy : DirectMessageStrategy {
 
     override fun execute(
         auth: UserAuthentication,
         sessionId: String,
         socketRequest: SocketRequest
-    ): Mono<Void> {
+    ): Mono<PubDTO> {
         TODO("Not yet implemented")
     }
 }
