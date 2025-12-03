@@ -1,6 +1,5 @@
 package cool.hdd.domain.post.entity
 
-import cool.hdd.domain.post.entity.Post.PostId
 import cool.hdd.domain.post.value.*
 import java.time.Instant
 
