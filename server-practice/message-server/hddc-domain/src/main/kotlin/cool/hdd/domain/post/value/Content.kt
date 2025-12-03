@@ -5,6 +5,8 @@ value class Content(
     val value: String
 ) {
 
+    fun validate(): Boolean = value.contains("lkdcode")
+
     init {
         require(value.isNotBlank()) { REQUIRE_MESSAGE }
         require(value.length <= MAX_LENGTH) { INVALID_LENGTH_MESSAGE }
