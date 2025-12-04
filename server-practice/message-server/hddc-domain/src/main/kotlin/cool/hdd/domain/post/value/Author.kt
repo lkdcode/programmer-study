@@ -3,8 +3,13 @@ package cool.hdd.domain.post.value
 data class Author(
     val userId: Long,
     val username: String,
-    val role: UserRole
+    val role: UserRole,
+    val isLocked: Boolean,
+    val isValid: Boolean,
 ) {
+
+    val isNotLocked get() = !isLocked
+
     enum class UserRole {
         ADMIN, MODERATOR, USER, GUEST
     }
