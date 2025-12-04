@@ -2,6 +2,8 @@ package cool.hdd.domain.post.service
 
 import cool.hdd.domain.post.aggregate.PostAggregate
 import cool.hdd.domain.post.entity.Post
+import cool.hdd.domain.post.repository.PostRepository
+import cool.hdd.domain.post.value.Author
 import cool.hdd.domain.post.value.PostStatus
 
 class PostCreationService private constructor(
@@ -12,8 +14,12 @@ class PostCreationService private constructor(
         require(post.status == PostStatus.DRAFT) { "INVALID" }
     }
 
-    fun saved(): PostAggregate =
-        PostAggregate.from(post)
+    fun validateAuthor(validate: Author.() -> Unit): PostCreationService = apply {
+        require(post.author.isNotLocked)
+        require(post.author.isValid)
+    }
+
+    fun saved(): PostAggregate = PostAggregate.from(post)
 
     companion object {
         fun execute(
