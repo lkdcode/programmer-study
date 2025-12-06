@@ -2,7 +2,6 @@ package cool.hdd.domain.post.service
 
 import cool.hdd.domain.post.aggregate.PostAggregate
 import cool.hdd.domain.post.entity.Post
-import cool.hdd.domain.post.repository.PostRepository
 import cool.hdd.domain.post.value.Author
 import cool.hdd.domain.post.value.PostStatus
 
