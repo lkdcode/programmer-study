@@ -33,9 +33,29 @@ class PostAggregate private constructor(
         return this
     }
 
+    fun delete(author: Author, now: Instant): PostAggregate {
+        requireCanDelete(author)
+
+        this.post = post.copy(
+            title = post.title,
+            content = post.content,
+            status = PostStatus.DELETED,
+            platformCategory = post.platformCategory,
+            product = post.product,
+            now = now
+        )
+
+        return this
+    }
+
     private fun requireCanEdit(author: Author) {
         require(post.status == PostStatus.PUBLISHED) { "삭제되거나 비활성화된 글은 수정할 수 없습니다." }
         require(post.author == author) { "작성자만 수정할 수 있습니다." }
+    }
+
+    private fun requireCanDelete(author: Author) {
+        require(post.status != PostStatus.DELETED) { "이미 삭제된 글입니다." }
+        require(post.author == author || author.canDelete()) { "작성자 또는 관리자만 삭제할 수 있습니다." }
     }
 
     companion object {

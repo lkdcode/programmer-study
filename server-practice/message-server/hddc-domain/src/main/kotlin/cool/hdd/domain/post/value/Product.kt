@@ -6,4 +6,5 @@ data class Product(
     val price: Long,
     val link: String,
     val platformCategory: PlatformCategory,
+    val thumbnail: String,
 )
