@@ -10,6 +10,11 @@ class PostAggregate private constructor(
     private var post: Post
 ) {
 
+    @JvmInline
+    value class PostId(val value: Long)
+
+    fun getId(): PostId = PostId(post.id.value)
+
     fun update(
         title: Title,
         content: Content,
@@ -47,6 +52,8 @@ class PostAggregate private constructor(
 
         return this
     }
+
+    fun getStatus(): PostStatus = post.status
 
     private fun requireCanEdit(author: Author) {
         require(post.status == PostStatus.PUBLISHED) { "삭제되거나 비활성화된 글은 수정할 수 없습니다." }
