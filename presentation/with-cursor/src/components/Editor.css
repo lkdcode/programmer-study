@@ -3,6 +3,7 @@
   display: flex;
   min-height: 100vh;
   background-color: #f5f5f5;
+  background-color: #1d1d1f;
 }
 
 /* 왼쪽 노란색 사이드바 (전체 높이) */
@@ -122,6 +123,7 @@
   cursor: pointer;
   color: #111827;
   transition: all 0.2s;
+  border-radius: 50%;
 }
 
 .icon-btn:hover {
@@ -178,6 +180,7 @@
   flex-direction: column;
   background-color: #f5f5f5;
   position: relative;
+  min-height: 0;
 }
 
 /* 캔버스 영역 */
@@ -198,85 +201,152 @@
 
 .works-display {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 24px;
   width: 100%;
-  max-width: 1200px;
+  max-width: 2400px;
 }
 
 .work-item {
   position: relative;
-  background-color: #ffffff;
+  background-color: #2d2d2d;
   border-radius: 12px;
-  padding: 32px;
+  padding: 40px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  min-height: 200px;
+  aspect-ratio: 1109.26 / 605.05; /* 이미지 비율 유지 */
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+
+  /* background-color: #d9d9d9; */
+}
+
+.work-item:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .work-content {
   font-size: 36px;
-  color: #111827;
+  color: #ffffff;
   text-align: center;
   line-height: 1.4;
 }
 
-.work-delete {
+/* 카드 버튼 그룹 (기본적으로 숨김) */
+.work-buttons {
   position: absolute;
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.work-item:hover .work-buttons {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 좌측 상단 */
+.work-buttons.top-left {
+  top: 12px;
+  left: 12px;
+}
+
+/* 우측 상단 */
+.work-buttons.top-right {
   top: 12px;
   right: 12px;
-  width: 32px;
-  height: 32px;
+}
+
+/* 좌측 하단 */
+.work-buttons.bottom-left {
+  bottom: 12px;
+  left: 12px;
+}
+
+/* 우측 하단 */
+.work-buttons.bottom-right {
+  bottom: 12px;
+  right: 12px;
+}
+
+/* 개별 버튼 스타일 */
+.work-btn {
+  width: 24px;
+  height: 24px;
   border: none;
-  background-color: #f5f5f5;
-  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #111827;
-  font-size: 20px;
-  transition: all 0.2s;
-}
-
-.work-delete:hover {
-  background-color: #ef4444;
   color: #ffffff;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  padding: 0;
 }
 
-/* 하단 입력 박스 */
+.work-btn:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+  /* transform: scale(1.1); */
+  /* background: linear-gradient(135deg, #1f2937 0%, #111827 100%); */
+  /* background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6)); */
+  /* box-shadow: 0 6px 20px rgba(17, 24, 39, 0.4); */
+}
+
+.work-btn.work-delete:hover {
+  background-color: rgba(239, 68, 68, 0.8);
+}
+
+/* 하단 입력 박스 (Sticky) */
 .input-box {
-  padding: 20px;
+  position: sticky;
+  bottom: 0;
+  padding: 0px 20px 20px 20px;
   display: flex;
   justify-content: center;
+  background-color: #f5f5f5;
+  z-index: 10;
+  margin-top: auto;
+
+  background-color: rgba(0, 0, 0, 0.0);
 }
 
 .input-content {
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
   background-color: #ffffff;
   border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px 24px;
+  /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12); */
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
-.prompt-input {
-  width: 100%;
-  border: none;
-  outline: none;
+.prompt-text {
+  min-height: 24px;
   font-size: 15px;
   color: #111827;
-  resize: none;
-  font-family: inherit;
-  line-height: 1.5;
+  line-height: 1.6;
+  outline: none;
+  word-wrap: break-word;
+  white-space: pre-wrap;
 }
 
-.prompt-input::placeholder {
+.prompt-text:empty::before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+}
+
+.prompt-placeholder {
   color: #9ca3af;
 }
 
@@ -291,25 +361,27 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 16px;
+  padding: 10px 18px;
   background-color: rgb(250, 212, 0);
   color: #111827;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .add-image-btn:hover {
-  background-color: #f59e0b;
+  background-color: rgb(250, 212, 0);
+  /* transform: translateY(-1px); */
 }
 
 .input-icons {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   flex: 1;
   justify-content: flex-end;
 }
@@ -332,21 +404,55 @@
 }
 
 .submit-btn {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border: none;
-  background-color: #111827;
+  background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
   color: #ffffff;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(17, 24, 39, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease;
 }
 
 .submit-btn:hover {
-  background-color: #333333;
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  box-shadow: 0 6px 20px rgba(17, 24, 39, 0.4);
+  /* transform: translateY(-2px); */
+}
+
+.submit-btn:hover::before {
+  width: 100%;
+  height: 100%;
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(17, 24, 39, 0.3);
+}
+
+.submit-btn .submit-arrow {
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s ease;
 }
 
 /* 하단 면책 조항 */
@@ -413,6 +519,11 @@
 
   .works-display {
     grid-template-columns: 1fr;
+  }
+
+  .work-item {
+    aspect-ratio: auto;
+    min-height: 300px;
   }
 
   .input-content {
