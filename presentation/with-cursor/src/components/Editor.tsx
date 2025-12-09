@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './Editor.css'
 
 // 캘리그래피 작품의 타입 정의
@@ -9,22 +10,58 @@ interface CalligraphyWork {
 }
 
 function Editor() {
+  const navigate = useNavigate()
+  
   // 사용자가 입력한 텍스트를 저장하는 상태
   const [inputText, setInputText] = useState<string>('')
   
   // 생성된 캘리그래피 작품들을 저장하는 배열
   const [works, setWorks] = useState<CalligraphyWork[]>([])
   
+  // 로딩 상태
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  
   // contentEditable div의 ref
   const promptRef = useRef<HTMLDivElement>(null)
+  
+  // canvas-area의 ref (스크롤 제어용)
+  const canvasAreaRef = useRef<HTMLDivElement>(null)
+  
+  // 스켈레톤 요소의 ref
+  const skeletonRef = useRef<HTMLDivElement>(null)
+  
+  // 모달 상태 관리
+  const [openModal, setOpenModal] = useState<string | null>(null)
+  const [modalPosition, setModalPosition] = useState<{ top: number; left: number } | null>(null)
+  
+  // 시드 입력 상태
+  const [seed, setSeed] = useState<string>('492565')
+  const [isSeedLocked, setIsSeedLocked] = useState<boolean>(false)
+  
+  // 비율 선택 상태
+  const [selectedRatio, setSelectedRatio] = useState<string>('1:1')
+  
+  // 속성 선택 상태
+  const [selectedStyle, setSelectedStyle] = useState<string>('클래식')
+  
+  // 버튼 refs
+  const cropBtnRef = useRef<HTMLButtonElement>(null)
+  const zoomBtnRef = useRef<HTMLButtonElement>(null)
+  const settingsBtnRef = useRef<HTMLButtonElement>(null)
 
   // 캘리그래피를 생성하는 함수
-  const handleCreate = () => {
+  const handleCreate = async () => {
     // 입력창이 비어있으면 생성하지 않습니다
     if (inputText.trim() === '') {
       alert('문구를 입력해주세요!')
       return
     }
+
+    // 로딩 시작
+    setIsLoading(true)
+
+    // 서버 요청 시뮬레이션 (3초)
+    await new Promise(resolve => setTimeout(resolve, 3000))
 
     // 새로운 작품을 생성합니다
     const newWork: CalligraphyWork = {
@@ -33,11 +70,13 @@ function Editor() {
       style: '클래식', // 기본 스타일
     }
 
-    // 기존 작품 목록에 새로운 작품을 추가합니다
-    setWorks([newWork, ...works])
+    // 기존 작품 목록에 새로운 작품을 추가합니다 (최신 것이 아래로)
+    setWorks([...works, newWork])
     
-    // 입력창을 비웁니다
-    setInputText('')
+    // 입력창은 유지합니다 (지우지 않음)
+    
+    // 로딩 종료
+    setIsLoading(false)
   }
 
   // 작품을 삭제하는 함수
@@ -59,6 +98,41 @@ function Editor() {
     setInputText(text)
   }
 
+  // 모달 열기 함수
+  const handleOpenModal = (modalType: string, buttonRef: React.RefObject<HTMLButtonElement | null>) => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect()
+      setModalPosition({
+        top: rect.top - 8, // 버튼 위 8px
+        left: rect.left
+      })
+      setOpenModal(modalType)
+    }
+  }
+
+  // 모달 닫기 함수
+  const handleCloseModal = () => {
+    setOpenModal(null)
+    setModalPosition(null)
+  }
+
+  // 시드 입력 핸들러
+  const handleSeedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSeed(e.target.value)
+  }
+
+  // 시드 잠금/해제 토글
+  const handleToggleSeedLock = () => {
+    setIsSeedLocked(!isSeedLocked)
+  }
+
+  // 시드 적용 핸들러
+  const handleApplySeed = () => {
+    // 시드 적용 로직 (추후 구현)
+    console.log('시드 적용:', seed, '잠금:', isSeedLocked)
+    handleCloseModal()
+  }
+
   // 초기값 설정 및 외부 변경 시에만 업데이트
   useEffect(() => {
     if (promptRef.current) {
@@ -69,6 +143,21 @@ function Editor() {
       }
     }
   }, [inputText])
+
+  // 스켈레톤이 추가되면 해당 요소로 스크롤
+  useEffect(() => {
+    if (isLoading && skeletonRef.current) {
+      // 스켈레톤이 DOM에 추가된 후 스크롤
+      setTimeout(() => {
+        if (skeletonRef.current) {
+          skeletonRef.current.scrollIntoView({
+            behavior: 'smooth',
+            block: 'end'
+          })
+        }
+      }, 100)
+    }
+  }, [isLoading])
 
   return (
     <div className="editor-whisk">
@@ -97,8 +186,8 @@ function Editor() {
         <header className="editor-header">
           <div className="header-left">
             <div className="brand-section">
-              <span className="brand-name">Calligraphy Studio</span>
-              <button className="experiment-badge">EXPERIMENT</button>
+              <span className="brand-name" style={{cursor:"pointer"}} onClick={() => navigate('/')}>Calligraphy Studio</span>
+              <button className="experiment-badge" onClick={() => navigate('/')}>EXPERIMENT</button>
             </div>
           </div>
           
@@ -138,8 +227,8 @@ function Editor() {
         {/* 메인 콘텐츠 영역 */}
         <main className="editor-main">
           {/* 캔버스 영역 */}
-          <div className="canvas-area">
-            {works.length === 0 ? (
+          <div className="canvas-area" ref={canvasAreaRef}>
+            {works.length === 0 && !isLoading ? (
               <div className="empty-canvas">
                 <p>문구를 입력하고 캘리그래피를 생성해보세요</p>
               </div>
@@ -246,6 +335,12 @@ function Editor() {
                     </div>
                   </div>
                 ))}
+                {/* 로딩 중일 때 스켈레톤 표시 (최신 작품 아래에) */}
+                {isLoading && (
+                  <div className="work-item skeleton" ref={skeletonRef}>
+                    <div className="skeleton-content"></div>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -267,20 +362,43 @@ function Editor() {
                   <span>→</span> 이미지 추가
                 </button>
                 <div className="input-icons">
-                  <button className="input-icon-btn" title="자르기">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                      <rect x="3" y="3" width="8" height="8" stroke="currentColor" strokeWidth="2"/>
-                      <rect x="13" y="3" width="8" height="8" stroke="currentColor" strokeWidth="2"/>
-                      <rect x="3" y="13" width="8" height="8" stroke="currentColor" strokeWidth="2"/>
-                      <rect x="13" y="13" width="8" height="8" stroke="currentColor" strokeWidth="2"/>
+                  <button 
+                    ref={zoomBtnRef}
+                    className="input-icon-btn" 
+                    title="속성"
+                    onClick={() => handleOpenModal('zoom', zoomBtnRef)}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      {/* 펜/브러시 아이콘 - 캘리그래피 속성 표현 */}
+                      <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+                      <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+                      <path d="M2 2l7.586 7.586"/>
+                      <circle cx="11" cy="11" r="2"/>
                     </svg>
                   </button>
-                  <button className="input-icon-btn" title="확대">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                      <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  <button 
+                    ref={cropBtnRef}
+                    className="input-icon-btn" 
+                    title="비율 선택"
+                    onClick={() => handleOpenModal('crop', cropBtnRef)}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="2" width="20" height="20" rx="2" fill="none"/>
+                      <line x1="8" y1="2" x2="8" y2="22"/>
+                      <line x1="16" y1="2" x2="16" y2="22"/>
+                      <line x1="2" y1="8" x2="22" y2="8"/>
+                      <line x1="2" y1="16" x2="22" y2="16"/>
+                      <rect x="3" y="3" width="4" height="4" rx="0.5" fill="currentColor" opacity="0.3"/>
+                      <rect x="9" y="3" width="6" height="4" rx="0.5" fill="currentColor" opacity="0.3"/>
+                      <rect x="3" y="9" width="4" height="6" rx="0.5" fill="currentColor" opacity="0.3"/>
                     </svg>
                   </button>
-                  <button className="input-icon-btn" title="설정">
+                  <button 
+                    ref={settingsBtnRef}
+                    className="input-icon-btn" 
+                    title="설정"
+                    onClick={() => handleOpenModal('settings', settingsBtnRef)}
+                  >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                       <circle cx="12" cy="6" r="1.5" fill="currentColor"/>
                       <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
@@ -289,7 +407,12 @@ function Editor() {
                     </svg>
                   </button>
                 </div>
-                <button className="submit-btn" onClick={handleCreate} title="생성">
+                <button 
+                  className="submit-btn" 
+                  onClick={handleCreate} 
+                  title="생성"
+                  disabled={isLoading}
+                >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                     <path 
                       d="M5 12h14M12 5l7 7-7 7" 
@@ -314,6 +437,140 @@ function Editor() {
           </div>
         </main>
       </div>
+      
+      {/* 모달 */}
+      {openModal && modalPosition && (
+        <>
+          <div className="modal-overlay" onClick={handleCloseModal}></div>
+          <div 
+            className={`input-modal ${openModal === 'crop' ? 'crop-modal-wrapper' : openModal === 'settings' ? 'seed-modal-wrapper' : openModal === 'zoom' ? 'style-modal-wrapper' : ''}`}
+            style={{
+              top: `${modalPosition.top}px`,
+              left: `${modalPosition.left}px`
+            }}
+          >
+            <div className="modal-content">
+              {openModal === 'settings' && (
+                <div className="seed-modal">
+                  {/* <h3 className="modal-title">설정ㅎㅎ</h3> */}
+                  
+                  <div className="seed-input-wrapper">
+                    <label className="seed-label">시드</label>
+                    <div className="seed-input-container">
+                      <input
+                        type="text"
+                        className="seed-input"
+                        value={seed}
+                        onChange={handleSeedChange}
+                        disabled={isSeedLocked}
+                        maxLength={6}
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
+                            handleApplySeed()
+                          }
+                        }}
+                      />
+                      <button 
+                        className="seed-lock-btn"
+                        onClick={handleToggleSeedLock}
+                        title={isSeedLocked ? '잠금 해제' : '잠금'}
+                      >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                      </button>
+                    </div>
+                    <p className="seed-description">
+                      {isSeedLocked 
+                        ? '시드가 잠금되어 동일한 출력이 제공됩니다.' 
+                        : '시드가 잠금 해제되어 더욱 다양한 출력이 제공됩니다.'}
+                    </p>
+                  </div>
+                </div>
+              )}
+              {openModal === 'crop' && (
+                <div className="crop-modal">
+                  <h3 className="modal-title">가로세로 비율</h3>
+                  
+                  <div className="ratio-options">
+                    <button
+                      className={`ratio-option ${selectedRatio === '1:1' ? 'active' : ''}`}
+                      onClick={() => setSelectedRatio('1:1')}
+                    >
+                      <div className="ratio-shape ratio-square">
+                        <span className="ratio-text">1:1</span>
+                      </div>
+                      <span className="ratio-label">정사각형</span>
+                    </button>
+                    
+                    <button
+                      className={`ratio-option ${selectedRatio === '9:16' ? 'active' : ''}`}
+                      onClick={() => setSelectedRatio('9:16')}
+                    >
+                      <div className="ratio-shape ratio-portrait">
+                        <span className="ratio-text">9:16</span>
+                      </div>
+                      <span className="ratio-label">세로 모드</span>
+                    </button>
+                    
+                    <button
+                      className={`ratio-option ${selectedRatio === '16:9' ? 'active' : ''}`}
+                      onClick={() => setSelectedRatio('16:9')}
+                    >
+                      <div className="ratio-shape ratio-landscape">
+                        <span className="ratio-text">16:9</span>
+                      </div>
+                      <span className="ratio-label">가로 모드</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+              {openModal === 'zoom' && (
+                <div className="style-modal">
+                  <h3 className="modal-title">속성 선택</h3>
+                  
+                  <div className="style-options">
+                  <button
+                      className={`style-option ${selectedStyle === 'None' ? 'active' : ''}`}
+                      onClick={() => setSelectedStyle('None')}
+                    >
+                      <span className="style-name">None</span>
+                    </button>
+                    <button
+                      className={`style-option ${selectedStyle === '클래식' ? 'active' : ''}`}
+                      onClick={() => setSelectedStyle('클래식')}
+                    >
+                      <span className="style-name">클래식</span>
+                    </button>
+                    
+                    <button
+                      className={`style-option ${selectedStyle === '모던' ? 'active' : ''}`}
+                      onClick={() => setSelectedStyle('모던')}
+                    >
+                      <span className="style-name">모던</span>
+                    </button>
+                    
+                    <button
+                      className={`style-option ${selectedStyle === '엘레강트' ? 'active' : ''}`}
+                      onClick={() => setSelectedStyle('엘레강트')}
+                    >
+                      <span className="style-name">엘레강트</span>
+                    </button>
+                    
+                    <button
+                      className={`style-option ${selectedStyle === '손글씨' ? 'active' : ''}`}
+                      onClick={() => setSelectedStyle('손글씨')}
+                    >
+                      <span className="style-name">손글씨</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   )
 }
