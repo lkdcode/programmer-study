@@ -34,6 +34,10 @@ function Editor() {
   const [openModal, setOpenModal] = useState<string | null>(null)
   const [modalPosition, setModalPosition] = useState<{ top: number; left: number } | null>(null)
   
+  // 이미지 추가 버튼 hover 모달 상태
+  const [showImageModal, setShowImageModal] = useState<boolean>(false)
+  const [imageModalPosition, setImageModalPosition] = useState<{ top: number; left: number } | null>(null)
+  
   // 시드 입력 상태
   const [seed, setSeed] = useState<string>('492565')
   const [isSeedLocked, setIsSeedLocked] = useState<boolean>(false)
@@ -48,6 +52,7 @@ function Editor() {
   const cropBtnRef = useRef<HTMLButtonElement>(null)
   const zoomBtnRef = useRef<HTMLButtonElement>(null)
   const settingsBtnRef = useRef<HTMLButtonElement>(null)
+  const addImageBtnRef = useRef<HTMLButtonElement>(null)
 
   // 캘리그래피를 생성하는 함수
   const handleCreate = async () => {
@@ -99,21 +104,56 @@ function Editor() {
   }
 
   // 모달 열기 함수
-  const handleOpenModal = (modalType: string, buttonRef: React.RefObject<HTMLButtonElement | null>) => {
-    if (buttonRef.current) {
+  const handleOpenModal = (modalType: string, buttonRef?: React.RefObject<HTMLButtonElement | null>) => {
+    if (buttonRef?.current) {
       const rect = buttonRef.current.getBoundingClientRect()
       setModalPosition({
         top: rect.top - 8, // 버튼 위 8px
         left: rect.left
       })
-      setOpenModal(modalType)
+    } else {
+      // 중앙 모달 (privacy, terms)
+      setModalPosition({
+        top: window.innerHeight / 2,
+        left: window.innerWidth / 2
+      })
     }
+    setOpenModal(modalType)
   }
 
   // 모달 닫기 함수
   const handleCloseModal = () => {
     setOpenModal(null)
     setModalPosition(null)
+  }
+
+  // 개인정보 보호 모달 열기
+  const handleOpenPrivacyModal = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    handleOpenModal('privacy')
+  }
+
+  // 서비스 약관 모달 열기
+  const handleOpenTermsModal = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    handleOpenModal('terms')
+  }
+
+  // 이미지 추가 버튼 hover 핸들러
+  const handleImageBtnMouseEnter = () => {
+    if (addImageBtnRef.current) {
+      const rect = addImageBtnRef.current.getBoundingClientRect()
+      setImageModalPosition({
+        top: rect.top - 8,
+        left: rect.left
+      })
+      setShowImageModal(true)
+    }
+  }
+
+  const handleImageBtnMouseLeave = () => {
+    setShowImageModal(false)
+    setImageModalPosition(null)
   }
 
   // 시드 입력 핸들러
@@ -159,11 +199,57 @@ function Editor() {
     }
   }, [isLoading])
 
+  // 모달 외부 클릭 및 ESC 키로 모달 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (openModal && modalPosition) {
+        const target = event.target as HTMLElement
+        const modalElement = document.querySelector('.input-modal')
+        
+        // 모달이 열려있고, 클릭한 요소가 모달 외부인 경우
+        if (modalElement && !modalElement.contains(target)) {
+          // 버튼을 클릭한 경우는 제외 (버튼 클릭은 모달을 열기 위한 것)
+          const isButtonClick = target.closest('.input-icon-btn') || 
+                                target.closest('.add-image-btn') ||
+                                target.closest('button')
+          
+          if (!isButtonClick) {
+            handleCloseModal()
+          }
+        }
+      }
+    }
+
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && openModal) {
+        handleCloseModal()
+      }
+    }
+
+    if (openModal) {
+      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('keydown', handleEscapeKey)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEscapeKey)
+    }
+  }, [openModal, modalPosition])
+
   return (
     <div className="editor-whisk">
       {/* 왼쪽 노란색 사이드바 (전체 높이) */}
       <aside className="yellow-sidebar">
         <button className="sidebar-icon-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="7" height="7" rx="1" fill="currentColor"/>
+            <rect x="14" y="3" width="7" height="7" rx="1" fill="currentColor"/>
+            <rect x="3" y="14" width="7" height="7" rx="1" fill="currentColor"/>
+            <rect x="14" y="14" width="7" height="7" rx="1" fill="currentColor"/>
+          </svg>
+        </button>
+        {/* <button className="sidebar-icon-btn">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
           </svg>
@@ -176,6 +262,12 @@ function Editor() {
         <button className="sidebar-icon-btn">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
+          </svg>
+        </button> */}
+        <button className="sidebar-icon-btn sidebar-settings-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
           </svg>
         </button>
       </aside>
@@ -306,22 +398,22 @@ function Editor() {
                     
                     {/* 좌측 하단: 3개 메뉴 */}
                     <div className="work-buttons bottom-left">
+                    <button className="work-btn" title="좋아요">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                      </button>
                       <button className="work-btn" title="피드백">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
                           <line x1="4" y1="22" x2="4" y2="15"/>
                         </svg>
-                      </button>
-                      <button className="work-btn" title="좋아요">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                        </svg>
-                      </button>
-                      <button className="work-btn" title="안좋아요">
+                      </button>  
+                      {/* <button className="work-btn" title="안좋아요">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                           <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                         </svg>
-                      </button>
+                      </button> */}
                     </div>
                     
                     {/* 우측 하단: 1개 메뉴 */}
@@ -358,8 +450,18 @@ function Editor() {
                 data-placeholder="예: 행복한 하루 되세요"
               />
               <div className="input-actions">
-                <button className="add-image-btn">
-                  <span>→</span> 이미지 추가
+                <button 
+                  className="add-image-btn"
+                  ref={addImageBtnRef}
+                  onMouseEnter={handleImageBtnMouseEnter}
+                  onMouseLeave={handleImageBtnMouseLeave}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                  이미지 추가
                 </button>
                 <div className="input-icons">
                   <button 
@@ -431,8 +533,8 @@ function Editor() {
           <div className="editor-footer">
             <p className="disclaimer">면책 조항: 이 도구는 실수를 할 수 있으니 다시 한번 확인하세요.</p>
             <div className="footer-links">
-              <a href="#" className="footer-link">개인 정보 보호</a>
-              <a href="#" className="footer-link">서비스 약관</a>
+              <a href="#" className="footer-link" onClick={handleOpenPrivacyModal}>개인 정보 보호</a>
+              <a href="#" className="footer-link" onClick={handleOpenTermsModal}>서비스 약관</a>
             </div>
           </div>
         </main>
@@ -441,13 +543,24 @@ function Editor() {
       {/* 모달 */}
       {openModal && modalPosition && (
         <>
-          <div className="modal-overlay" onClick={handleCloseModal}></div>
+          {/* 딥레이어는 개인정보 보호와 서비스 약관 모달에만 표시 */}
+          {(openModal === 'privacy' || openModal === 'terms') && (
+            <div className="modal-overlay" onClick={handleCloseModal}></div>
+          )}
           <div 
-            className={`input-modal ${openModal === 'crop' ? 'crop-modal-wrapper' : openModal === 'settings' ? 'seed-modal-wrapper' : openModal === 'zoom' ? 'style-modal-wrapper' : ''}`}
-            style={{
-              top: `${modalPosition.top}px`,
-              left: `${modalPosition.left}px`
-            }}
+            className={`input-modal ${openModal === 'crop' ? 'crop-modal-wrapper' : openModal === 'settings' ? 'seed-modal-wrapper' : openModal === 'zoom' ? 'style-modal-wrapper' : openModal === 'privacy' || openModal === 'terms' ? 'center-modal-wrapper' : ''}`}
+            style={
+              openModal === 'privacy' || openModal === 'terms' 
+                ? {
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)'
+                  }
+                : {
+                    top: `${modalPosition.top}px`,
+                    left: `${modalPosition.left}px`
+                  }
+            }
           >
             <div className="modal-content">
               {openModal === 'settings' && (
@@ -567,9 +680,123 @@ function Editor() {
                   </div>
                 </div>
               )}
+              {openModal === 'privacy' && (
+                <div className="center-modal">
+                  <div className="center-modal-header">
+                    <h3 className="modal-title">개인 정보 보호</h3>
+                    <button className="modal-close-btn" onClick={handleCloseModal}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </button>
+                  </div>
+                  <div className="center-modal-content">
+                    <p>[개인정보 처리방침]</p>
+                    <p>본 서비스(이하 “서비스”)는 이용자의 개인정보를 중요하게 생각하며, 「개인정보 보호법」 등 관련 법령을 준수합니다. 본 개인정보 처리방침은 서비스 이용 과정에서 수집되는 개인정보의 항목, 이용 목적, 보관 기간 등을 설명합니다.</p>
+                    <br/>
+                    <p>1. 수집하는 개인정보</p>
+                    <p>서비스는 원칙적으로 개인정보를 최소한으로 수집합니다.</p>
+                    <p>- 필수 수집 항목: 없음</p>
+                    <p>- 선택 수집 항목: 사용자가 입력하는 문장(캘리그래피 생성 용도)</p>
+                    <p>※ 입력 문장은 개인정보와 무관한 텍스트만 입력할 것을 권장합니다.</p>
+                    <br/>
+                    <p>2. 개인정보 수집 및 이용 목적</p>
+                    <p>- 사용자가 입력한 문장을 기반으로 캘리그래피 이미지를 생성하기 위해 사용됩니다.</p>
+                    <p>- 서비스 개선 및 오류 분석을 위해 익명 형태의 사용 기록을 저장할 수 있습니다.</p>
+                    <br/>
+                    <p>3. 개인정보의 보관 기간</p>
+                    <p>- 입력 문장은 즉시 처리 후 서버에서 삭제됩니다. (단, 문제 해결 및 모델 품질 향상을 위해 익명화된 형태로 일부 데이터가 저장될 수 있습니다.)</p>
+                    <p>- 법령에 별도 규정이 있는 경우 해당 기간 동안 보관합니다.</p>
+                    <br/>
+                    <p>4. 개인정보의 제3자 제공</p>
+                    <p>서비스는 이용자의 개인정보를 제3자에게 제공하지 않습니다.</p>
+                    <br/>
+                    <p>5. 개인정보 처리 위탁</p>
+                    <p>현재 개인정보 처리를 위탁하고 있지 않습니다.</p>
+                    <br/>
+                    <p>6. 이용자의 권리</p>
+                    <p>이용자는 개인정보 열람·정정·삭제 요청을 서비스 운영자에게 요구할 수 있습니다. 요청 시 가능한 범위 내에서 신속히 처리합니다.</p>
+                    <br/>
+                    <p>7. 개인정보 보호 책임자</p>
+                    <p>서비스 운영자: [운영자명 또는 닉네임]</p>
+                    <p>이메일: [contact 이메일]</p>
+                    <br/>
+                    <p>8. 기타</p>
+                    <p>본 개인정보 처리방침은 서비스 개선에 따라 변경될 수 있으며 변경 시 공지사항을 통해 안내합니다.</p>
+                    <p>시행일자: YYYY-MM-DD</p>
+                  </div>
+                </div>
+              )}
+              {openModal === 'terms' && (
+                <div className="center-modal">
+                  <div className="center-modal-header">
+                    <h3 className="modal-title">서비스 약관</h3>
+                    <button className="modal-close-btn" onClick={handleCloseModal}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </button>
+                  </div>
+                  <div className="center-modal-content">
+                    <p>[서비스 이용약관]</p>
+                    <p>본 이용약관은 본 서비스(이하 “서비스”)의 이용과 관련하여 이용자와 서비스 운영자 간의 권리·의무 및 책임 사항을 규정합니다.</p>
+                    <br/>
+                    <p>1. 목적</p>
+                    <p>본 약관은 이용자가 서비스에서 제공하는 캘리그래피 생성 기능을 이용함에 있어 필요한 사항을 규정함을 목적으로 합니다.</p>
+                    <br/>
+                    <p>2. 서비스의 내용</p>
+                    <p>- 사용자가 입력한 문장을 기반으로 AI 캘리그래피 이미지를 생성하는 기능을 제공합니다.</p>
+                    <p>- 서비스는 예고 없이 기능이 추가되거나 변경될 수 있습니다.</p>
+                    <br/>
+                    <p>3. 이용자의 책임</p>
+                    <p>- 이용자는 저작권을 침해하는 문구, 개인정보가 포함된 문구, 불법·음란·폭력적 문구를 입력해서는 안 됩니다.</p>
+                    <p>- 이용자의 입력으로 인해 발생하는 법적 문제는 이용자 본인에게 책임이 있습니다.</p>
+                    <br/>
+                    <p>4. 저작권 및 이용 권한</p>
+                    <p>- 서비스가 생성한 캘리그래피 이미지는 이용자에게 비상업적·개인적 용도로 사용할 수 있는 권한을 부여합니다.</p>
+                    <p>- 단, 상업적 사용이 필요한 경우 별도로 운영자에게 문의해야 합니다.</p>
+                    <p>- 서비스 내부 알고리즘 및 코드의 저작권은 운영자에게 있습니다.</p>
+                    <br/>
+                    <p>5. 서비스 제공의 중단</p>
+                    <p>다음과 같은 경우 서비스가 일시적으로 중단될 수 있습니다.</p>
+                    <p>- 서버 점검 또는 개선 작업</p>
+                    <p>- 시스템 오류 또는 기술적 문제</p>
+                    <p>- 천재지변 등 불가항력적 사유</p>
+                    <br/>
+                    <p>6. 면책조항</p>
+                    <p>- 서비스는 “있는 그대로(as-is)” 제공되며, 생성된 결과물의 정확성·완성도·적합성에 대해 보증하지 않습니다.</p>
+                    <p>- 이용자가 생성한 결과물을 사용함에 있어 발생한 문제에 대해 운영자는 책임을 지지 않습니다.</p>
+                    <br/>
+                    <p>7. 약관의 변경</p>
+                    <p>운영자는 필요한 경우 약관을 변경할 수 있으며 변경된 내용은 공지사항을 통해 안내합니다.</p>
+                    <p>시행일자: YYYY-MM-DD</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </>
+      )}
+
+      {/* 이미지 추가 버튼 hover 모달 */}
+      {showImageModal && imageModalPosition && (
+        <div 
+          className="input-modal image-modal-wrapper"
+          style={{
+            top: `${imageModalPosition.top}px`,
+            left: `${imageModalPosition.left}px`
+          }}
+          onMouseEnter={handleImageBtnMouseEnter}
+          onMouseLeave={handleImageBtnMouseLeave}
+        >
+          <div className="modal-content">
+            <div className="image-modal">
+              <p style={{ margin: 0, fontSize: '14px', color: '#111827' }}>해당 이미지를 참고하여 생성해요.</p>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
