@@ -30,6 +30,9 @@ function Editor() {
   // 스켈레톤 요소의 ref
   const skeletonRef = useRef<HTMLDivElement>(null)
   
+  // 푸터의 ref
+  const footerRef = useRef<HTMLDivElement>(null)
+  
   // 모달 상태 관리
   const [openModal, setOpenModal] = useState<string | null>(null)
   const [modalPosition, setModalPosition] = useState<{ top: number; left: number } | null>(null)
@@ -184,18 +187,27 @@ function Editor() {
     }
   }, [inputText])
 
-  // 스켈레톤이 추가되면 해당 요소로 스크롤
+  // 스켈레톤이 추가되면 푸터가 보이도록 스크롤
   useEffect(() => {
-    if (isLoading && skeletonRef.current) {
-      // 스켈레톤이 DOM에 추가된 후 스크롤
-      setTimeout(() => {
-        if (skeletonRef.current) {
-          skeletonRef.current.scrollIntoView({
-            behavior: 'smooth',
-            block: 'end'
-          })
-        }
-      }, 100)
+    if (isLoading) {
+      // DOM 업데이트를 기다린 후 스크롤
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (footerRef.current) {
+            // 푸터가 보이도록 스크롤
+            footerRef.current.scrollIntoView({
+              behavior: 'smooth',
+              block: 'end'
+            })
+          } else if (canvasAreaRef.current) {
+            // 푸터가 없으면 컨테이너 끝으로 스크롤
+            canvasAreaRef.current.scrollTo({
+              top: canvasAreaRef.current.scrollHeight,
+              behavior: 'smooth'
+            })
+          }
+        })
+      })
     }
   }, [isLoading])
 
@@ -530,7 +542,7 @@ function Editor() {
           </div>
 
           {/* 하단 면책 조항 */}
-          <div className="editor-footer">
+          <div className="editor-footer" ref={footerRef}>
             <p className="disclaimer">면책 조항: 이 도구는 실수를 할 수 있으니 다시 한번 확인하세요.</p>
             <div className="footer-links">
               <a href="#" className="footer-link" onClick={handleOpenPrivacyModal}>개인 정보 보호</a>
