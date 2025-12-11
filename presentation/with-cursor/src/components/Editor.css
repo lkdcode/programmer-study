@@ -1,3 +1,15 @@
+/* 전체 페이지 스크롤바 숨기기 (스크롤 기능은 유지) */
+html,
+body {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
 /* 전체 선택자로 텍스트 선택 방지 */
 * {
   -webkit-user-select: none;
