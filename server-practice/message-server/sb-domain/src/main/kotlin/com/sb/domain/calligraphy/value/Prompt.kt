@@ -13,7 +13,7 @@ value class Prompt private constructor(
 
     companion object {
         const val REQUIRE_MESSAGE = "명령어는 필수입니다."
-        const val MAX_LENGTH = 3_000
+        const val MAX_LENGTH = 1_000
         const val INVALID_LENGTH_MESSAGE = "명령어는 ${MAX_LENGTH}자를 초과할 수 없습니다."
 
         fun of(value: String): Prompt = Prompt(value)

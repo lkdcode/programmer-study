@@ -1,8 +1,8 @@
-package com.sb.domain.calligraphy.aggregate
+package com.sb.domain.like.aggregate
 
 import com.sb.domain.calligraphy.entity.Calligraphy
-import com.sb.domain.calligraphy.entity.CalligraphyLike
 import com.sb.domain.calligraphy.value.User
+import com.sb.domain.like.entity.CalligraphyLike
 import java.time.Instant
 
 class CalligraphyLikeAggregate private constructor(
@@ -27,5 +27,3 @@ class CalligraphyLikeAggregate private constructor(
             CalligraphyLike.CalligraphyLikeId(Instant.now().toEpochMilli())
     }
 }
-
-
