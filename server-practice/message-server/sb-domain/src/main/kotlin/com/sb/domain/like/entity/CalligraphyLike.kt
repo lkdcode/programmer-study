@@ -1,5 +1,6 @@
-package com.sb.domain.calligraphy.entity
+package com.sb.domain.like.entity
 
+import com.sb.domain.calligraphy.entity.Calligraphy
 import com.sb.domain.calligraphy.value.User
 import java.time.Instant
 

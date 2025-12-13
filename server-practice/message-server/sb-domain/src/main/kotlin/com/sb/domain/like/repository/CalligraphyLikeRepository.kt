@@ -1,6 +1,6 @@
-package com.sb.domain.calligraphy.repository
+package com.sb.domain.like.repository
 
-import com.sb.domain.calligraphy.aggregate.CalligraphyLikeAggregate
+import com.sb.domain.like.aggregate.CalligraphyLikeAggregate
 
 interface CalligraphyLikeRepository {
     fun save(aggregate: CalligraphyLikeAggregate): CalligraphyLikeAggregate

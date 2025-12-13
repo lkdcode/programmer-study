@@ -1,16 +1,12 @@
-package com.sb.domain.calligraphy.service
+package com.sb.domain.like.service
 
-import com.sb.domain.calligraphy.aggregate.CalligraphyLikeAggregate
 import com.sb.domain.calligraphy.entity.Calligraphy
-import com.sb.domain.calligraphy.repository.CalligraphyLikeQueryRepository
-import com.sb.domain.calligraphy.repository.CalligraphyLikeRepository
 import com.sb.domain.calligraphy.value.User
+import com.sb.domain.like.aggregate.CalligraphyLikeAggregate
+import com.sb.domain.like.repository.CalligraphyLikeQueryRepository
+import com.sb.domain.like.repository.CalligraphyLikeRepository
 
-/**
- * (정책) 동일 사용자는 동일 Calligraphy에 좋아요를 1번만 가능.
- *
- * Calligraphy 자체는 불변이므로, 좋아요는 별도 Aggregate로 관리한다.
- */
+
 class CalligraphyLikeService(
     private val repository: CalligraphyLikeRepository,
     private val queryRepository: CalligraphyLikeQueryRepository,
@@ -22,5 +18,3 @@ class CalligraphyLikeService(
         return repository.save(aggregate)
     }
 }
-
-
