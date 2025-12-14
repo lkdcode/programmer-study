@@ -5,6 +5,6 @@ import com.sb.domain.calligraphy.entity.Calligraphy
 import com.sb.domain.calligraphy.value.User
 
 interface CalligraphyArchiveRepository {
-    fun save(aggregate: CalligraphyArchiveAggregate): CalligraphyArchiveAggregate
-    fun deleteBy(calligraphyId: Calligraphy.CalligraphyId, user: User)
+    suspend fun save(aggregate: CalligraphyArchiveAggregate): CalligraphyArchiveAggregate
+    suspend fun deleteBy(calligraphyId: Calligraphy.CalligraphyId, user: User)
 }

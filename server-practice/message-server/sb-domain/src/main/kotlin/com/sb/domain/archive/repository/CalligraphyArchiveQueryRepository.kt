@@ -5,7 +5,7 @@ import com.sb.domain.calligraphy.entity.Calligraphy
 import com.sb.domain.calligraphy.value.User
 
 interface CalligraphyArchiveQueryRepository {
-    fun existsBy(calligraphyId: Calligraphy.CalligraphyId, user: User): Boolean
-    fun findByUser(user: User): List<CalligraphyArchiveAggregate>
-    fun countBy(calligraphyId: Calligraphy.CalligraphyId): Long
+    suspend fun existsBy(calligraphyId: Calligraphy.CalligraphyId, user: User): Boolean
+    suspend fun findByUser(user: User): List<CalligraphyArchiveAggregate>
+    suspend fun countBy(calligraphyId: Calligraphy.CalligraphyId): Long
 }

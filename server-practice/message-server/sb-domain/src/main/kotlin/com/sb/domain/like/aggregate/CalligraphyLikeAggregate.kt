@@ -11,6 +11,8 @@ class CalligraphyLikeAggregate private constructor(
     val getLike: CalligraphyLike get() = like
 
     companion object {
+        fun restore(like: CalligraphyLike): CalligraphyLikeAggregate = CalligraphyLikeAggregate(like)
+
         fun create(
             calligraphyId: Calligraphy.CalligraphyId,
             user: User,

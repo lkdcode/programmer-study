@@ -5,9 +5,7 @@ import com.sb.domain.user.entity.User
 import com.sb.domain.user.value.Email
 
 interface UserQueryRepository {
-    fun findById(id: User.UserId): UserAggregate?
-    fun findByEmail(email: Email): UserAggregate?
-    fun existsByEmail(email: Email): Boolean
+    suspend fun findById(id: User.UserId): UserAggregate?
+    suspend fun findByEmail(email: Email): UserAggregate?
+    suspend fun existsByEmail(email: Email): Boolean
 }
-
-

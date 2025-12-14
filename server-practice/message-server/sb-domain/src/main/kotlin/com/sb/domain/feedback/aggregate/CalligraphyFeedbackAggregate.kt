@@ -12,6 +12,8 @@ class CalligraphyFeedbackAggregate private constructor(
     val getFeedback: CalligraphyFeedback get() = feedback
 
     companion object {
+        fun restore(feedback: CalligraphyFeedback): CalligraphyFeedbackAggregate = CalligraphyFeedbackAggregate(feedback)
+
         fun create(
             calligraphyId: Calligraphy.CalligraphyId,
             user: User,

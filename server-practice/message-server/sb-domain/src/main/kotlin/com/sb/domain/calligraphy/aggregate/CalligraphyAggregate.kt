@@ -35,6 +35,8 @@ class CalligraphyAggregate private constructor(
     }
 
     companion object {
+        fun restore(calligraphy: Calligraphy): CalligraphyAggregate = CalligraphyAggregate(calligraphy)
+
         fun create(
             prompt: Prompt,
             style: StyleType,
