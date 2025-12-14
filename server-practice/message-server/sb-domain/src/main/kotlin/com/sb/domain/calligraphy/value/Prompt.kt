@@ -1,5 +1,8 @@
 package com.sb.domain.calligraphy.value
 
+import com.sb.domain.exception.domainRequire
+import com.sb.domain.calligraphy.exception.CalligraphyErrorCode
+
 
 @JvmInline
 value class Prompt private constructor(
@@ -7,8 +10,8 @@ value class Prompt private constructor(
 ) {
 
     init {
-        require(value.isNotBlank()) { REQUIRE_MESSAGE }
-        require(value.length <= MAX_LENGTH) { INVALID_LENGTH_MESSAGE }
+        domainRequire(value.isNotBlank(), CalligraphyErrorCode.PROMPT_REQUIRED) { REQUIRE_MESSAGE }
+        domainRequire(value.length <= MAX_LENGTH, CalligraphyErrorCode.PROMPT_TOO_LONG) { INVALID_LENGTH_MESSAGE }
     }
 
     companion object {

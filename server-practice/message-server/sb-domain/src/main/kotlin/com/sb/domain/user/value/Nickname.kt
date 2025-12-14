@@ -1,12 +1,15 @@
 package com.sb.domain.user.value
 
+import com.sb.domain.exception.domainRequire
+import com.sb.domain.user.exception.UserErrorCode
+
 @JvmInline
 value class Nickname private constructor(
     val value: String
 ) {
     init {
-        require(value.isNotBlank()) { REQUIRE_MESSAGE }
-        require(value.length in MIN_LENGTH..MAX_LENGTH) { INVALID_LENGTH_MESSAGE }
+        domainRequire(value.isNotBlank(), UserErrorCode.NICKNAME_REQUIRED) { REQUIRE_MESSAGE }
+        domainRequire(value.length in MIN_LENGTH..MAX_LENGTH, UserErrorCode.NICKNAME_INVALID_LENGTH) { INVALID_LENGTH_MESSAGE }
     }
 
     companion object {

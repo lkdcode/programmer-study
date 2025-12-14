@@ -1,6 +1,9 @@
 package com.sb.domain.user.aggregate
 
+import com.sb.domain.exception.domainRequire
+import com.sb.domain.exception.domainFail
 import com.sb.domain.user.entity.EmailVerification
+import com.sb.domain.user.exception.UserErrorCode
 import com.sb.domain.user.value.Email
 import com.sb.domain.user.value.EmailVerificationToken
 import java.time.Duration
@@ -15,12 +18,12 @@ class EmailVerificationAggregate private constructor(
         token: EmailVerificationToken,
         now: Instant = Instant.now(),
     ): EmailVerificationAggregate {
-        require(verification.status == EmailVerification.Status.PENDING) { "이미 처리된 이메일 인증입니다." }
-        require(verification.token == token) { "이메일 인증 토큰이 올바르지 않습니다." }
+        domainRequire(verification.status == EmailVerification.Status.PENDING, UserErrorCode.EMAIL_VERIFICATION_ALREADY_PROCESSED)
+        domainRequire(verification.token == token, UserErrorCode.EMAIL_VERIFICATION_TOKEN_MISMATCH)
 
         if (now.isAfter(verification.expiresAt)) {
             verification = verification.copy(status = EmailVerification.Status.EXPIRED)
-            throw IllegalArgumentException("이메일 인증이 만료되었습니다.")
+            domainFail(UserErrorCode.EMAIL_VERIFICATION_EXPIRED)
         }
 
         verification = verification.copy(
@@ -31,7 +34,7 @@ class EmailVerificationAggregate private constructor(
     }
 
     fun consume(now: Instant = Instant.now()): EmailVerificationAggregate {
-        require(verification.status == EmailVerification.Status.VERIFIED) { "이메일 인증이 완료되지 않았습니다." }
+        domainRequire(verification.status == EmailVerification.Status.VERIFIED, UserErrorCode.EMAIL_VERIFICATION_NOT_VERIFIED)
         verification = verification.copy(
             status = EmailVerification.Status.CONSUMED,
             verifiedAt = verification.verifiedAt ?: now,

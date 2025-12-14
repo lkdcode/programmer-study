@@ -1,12 +1,15 @@
 package com.sb.domain.user.value
 
+import com.sb.domain.exception.domainRequire
+import com.sb.domain.user.exception.UserErrorCode
+
 @JvmInline
 value class Email private constructor(
     val value: String
 ) {
     init {
-        require(value.isNotBlank()) { REQUIRE_MESSAGE }
-        require(EMAIL_REGEX.matches(value)) { INVALID_MESSAGE }
+        domainRequire(value.isNotBlank(), UserErrorCode.EMAIL_REQUIRED) { REQUIRE_MESSAGE }
+        domainRequire(EMAIL_REGEX.matches(value), UserErrorCode.EMAIL_INVALID) { INVALID_MESSAGE }
     }
 
     companion object {

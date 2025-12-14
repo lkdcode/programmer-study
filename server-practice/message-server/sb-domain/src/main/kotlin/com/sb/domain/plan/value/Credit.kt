@@ -1,18 +1,21 @@
 package com.sb.domain.plan.value
 
+import com.sb.domain.exception.domainRequire
+import com.sb.domain.plan.exception.PlanErrorCode
+
 @JvmInline
 value class Credit private constructor(
     val value: Long
 ) {
     init {
-        require(value >= 0) { REQUIRE_MESSAGE }
+        domainRequire(value >= 0, PlanErrorCode.CREDIT_NEGATIVE) { REQUIRE_MESSAGE }
     }
 
     fun plus(other: Credit): Credit = Credit(value + other.value)
 
     fun minus(other: Credit): Credit {
         val next = value - other.value
-        require(next >= 0) { INSUFFICIENT_MESSAGE }
+        domainRequire(next >= 0, PlanErrorCode.CREDIT_INSUFFICIENT) { INSUFFICIENT_MESSAGE }
         return Credit(next)
     }
 
