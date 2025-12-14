@@ -5,7 +5,5 @@ import com.sb.domain.user.value.Email
 import com.sb.domain.user.value.EmailVerificationToken
 
 interface EmailVerificationQueryRepository {
-    fun findBy(email: Email, token: EmailVerificationToken): EmailVerificationAggregate?
+    suspend fun findBy(email: Email, token: EmailVerificationToken): EmailVerificationAggregate?
 }
-
-

@@ -30,8 +30,20 @@ class EmailVerificationAggregate private constructor(
         return this
     }
 
+    fun consume(now: Instant = Instant.now()): EmailVerificationAggregate {
+        require(verification.status == EmailVerification.Status.VERIFIED) { "이메일 인증이 완료되지 않았습니다." }
+        verification = verification.copy(
+            status = EmailVerification.Status.CONSUMED,
+            verifiedAt = verification.verifiedAt ?: now,
+        )
+        return this
+    }
+
     companion object {
         private val DEFAULT_TTL: Duration = Duration.ofMinutes(10)
+
+        fun restore(verification: EmailVerification): EmailVerificationAggregate =
+            EmailVerificationAggregate(verification)
 
         fun create(
             email: Email,

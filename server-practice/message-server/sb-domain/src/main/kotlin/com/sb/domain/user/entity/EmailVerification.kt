@@ -17,8 +17,6 @@ data class EmailVerification(
     value class EmailVerificationId(val value: Long)
 
     enum class Status {
-        PENDING, VERIFIED, EXPIRED
+        PENDING, VERIFIED, CONSUMED, EXPIRED
     }
 }
-
-

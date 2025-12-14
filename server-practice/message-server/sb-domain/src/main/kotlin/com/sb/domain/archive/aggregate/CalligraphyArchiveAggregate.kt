@@ -11,6 +11,8 @@ class CalligraphyArchiveAggregate private constructor(
     val getArchive: CalligraphyArchive get() = archive
 
     companion object {
+        fun restore(archive: CalligraphyArchive): CalligraphyArchiveAggregate = CalligraphyArchiveAggregate(archive)
+
         fun create(
             calligraphyId: Calligraphy.CalligraphyId,
             user: User,
@@ -27,5 +29,3 @@ class CalligraphyArchiveAggregate private constructor(
             CalligraphyArchive.CalligraphyArchiveId(Instant.now().toEpochMilli())
     }
 }
-
-
