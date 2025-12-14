@@ -4,16 +4,6 @@ package com.sb.domain.user.value
 value class Password private constructor(
     val value: String
 ) {
-    init {
-        require(value.isNotBlank()) { REQUIRE_MESSAGE }
-        require(value.length in MIN_LENGTH..MAX_LENGTH) { INVALID_LENGTH_MESSAGE }
-        require(LOWER.containsMatchIn(value)) { POLICY_MESSAGE }
-        require(UPPER.containsMatchIn(value)) { POLICY_MESSAGE }
-        require(DIGIT.containsMatchIn(value)) { POLICY_MESSAGE }
-        require(SPECIAL.containsMatchIn(value)) { POLICY_MESSAGE }
-        require(!WHITESPACE.containsMatchIn(value)) { WHITESPACE_MESSAGE }
-    }
-
     companion object {
         const val MIN_LENGTH = 8
         const val MAX_LENGTH = 64
@@ -29,6 +19,23 @@ value class Password private constructor(
         private val SPECIAL = Regex("[^A-Za-z0-9]")
         private val WHITESPACE = Regex("\\s")
 
-        fun of(value: String): Password = Password(value)
+        fun of(value: String): Password {
+            val raw = value
+            require(raw.isNotBlank()) { REQUIRE_MESSAGE }
+            require(raw.length in MIN_LENGTH..MAX_LENGTH) { INVALID_LENGTH_MESSAGE }
+            require(LOWER.containsMatchIn(raw)) { POLICY_MESSAGE }
+            require(UPPER.containsMatchIn(raw)) { POLICY_MESSAGE }
+            require(DIGIT.containsMatchIn(raw)) { POLICY_MESSAGE }
+            require(SPECIAL.containsMatchIn(raw)) { POLICY_MESSAGE }
+            require(!WHITESPACE.containsMatchIn(raw)) { WHITESPACE_MESSAGE }
+            return Password(raw)
+        }
+
+        fun encrypted(value: String): Password {
+            val encrypted = value
+            require(encrypted.isNotBlank()) { REQUIRE_MESSAGE }
+            require(!WHITESPACE.containsMatchIn(encrypted)) { WHITESPACE_MESSAGE }
+            return Password(encrypted)
+        }
     }
 }
