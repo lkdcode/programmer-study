@@ -1,5 +1,7 @@
 package com.sb.domain.user.value
 
+import com.sb.domain.exception.domainRequire
+import com.sb.domain.user.exception.UserErrorCode
 import kotlin.random.Random
 
 @JvmInline
@@ -7,9 +9,9 @@ value class EmailVerificationToken private constructor(
     val value: String
 ) {
     init {
-        require(value.isNotBlank()) { REQUIRE_MESSAGE }
-        require(value.length == LENGTH) { INVALID_LENGTH_MESSAGE }
-        require(value.all { it.isDigit() }) { INVALID_FORMAT_MESSAGE }
+        domainRequire(value.isNotBlank(), UserErrorCode.EMAIL_VERIFICATION_TOKEN_REQUIRED) { REQUIRE_MESSAGE }
+        domainRequire(value.length == LENGTH, UserErrorCode.EMAIL_VERIFICATION_TOKEN_INVALID_LENGTH) { INVALID_LENGTH_MESSAGE }
+        domainRequire(value.all { it.isDigit() }, UserErrorCode.EMAIL_VERIFICATION_TOKEN_INVALID_FORMAT) { INVALID_FORMAT_MESSAGE }
     }
 
     companion object {

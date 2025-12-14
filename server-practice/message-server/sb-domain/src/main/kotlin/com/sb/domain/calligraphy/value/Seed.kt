@@ -1,5 +1,7 @@
 package com.sb.domain.calligraphy.value
 
+import com.sb.domain.exception.domainRequire
+import com.sb.domain.calligraphy.exception.CalligraphyErrorCode
 import kotlin.random.Random
 
 @JvmInline
@@ -7,7 +9,7 @@ value class Seed private constructor(
     val value: Long
 ) {
     init {
-        require(value in MIN_VALUE..MAX_VALUE) { REQUIRE_MESSAGE }
+        domainRequire(value in MIN_VALUE..MAX_VALUE, CalligraphyErrorCode.SEED_INVALID) { REQUIRE_MESSAGE }
     }
 
     companion object {

@@ -1,6 +1,8 @@
 package com.sb.domain.calligraphy.entity
 
+import com.sb.domain.calligraphy.exception.CalligraphyErrorCode
 import com.sb.domain.calligraphy.value.*
+import com.sb.domain.exception.domainRequire
 import java.time.Instant
 
 data class Calligraphy(
@@ -25,7 +27,7 @@ data class Calligraphy(
         newId: CalligraphyId,
         now: Instant,
     ): Calligraphy {
-        require(canCreateNext(requester)) { "캘리그래피 생성 권한이 없습니다." }
+        domainRequire(canCreateNext(requester), CalligraphyErrorCode.PERMISSION_DENIED) { "캘리그래피 생성 권한이 없습니다." }
 
         val mergedPrompt = Prompt.of(
             listOf(prompt.value, additionalPrompt.value)

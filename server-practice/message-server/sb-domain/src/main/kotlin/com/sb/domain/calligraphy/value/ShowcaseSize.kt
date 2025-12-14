@@ -1,11 +1,14 @@
 package com.sb.domain.calligraphy.value
 
+import com.sb.domain.exception.domainRequire
+import com.sb.domain.calligraphy.exception.CalligraphyErrorCode
+
 @JvmInline
 value class ShowcaseSize private constructor(
     val value: Int
 ) {
     init {
-        require(value in MIN..MAX) { REQUIRE_MESSAGE }
+        domainRequire(value in MIN..MAX, CalligraphyErrorCode.SHOWCASE_SIZE_INVALID) { REQUIRE_MESSAGE }
     }
 
     companion object {

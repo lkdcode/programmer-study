@@ -1,7 +1,9 @@
 package com.sb.domain.plan.aggregate
 
+import com.sb.domain.exception.domainRequire
 import com.sb.domain.plan.entity.CreditTransaction
 import com.sb.domain.plan.entity.CreditWallet
+import com.sb.domain.plan.exception.PlanErrorCode
 import com.sb.domain.plan.value.Credit
 import java.time.Instant
 
@@ -16,7 +18,7 @@ class CreditWalletAggregate private constructor(
         reference: String?,
         now: Instant = Instant.now(),
     ): Pair<CreditWalletAggregate, CreditTransaction> {
-        require(reason.isNotBlank()) { "사유는 필수입니다." }
+        domainRequire(reason.isNotBlank(), PlanErrorCode.CREDIT_TX_REASON_REQUIRED) { "사유는 필수입니다." }
         wallet = wallet.copy(
             balance = wallet.balance.plus(amount),
             updatedAt = now,
@@ -38,7 +40,7 @@ class CreditWalletAggregate private constructor(
         reference: String?,
         now: Instant = Instant.now(),
     ): Pair<CreditWalletAggregate, CreditTransaction> {
-        require(reason.isNotBlank()) { "사유는 필수입니다." }
+        domainRequire(reason.isNotBlank(), PlanErrorCode.CREDIT_TX_REASON_REQUIRED) { "사유는 필수입니다." }
         wallet = wallet.copy(
             balance = wallet.balance.minus(amount),
             updatedAt = now,

@@ -13,7 +13,7 @@ class UserAggregate private constructor(
     val getUser: User get() = user
 
     companion object {
-        fun restore(user: User): UserAggregate = UserAggregate(user)
+        fun from(user: User): UserAggregate = UserAggregate(user)
 
         fun registerWithEmail(
             email: Email,

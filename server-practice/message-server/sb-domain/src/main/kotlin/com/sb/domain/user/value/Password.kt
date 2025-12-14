@@ -1,5 +1,8 @@
 package com.sb.domain.user.value
 
+import com.sb.domain.exception.domainRequire
+import com.sb.domain.user.exception.UserErrorCode
+
 @JvmInline
 value class Password private constructor(
     val value: String
@@ -21,20 +24,20 @@ value class Password private constructor(
 
         fun of(value: String): Password {
             val raw = value
-            require(raw.isNotBlank()) { REQUIRE_MESSAGE }
-            require(raw.length in MIN_LENGTH..MAX_LENGTH) { INVALID_LENGTH_MESSAGE }
-            require(LOWER.containsMatchIn(raw)) { POLICY_MESSAGE }
-            require(UPPER.containsMatchIn(raw)) { POLICY_MESSAGE }
-            require(DIGIT.containsMatchIn(raw)) { POLICY_MESSAGE }
-            require(SPECIAL.containsMatchIn(raw)) { POLICY_MESSAGE }
-            require(!WHITESPACE.containsMatchIn(raw)) { WHITESPACE_MESSAGE }
+            domainRequire(raw.isNotBlank(), UserErrorCode.PASSWORD_REQUIRED) { REQUIRE_MESSAGE }
+            domainRequire(raw.length in MIN_LENGTH..MAX_LENGTH, UserErrorCode.PASSWORD_INVALID_LENGTH) { INVALID_LENGTH_MESSAGE }
+            domainRequire(LOWER.containsMatchIn(raw), UserErrorCode.PASSWORD_POLICY) { POLICY_MESSAGE }
+            domainRequire(UPPER.containsMatchIn(raw), UserErrorCode.PASSWORD_POLICY) { POLICY_MESSAGE }
+            domainRequire(DIGIT.containsMatchIn(raw), UserErrorCode.PASSWORD_POLICY) { POLICY_MESSAGE }
+            domainRequire(SPECIAL.containsMatchIn(raw), UserErrorCode.PASSWORD_POLICY) { POLICY_MESSAGE }
+            domainRequire(!WHITESPACE.containsMatchIn(raw), UserErrorCode.PASSWORD_WHITESPACE) { WHITESPACE_MESSAGE }
             return Password(raw)
         }
 
         fun encrypted(value: String): Password {
             val encrypted = value
-            require(encrypted.isNotBlank()) { REQUIRE_MESSAGE }
-            require(!WHITESPACE.containsMatchIn(encrypted)) { WHITESPACE_MESSAGE }
+            domainRequire(encrypted.isNotBlank(), UserErrorCode.PASSWORD_REQUIRED) { REQUIRE_MESSAGE }
+            domainRequire(!WHITESPACE.containsMatchIn(encrypted), UserErrorCode.PASSWORD_WHITESPACE) { WHITESPACE_MESSAGE }
             return Password(encrypted)
         }
     }

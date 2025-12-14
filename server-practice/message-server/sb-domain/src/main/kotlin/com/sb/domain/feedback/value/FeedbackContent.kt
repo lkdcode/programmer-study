@@ -1,13 +1,16 @@
 package com.sb.domain.feedback.value
 
+import com.sb.domain.exception.domainRequire
+import com.sb.domain.feedback.exception.FeedbackErrorCode
+
 @JvmInline
 value class FeedbackContent private constructor(
     val value: String
 ) {
     init {
         val normalized = normalize(value)
-        require(normalized.isNotBlank()) { REQUIRE_MESSAGE }
-        require(normalized.length <= MAX_LENGTH) { INVALID_LENGTH_MESSAGE }
+        domainRequire(normalized.isNotBlank(), FeedbackErrorCode.CONTENT_REQUIRED) { REQUIRE_MESSAGE }
+        domainRequire(normalized.length <= MAX_LENGTH, FeedbackErrorCode.CONTENT_TOO_LONG) { INVALID_LENGTH_MESSAGE }
     }
 
     companion object {

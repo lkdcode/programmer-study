@@ -1,12 +1,15 @@
 package com.sb.domain.plan.value
 
+import com.sb.domain.exception.domainRequire
+import com.sb.domain.plan.exception.PlanErrorCode
+
 data class PaymentMethod(
     val provider: PaymentProvider,
     val referenceId: String?,
 ) {
     init {
-        require(referenceId == null || referenceId.isNotBlank()) { REQUIRE_MESSAGE }
-        require(referenceId == null || referenceId.length <= MAX_LENGTH) { INVALID_LENGTH_MESSAGE }
+        domainRequire(referenceId == null || referenceId.isNotBlank(), PlanErrorCode.PAYMENT_METHOD_REFERENCE_BLANK) { REQUIRE_MESSAGE }
+        domainRequire(referenceId == null || referenceId.length <= MAX_LENGTH, PlanErrorCode.PAYMENT_METHOD_REFERENCE_TOO_LONG) { INVALID_LENGTH_MESSAGE }
     }
 
     companion object {
