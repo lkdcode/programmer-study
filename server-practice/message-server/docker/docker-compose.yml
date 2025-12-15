@@ -2,6 +2,17 @@ version: "3.9"
 
 name: lkdcode-message-server
 services:
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "18085:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
+    depends_on:
+      - kafka
+
   kafka:
     image: apache/kafka-native:4.1.0
     container_name: lkdcode-kafka
