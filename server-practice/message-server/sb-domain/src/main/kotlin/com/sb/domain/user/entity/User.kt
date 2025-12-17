@@ -12,7 +12,6 @@ data class User(
     val nickname: Nickname,
     val password: Password?,
     val signUpType: SignUpType,
-    val emailVerified: Boolean,
     val oauthSubject: OAuthSubject?,
     val createdAt: Instant,
     val updatedAt: Instant,
