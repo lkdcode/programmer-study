@@ -5,7 +5,7 @@ import com.sb.domain.user.exception.UserErrorCode
 import kotlin.random.Random
 
 @JvmInline
-value class EmailVerificationToken private constructor(
+value class IdentityVerificationToken private constructor(
     val value: String
 ) {
     init {
@@ -16,17 +16,17 @@ value class EmailVerificationToken private constructor(
 
     companion object {
         const val LENGTH = 8
-        const val REQUIRE_MESSAGE = "이메일 인증 토큰은 필수입니다."
-        const val INVALID_LENGTH_MESSAGE = "이메일 인증 토큰은 ${LENGTH}자리여야 합니다."
-        const val INVALID_FORMAT_MESSAGE = "이메일 인증 토큰은 숫자만 가능합니다."
+        const val REQUIRE_MESSAGE = "이메일 인증 코드는 필수입니다."
+        const val INVALID_LENGTH_MESSAGE = "이메일 인증 코드는 ${LENGTH}자리여야 합니다."
+        const val INVALID_FORMAT_MESSAGE = "이메일 인증 코드는 숫자만 가능합니다."
 
-        fun of(value: String): EmailVerificationToken = EmailVerificationToken(value.trim())
+        fun of(value: String): IdentityVerificationToken = IdentityVerificationToken(value.trim())
 
-        fun generate(random: Random = Random.Default): EmailVerificationToken {
+        internal fun generate(random: Random = Random.Default): IdentityVerificationToken {
             val code = buildString(LENGTH) {
                 repeat(LENGTH) { append(random.nextInt(0, 10)) }
             }
-            return EmailVerificationToken(code)
+            return IdentityVerificationToken(code)
         }
     }
 }

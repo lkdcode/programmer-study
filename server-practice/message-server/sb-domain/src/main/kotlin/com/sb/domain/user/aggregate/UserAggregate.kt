@@ -11,49 +11,18 @@ class UserAggregate private constructor(
     private var user: User
 ) {
     val getUser: User get() = user
+    val getUserId: User.UserId get() = user.id
+
+    val id: User.UserId get() = user.id
+    val email: Email get() = user.email
+    val nickname: Nickname get() = user.nickname
+    val password: Password? get() = user.password
+    val signUpType: User.SignUpType get() = user.signUpType
+    val oauthSubject: OAuthSubject? get() = user.oauthSubject
+    val createdAt: Instant get() = user.createdAt
+    val updatedAt: Instant get() = user.updatedAt
 
     companion object {
         fun from(user: User): UserAggregate = UserAggregate(user)
-
-        fun registerWithEmail(
-            email: Email,
-            nickname: Nickname,
-            password: Password,
-            now: Instant = Instant.now(),
-        ): UserAggregate = UserAggregate(
-            User(
-                id = generateUserId(),
-                email = email,
-                nickname = nickname,
-                password = password,
-                signUpType = User.SignUpType.EMAIL,
-                emailVerified = true,
-                oauthSubject = null,
-                createdAt = now,
-                updatedAt = now,
-            )
-        )
-
-        fun registerWithGoogle(
-            email: Email,
-            nickname: Nickname,
-            subject: OAuthSubject,
-            now: Instant = Instant.now(),
-        ): UserAggregate = UserAggregate(
-            User(
-                id = generateUserId(),
-                email = email,
-                nickname = nickname,
-                password = null,
-                signUpType = User.SignUpType.GOOGLE,
-                emailVerified = true,
-                oauthSubject = subject,
-                createdAt = now,
-                updatedAt = now,
-            )
-        )
-
-        private fun generateUserId(): User.UserId =
-            User.UserId(Instant.now().toEpochMilli())
     }
 }

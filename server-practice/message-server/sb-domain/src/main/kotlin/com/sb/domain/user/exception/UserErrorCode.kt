@@ -28,7 +28,12 @@ enum class UserErrorCode(
     EMAIL_VERIFICATION_TOKEN_MISMATCH("USR015", "이메일 인증 토큰이 올바르지 않습니다."),
     EMAIL_VERIFICATION_EXPIRED("USR016", "이메일 인증이 만료되었습니다."),
     EMAIL_VERIFICATION_NOT_VERIFIED("USR017", "이메일 인증이 완료되지 않았습니다."),
+
+    DUPLICATE_EMAIL("USR018", "이미 등록된 이메일입니다."),
+
+    PASSWORD_CONFIRM_MISMATCH("USR019", "비밀번호와 재확인 비밀번호가 일치하지 않습니다."),
+    USER_NOT_FOUND("USR020", "해당 유저를 찾을 수 없습니다."),
+    AUTHENTICATION_FAILED("USR021", "인증에 실패했습니다."),
+    ACCESS_DENIED("USR022", "권한이 없습니다.")
     ;
 }
-
-
