@@ -1,51 +1,47 @@
 package com.sb.application.user.usecase
 
+import com.sb.application.common.validator.throwIf
+import com.sb.application.common.validator.throwUnless
 import com.sb.application.user.dto.RegisterWithEmailCommand
 import com.sb.application.user.service.RegisterWithEmailService
-import com.sb.domain.user.aggregate.UserAggregate
-import com.sb.domain.user.spec.EmailVerificationSpec
+import com.sb.domain.user.entity.User
+import com.sb.domain.user.exception.UserErrorCode
+import com.sb.domain.user.spec.IdentityVerificationSpec
 
 class RegisterWithEmailDsl private constructor(
     private val command: RegisterWithEmailCommand,
 ) {
-    val signUpKey get() = EmailVerificationSpec.generateSignUpKey(command.emailVo)
+    internal val signUpKey get() = IdentityVerificationSpec.generateSignUpKey(command.emailVo)
 
-    fun requirePasswordConfirmed() {
-        require(command.password == command.passwordConfirm) { PASSWORD_CONFIRM_MESSAGE }
-    }
+    internal fun requirePasswordConfirmed() =
+        throwUnless(
+            command.password == command.passwordConfirm,
+            UserErrorCode.PASSWORD_CONFIRM_MISMATCH
+        )
 
-    suspend fun RegisterWithEmailService.requireEmailNotRegistered() {
+    internal suspend fun RegisterWithEmailService.requireEmailNotRegistered() =
         guardEmailNotRegistered(command.emailVo)
-    }
 
-    suspend fun RegisterWithEmailService.requireEmailVerified() {
-        require(emailVerificationPort.isVerified(signUpKey)) { "이메일 인증이 필요합니다." }
-    }
+    internal suspend fun RegisterWithEmailService.requireEmailVerified() =
+        throwUnless(
+            emailVerificationPort.isVerified(signUpKey),
+            UserErrorCode.EMAIL_VERIFICATION_NOT_VERIFIED
+        )
 
-    suspend fun RegisterWithEmailService.register(): Long =
-        userCommandPort.save(
-            UserAggregate.registerWithEmail(
-                email = command.signUpVo.email,
-                nickname = command.signUpVo.nickname,
-                password = command.signUpVo.password,
-            )
-        ).getUser.id.value
+    internal suspend fun RegisterWithEmailService.register(): User.UserId =
+        userCommandPort.save(command.newUser)
 
-    suspend fun RegisterWithEmailService.consumeVerification() {
+    internal suspend fun RegisterWithEmailService.consumeVerification() =
         emailVerificationPort.remove(signUpKey)
-    }
 
-    suspend fun RegisterWithEmailService.rewardSignupBonus(userId: Long) {
+    internal suspend fun RegisterWithEmailService.rewardSignupBonus(userId: User.UserId) =
         rewardSignupBonusUsecase.reward(userId)
-    }
 
     companion object {
-        const val PASSWORD_CONFIRM_MESSAGE = "비밀번호가 일치하지 않습니다."
-
-        suspend fun execute(
+        internal suspend fun execute(
             command: RegisterWithEmailCommand,
-            block: suspend RegisterWithEmailDsl.() -> Long,
-        ): Long = block(
+            block: suspend RegisterWithEmailDsl.() -> Unit,
+        ) = block(
             RegisterWithEmailDsl(
                 command = command,
             )

@@ -4,6 +4,7 @@ import com.sb.domain.user.value.Email
 import com.sb.domain.user.value.signup.GoogleSignUpCommand
 import com.sb.domain.user.value.Nickname
 import com.sb.domain.user.value.OAuthSubject
+import com.sb.domain.user.model.NewUser
 
 data class RegisterWithGoogleCommand(
     val email: String,
@@ -19,4 +20,11 @@ data class RegisterWithGoogleCommand(
         nickname = nicknameVo,
         subject = subjectVo,
     )
+
+    val newUser
+        get() = NewUser.registerWithGoogle(
+            email = emailVo,
+            nickname = nicknameVo,
+            subject = subjectVo,
+        )
 }

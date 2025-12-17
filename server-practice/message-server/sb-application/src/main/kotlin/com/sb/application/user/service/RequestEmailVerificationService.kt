@@ -5,7 +5,7 @@ import com.sb.application.user.guard.UserGuard
 import com.sb.application.user.ports.input.command.RequestEmailVerificationUsecase
 import com.sb.application.user.ports.output.cache.EmailVerificationPort
 import com.sb.application.user.ports.output.external.EmailSenderPort
-import com.sb.domain.user.spec.EmailVerificationSpec
+import com.sb.domain.user.spec.IdentityVerificationSpec
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Service
@@ -23,12 +23,12 @@ class RequestEmailVerificationService(
     override suspend fun request(command: RequestEmailVerificationCommand) {
         userGuard.requireEmailNotRegistered(command.emailVo)
 
-        val token = EmailVerificationSpec.generateToken()
-        val signUpKey = EmailVerificationSpec.generateSignUpKey(command.emailVo)
-
         appScope.launch {
+            val token = IdentityVerificationSpec.generateToken()
+            val signUpKey = IdentityVerificationSpec.generateSignUpKey(command.emailVo)
+
             runCatching {
-                emailVerificationPort.save(signUpKey, token.value, EmailVerificationSpec.defaultTTL())
+                emailVerificationPort.save(signUpKey, token.value, IdentityVerificationSpec.defaultTTL())
                 emailSenderPort.sendVerificationCode(command.emailVo, token)
             }.onFailure {
                 emailVerificationPort.remove(signUpKey)
