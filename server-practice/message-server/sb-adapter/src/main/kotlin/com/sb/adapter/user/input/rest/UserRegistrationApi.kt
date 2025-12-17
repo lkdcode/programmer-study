@@ -27,7 +27,7 @@ class UserRegistrationApi(
     private val registerWithGoogleUsecase: RegisterWithGoogleUsecase,
 ) {
 
-    @PostMapping("/api/users/email-verifications")
+    @PostMapping("/public/users/email-verifications")
     suspend fun requestEmailVerification(
         @RequestBody @Valid request: RequestEmailVerificationRequest,
     ): ApiEntity<Unit> {
@@ -36,7 +36,7 @@ class UserRegistrationApi(
         return Unit.toApiResponseEntity(status = HttpStatus.CREATED, message = "OK")
     }
 
-    @PostMapping("/api/users/email-verifications/verify")
+    @PostMapping("/public/users/email-verifications/verify")
     suspend fun verifyEmail(
         @RequestBody @Valid request: VerifyEmailRequest,
     ): ApiEntity<Unit> {
@@ -45,16 +45,16 @@ class UserRegistrationApi(
         return Unit.toApiResponseEntity(status = HttpStatus.OK, message = "OK")
     }
 
-    @PostMapping("/api/users/register/email")
+    @PostMapping("/public/users/register/email")
     suspend fun registerWithEmail(
         @RequestBody @Valid request: RegisterWithEmailRequest,
-    ): ApiEntity<RegisterResponse> {
-        val userId = registerWithEmailUsecase.register(request.convert)
+    ): ApiEntity<Unit> {
+        registerWithEmailUsecase.register(request.convert)
 
-        return RegisterResponse(userId).toApiResponseEntity(status = HttpStatus.CREATED, message = "OK")
+        return Unit.toApiResponseEntity(status = HttpStatus.CREATED, message = "OK")
     }
 
-    @PostMapping("/api/users/register/google")
+    @PostMapping("/public/users/register/google")
     suspend fun registerWithGoogle(
         @RequestBody @Valid request: RegisterWithGoogleRequest,
     ): ApiEntity<RegisterResponse> {
