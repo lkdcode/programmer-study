@@ -1,8 +1,8 @@
 package com.sb.application.user.ports.output.external
 
 import com.sb.domain.user.value.Email
-import com.sb.domain.user.value.EmailVerificationToken
+import com.sb.domain.user.value.IdentityVerificationToken
 
 interface EmailSenderPort {
-    suspend fun sendVerificationCode(email: Email, token: EmailVerificationToken)
+    suspend fun sendVerificationCode(email: Email, token: IdentityVerificationToken)
 }
