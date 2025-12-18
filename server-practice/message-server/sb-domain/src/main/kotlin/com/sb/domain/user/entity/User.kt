@@ -2,8 +2,8 @@ package com.sb.domain.user.entity
 
 import com.sb.domain.user.value.Email
 import com.sb.domain.user.value.Nickname
-import com.sb.domain.user.value.OAuthSubject
 import com.sb.domain.user.value.Password
+import com.sb.domain.user.value.UserRole
 import java.time.Instant
 
 data class User(
@@ -12,9 +12,11 @@ data class User(
     val nickname: Nickname,
     val password: Password?,
     val signUpType: SignUpType,
-    val oauthSubject: OAuthSubject?,
+    val provider: String?,
+    val providerUserId: String?,
+    val role: UserRole,
     val createdAt: Instant,
-    val updatedAt: Instant,
+    val updatedAt: Instant?,
 ) {
     @JvmInline
     value class UserId(val value: Long)

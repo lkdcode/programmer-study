@@ -59,20 +59,6 @@ class CreditWalletAggregate private constructor(
     companion object {
         fun restore(wallet: CreditWallet): CreditWalletAggregate = CreditWalletAggregate(wallet)
 
-        fun create(userId: Long, now: Instant = Instant.now()): CreditWalletAggregate =
-            CreditWalletAggregate(
-                CreditWallet(
-                    id = generateWalletId(),
-                    userId = userId,
-                    balance = Credit.zero(),
-                    createdAt = now,
-                    updatedAt = now,
-                )
-            )
-
-        private fun generateWalletId(): CreditWallet.WalletId =
-            CreditWallet.WalletId(Instant.now().toEpochMilli())
-
         private fun generateTxId(): CreditTransaction.TransactionId =
             CreditTransaction.TransactionId(Instant.now().toEpochMilli())
     }
