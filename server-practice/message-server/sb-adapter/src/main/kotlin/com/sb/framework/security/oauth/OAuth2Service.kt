@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono
 @Service
 class OAuth2Service(
     private val mappers: List<OAuth2UserInfoMapper>,
-    private val registerWithOAuth2Usecase: OAuth2UserProvisioningUsecase
+    private val oAuth2UserProvisioningUsecase: OAuth2UserProvisioningUsecase
 ) : ReactiveOAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     override fun loadUser(userRequest: OAuth2UserRequest): Mono<OAuth2User> =
@@ -29,7 +29,7 @@ class OAuth2Service(
                 Mono
                     .defer {
                         mono {
-                            registerWithOAuth2Usecase.provision(command)
+                            oAuth2UserProvisioningUsecase.provision(command)
                         }
                     }
                     .thenReturn(oauthUser.defaultOAuth2User())
