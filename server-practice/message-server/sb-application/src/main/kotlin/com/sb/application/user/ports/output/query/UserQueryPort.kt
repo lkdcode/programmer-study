@@ -6,6 +6,8 @@ import com.sb.domain.user.value.Email
 
 interface UserQueryPort {
     suspend fun loadById(id: User.UserId): UserAggregate
-    suspend fun existsByEmail(email: Email): Boolean
     suspend fun loadByEmail(email: Email): UserAggregate
+
+    suspend fun existsByEmail(email: Email): Boolean
+    suspend fun alreadyRegisterByEmail(email: Email): Boolean
 }

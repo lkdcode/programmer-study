@@ -1,6 +1,5 @@
 package com.sb.application.user.usecase
 
-import com.sb.application.common.validator.throwIf
 import com.sb.application.common.validator.throwUnless
 import com.sb.application.user.dto.RegisterWithEmailCommand
 import com.sb.application.user.service.RegisterWithEmailService
@@ -8,7 +7,7 @@ import com.sb.domain.user.entity.User
 import com.sb.domain.user.exception.UserErrorCode
 import com.sb.domain.user.spec.IdentityVerificationSpec
 
-class RegisterWithEmailDsl private constructor(
+internal class RegisterWithEmailDsl private constructor(
     private val command: RegisterWithEmailCommand,
 ) {
     internal val signUpKey get() = IdentityVerificationSpec.generateSignUpKey(command.emailVo)
@@ -42,9 +41,7 @@ class RegisterWithEmailDsl private constructor(
             command: RegisterWithEmailCommand,
             block: suspend RegisterWithEmailDsl.() -> Unit,
         ) = block(
-            RegisterWithEmailDsl(
-                command = command,
-            )
+            RegisterWithEmailDsl(command)
         )
     }
 }
