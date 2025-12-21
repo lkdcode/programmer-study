@@ -1,5 +1,6 @@
 package com.sb.framework.security.authentication
 
+import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
@@ -11,6 +12,9 @@ data class UserAuthentication(
     val isNotDeleted: Boolean,
     val isNonLocked: Boolean,
 ) : UserDetails {
+
+    val authority get() = role.first()
+    val authorityStringValue get() = role.first().toString()
 
     override fun getAuthorities(): List<SimpleGrantedAuthority> = role
 
@@ -26,3 +30,5 @@ data class UserAuthentication(
 
     override fun isEnabled(): Boolean = isNotDeleted
 }
+
+fun Authentication.userAuthentication(): UserAuthentication = this.principal as UserAuthentication
