@@ -1,5 +1,6 @@
 package com.sb.framework.security.login
 
+import com.sb.application.user.ports.output.query.UserQueryPort
 import com.sb.framework.security.authentication.UserAuthentication
 import com.sb.framework.security.login.policy.AuthenticationPolicy
 import com.sb.framework.security.login.repository.SecurityUserRepository

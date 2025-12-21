@@ -36,11 +36,8 @@ class ReactiveJwtValidator(
             .defaultIfEmpty(false)
 
     private fun validateProperty(jwtProperties: JwtProperties, token: String): Mono<Boolean> =
-        Mono
-            .zip(
-                reactiveParser.getUsername(jwtProperties, token),
-                reactiveParser.getDeviceId(jwtProperties, token)
-            )
+        reactiveParser
+            .getUsername(jwtProperties, token)
             .map { true }
             .onErrorReturn(false)
 }

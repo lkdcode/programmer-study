@@ -10,7 +10,4 @@ object JwtSpec {
 
     const val USER_ROLE_KEY = "role"
     val USER_ROLE_TYPE = String::class.java
-
-    const val DEVICE_ID_KEY = "deviceId"
-    val DEVICE_ID_TYPE = String::class.java
 }

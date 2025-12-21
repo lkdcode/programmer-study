@@ -42,15 +42,6 @@ class ReactiveJwtParser {
                 claims.get(JwtSpec.USERNAME_KEY, JwtSpec.USERNAME_TYPE)
             }
 
-    fun getDeviceId(
-        jwtProperties: JwtProperties,
-        token: String,
-    ): Mono<String> =
-        getClaims(jwtProperties, token)
-            .mapNotNull { claims ->
-                claims.get(JwtSpec.DEVICE_ID_KEY, JwtSpec.DEVICE_ID_TYPE)
-            }
-
     private fun String.substringPrefix(): String? =
         takeIf { it.startsWith(JwtSpec.TOKEN_PREFIX) }
             ?.substring(JwtSpec.TOKEN_PREFIX.length)
