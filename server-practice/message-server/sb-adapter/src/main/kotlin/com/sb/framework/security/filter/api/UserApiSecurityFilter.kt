@@ -1,6 +1,8 @@
 package com.sb.framework.security.filter.api
 
 import com.sb.framework.security.login.UserAuthenticationWebFilterFactory
+import com.sb.framework.security.login.UserLoginFilter
+import com.sb.framework.security.oauth.OAuth2LoginSuccessHandler
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.web.server.SecurityWebFilterChain
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Component
 @Component
 class UserApiSecurityFilter(
     private val userAuthenticationWebFilterFactory: UserAuthenticationWebFilterFactory,
+    private val oAuth2LoginSuccessHandler: OAuth2LoginSuccessHandler,
+    private val userLoginFilter: UserLoginFilter,
 ) {
 
     fun doFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
@@ -22,9 +26,14 @@ class UserApiSecurityFilter(
                     .anyExchange().denyAll()
             }
             .oauth2Login { oauth2 ->
+                oauth2.authenticationSuccessHandler(oAuth2LoginSuccessHandler)
             }
             .addFilterAt(
                 userAuthenticationWebFilterFactory.authenticationWebFilter(),
+                SecurityWebFiltersOrder.AUTHENTICATION
+            )
+            .addFilterAt(
+                userLoginFilter.adminAuthenticationWebFilter(),
                 SecurityWebFiltersOrder.AUTHENTICATION
             )
             .build()
@@ -44,7 +53,9 @@ class UserApiSecurityFilter(
             "/api/logout",
             "/oauth2/**",
             "/login/**",
-            "/login"
+            "/login",
+            "/public",
+            "/public/**",
         )
 
         val AUTHENTICATED_URL = arrayOf(

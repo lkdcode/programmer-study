@@ -19,4 +19,7 @@ class GoogleOAuth2UserInfoMapper(
             nickname = attributes["name"] as String,
             profileImage = attributes["picture"] as String?,
         )
+
+    override fun getEmail(attributes: Map<String, Any>): String =
+        attributes["email"] as String
 }

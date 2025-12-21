@@ -18,9 +18,7 @@ class TodoAuthenticationPolicy : AuthenticationPolicy {
         TODO("Not yet implemented")
     }
 
-    override fun isAttemptAllowed(loginId: String): Mono<Boolean> {
-        TODO("Not yet implemented")
-    }
+    override fun isAttemptAllowed(loginId: String): Mono<Boolean> = Mono.just(true)
 
     override fun permitAll(): Array<String> = UserApiSecurityFilter.PERMIT_ALL_URL
 
