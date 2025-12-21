@@ -1,8 +1,9 @@
-package com.sb.application.auth.ports.input
+package com.sb.application.auth.ports.output.command
 
 import com.sb.application.auth.dto.IssueLoginTokensCommand
 import com.sb.application.auth.dto.TokenPair
 
-interface IssueLoginTokensUsecase {
+
+interface TokenIssuerPort {
     suspend fun issue(command: IssueLoginTokensCommand): TokenPair
 }

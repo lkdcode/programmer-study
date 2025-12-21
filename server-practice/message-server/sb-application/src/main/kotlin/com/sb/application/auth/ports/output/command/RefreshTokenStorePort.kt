@@ -1,4 +1,4 @@
-package com.sb.application.auth.ports.output
+package com.sb.application.auth.ports.output.command
 
 import java.time.Instant
 
