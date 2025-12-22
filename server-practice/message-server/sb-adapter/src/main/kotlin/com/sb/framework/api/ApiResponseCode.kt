@@ -40,7 +40,6 @@ enum class ApiResponseCode(
 
     /* PLAN */
     PLAN_NOT_FOUND("PLN001", HttpStatus.NOT_FOUND, "해당 플랜을 찾을 수 없습니다."),
-    PLAN_USER_LIMIT_EXCEEDED("PLN002", HttpStatus.BAD_REQUEST, "생성할 수 있는 사용자가 초과되었습니다."),
 
     /* HIS_PLAN */
     HIS_PLAN_NOT_FOUND("HPL001", HttpStatus.NOT_FOUND, "해당 플랜을 찾을 수 없습니다."),
@@ -51,6 +50,7 @@ enum class ApiResponseCode(
     INVALID_PASSWORD("U003", HttpStatus.BAD_REQUEST, Password.POLICY_MESSAGE),
     USER_INVALID("U004", HttpStatus.BAD_REQUEST, "올바르지 않은 접근입니다."),
     REQUIRED_PASSWORD_CONFIRM("U005", HttpStatus.BAD_REQUEST, "재확인 비밀번호는 필수입니다."),
+    USER_NOT_FOUND("U006", HttpStatus.BAD_REQUEST, "해당 유저를 찾을 수 없습니다."),
 
     /* ADMIN */
     ADMIN_NOT_FOUND_BY_ID("A001", HttpStatus.NOT_FOUND, "존재하지 않는 관리자입니다."),
@@ -62,12 +62,16 @@ enum class ApiResponseCode(
 
 
     /* SERVER */
-    SEVER_SQL_EXCEPTION("SE001", HttpStatus.INTERNAL_SERVER_ERROR, "데이터베이스 SQL 에러가 발생했습니다."),
-    SEVER_DATABASE_EXCEPTION("SE002", HttpStatus.INTERNAL_SERVER_ERROR, "데이터베이스 에러가 발생했습니다."),
+    SEVER_SQL_EXCEPTION("SV001", HttpStatus.INTERNAL_SERVER_ERROR, "서버에서 에러가 발생했습니다."),
+    SEVER_DATABASE_EXCEPTION("SV002", HttpStatus.INTERNAL_SERVER_ERROR, "서버에서 에러가 발생했습니다."),
+    SEVER_DATA_INTEGRITY_VIOLATION_EXCEPTION("SV003", HttpStatus.INTERNAL_SERVER_ERROR, "서버에서 에러가 발생했습니다."),
+    SEVER_TRANSIENT_RESOURCE_EXCEPTION("SV004", HttpStatus.INTERNAL_SERVER_ERROR, "서버에서 에러가 발생했습니다."),
+    SEVER_NON_TRANSIENT_RESOURCE_EXCEPTION("SV005", HttpStatus.INTERNAL_SERVER_ERROR, "서버에서 에러가 발생했습니다."),
+    SEVER_ROLL_BACK_EXCEPTION("SV006", HttpStatus.INTERNAL_SERVER_ERROR, "서버에서 에러가 발생했습니다."),
 
-    SEVER_UNHANDLED_EXCEPTION("SE998", HttpStatus.INTERNAL_SERVER_ERROR, "서버에서 에러가 발생했습니다."),
-    SEVER_CRITICAL_EXCEPTION("SE999", HttpStatus.INTERNAL_SERVER_ERROR, "서버에서 에러가 발생했습니다."),
-    I_AM_A_TEAPOT("SE1000", HttpStatus.I_AM_A_TEAPOT, "I_AM_A_TEAPOT"),
+    SEVER_UNHANDLED_EXCEPTION("SV998", HttpStatus.INTERNAL_SERVER_ERROR, "서버에서 에러가 발생했습니다."),
+    SEVER_CRITICAL_EXCEPTION("SV999", HttpStatus.INTERNAL_SERVER_ERROR, "서버에서 에러가 발생했습니다."),
+    I_AM_A_TEAPOT("HELLO_WORLD", HttpStatus.I_AM_A_TEAPOT, "I_AM_A_TEAPOT"),
 
     ;
 
