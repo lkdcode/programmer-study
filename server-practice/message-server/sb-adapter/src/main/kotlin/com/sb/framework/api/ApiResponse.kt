@@ -10,6 +10,18 @@ class ApiResponse<T>(
     val payload: T? = null,
 ) {
     companion object {
+        fun <T> of(
+            success: Boolean,
+            apiCode: ApiResponseCode,
+            payload: T? = null,
+        ): ApiResponse<T> =
+            ApiResponse(
+                success = success,
+                code = apiCode.code,
+                message = apiCode.message,
+                payload = payload,
+            )
+
         fun <T> success(
             payload: T,
             code: String = "SUCCESS",
