@@ -34,7 +34,7 @@ class ReactiveJwtService(
     fun createRefreshToken(
         username: String,
         userRole: String,
-    ): Mono<String> = reactiveJwtCreator.create(
+    ): Mono<String> = reactiveJwtCreator.createRefreshToken(
         refreshTokenProperties,
         mutableMapOf(
             JwtSpec.USERNAME_KEY to username,
@@ -50,7 +50,8 @@ class ReactiveJwtService(
         val refreshMono = createRefreshToken(username, userRole)
         val refreshExpiredAt = Instant.now().plusMillis(refreshTokenProperties.expired())
 
-        return Mono.zip(accessMono, refreshMono)
+        return Mono
+            .zip(accessMono, refreshMono)
             .map { tuple ->
                 TokenPair(
                     accessToken = tuple.t1,

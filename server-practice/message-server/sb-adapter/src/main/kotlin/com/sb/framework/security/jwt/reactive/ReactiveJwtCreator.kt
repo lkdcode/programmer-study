@@ -25,4 +25,19 @@ class ReactiveJwtCreator {
                 .signWith(jwtProperties.secretKey())
                 .compact()
         }
+
+    fun createRefreshToken(
+        jwtProperties: JwtProperties,
+        claims: Map<String, *>,
+    ): Mono<String> =
+        Mono.fromSupplier {
+            val now = Instant.now()
+
+            Jwts.builder()
+                .claims(claims)
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plusSeconds(jwtProperties.expired())))
+                .signWith(jwtProperties.secretKey())
+                .compact()
+        }
 }
