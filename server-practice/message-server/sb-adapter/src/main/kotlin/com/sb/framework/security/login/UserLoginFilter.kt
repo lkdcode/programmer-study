@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class UserLoginFilter(
-    private val adminLoginConverter: UserLoginConverter,
+    private val userLoginConverter: UserLoginConverter,
     private val userLoginSuccessHandler: UserLoginSuccessHandler,
     private val userAuthenticationFailureHandler: UserAuthenticationFailureHandler,
     private val adminReactiveAuthenticationManager: UserLoginReactiveAuthenticationManager,
@@ -18,7 +18,7 @@ class UserLoginFilter(
     fun adminAuthenticationWebFilter(): AuthenticationWebFilter =
         AuthenticationWebFilter(adminReactiveAuthenticationManager)
             .apply {
-                setServerAuthenticationConverter(adminLoginConverter)
+                setServerAuthenticationConverter(userLoginConverter)
                 setAuthenticationSuccessHandler(userLoginSuccessHandler)
                 setAuthenticationFailureHandler(userAuthenticationFailureHandler)
                 setRequiresAuthenticationMatcher(

@@ -1,6 +1,5 @@
 package com.sb.framework.security.login
 
-import com.sb.application.user.ports.output.query.UserQueryPort
 import com.sb.framework.security.authentication.UserAuthentication
 import com.sb.framework.security.login.policy.AuthenticationPolicy
 import com.sb.framework.security.login.repository.SecurityUserRepository
@@ -37,12 +36,12 @@ class UserLoginReactiveAuthenticationManager(
 
     private fun matchesPassword(raw: String, auth: UserAuthentication): Mono<UserAuthentication> =
         Mono
-            .defer { Mono.just(passwordEncoder.matches(raw, auth.encodedPassword)) }
+            .fromCallable { passwordEncoder.matches(raw, auth.encodedPassword) }
+            .filter { it }
             .switchIfEmpty(
-                Mono.defer {
-                    authenticationPolicy.onFailure(auth.loginId)
-                        .then(Mono.error(BadCredentialsException("Invalid Authentication")))
-                }
+                authenticationPolicy
+                    .onFailure(auth.loginId)
+                    .then(Mono.error(BadCredentialsException("Invalid Authentication")))
             )
             .thenReturn(auth)
 
@@ -50,7 +49,7 @@ class UserLoginReactiveAuthenticationManager(
         authenticationPolicy
             .isAttemptAllowed(auth.loginId)
             .flatMap { result ->
-                if (result) Mono.error(BadCredentialsException("Invalid Authentication"))
-                else Mono.just(auth)
+                if (result) Mono.just(auth)
+                else Mono.error(BadCredentialsException("Invalid Authentication"))
             }
 }
