@@ -2,6 +2,7 @@ package com.sb.framework.security.jwt.spec
 
 object JwtSpec {
     const val TOKEN_HEADER_KEY = "Authorization"
+    const val REFRESH_COOKIE_KEY = "refresh_token"
     const val TOKEN_PREFIX = "Bearer "
     const val BLACK_LIST_KEY = "BLACK_LIST"
 
