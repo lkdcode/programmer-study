@@ -15,6 +15,7 @@ data class User(
     val provider: String?,
     val providerUserId: String?,
     val role: UserRole,
+    val loginAttemptCount: Int = 0,
     val createdAt: Instant,
     val updatedAt: Instant?,
 ) {
