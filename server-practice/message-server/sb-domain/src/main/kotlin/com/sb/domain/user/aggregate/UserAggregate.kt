@@ -1,31 +1,28 @@
 package com.sb.domain.user.aggregate
 
 import com.sb.domain.user.entity.User
-import com.sb.domain.user.value.Email
-import com.sb.domain.user.value.Nickname
-import com.sb.domain.user.value.Password
-import com.sb.domain.user.value.UserRole
-import java.time.Instant
 
 class UserAggregate private constructor(
     private var user: User
 ) {
-    val getUser: User get() = user
-    val getUserId: User.UserId get() = user.id
+    val snapshot: User get() = user
 
-    val id: User.UserId get() = user.id
-    val email: Email get() = user.email
-    val nickname: Nickname get() = user.nickname
-    val password: Password? get() = user.password
-    val signUpType: User.SignUpType get() = user.signUpType
-    val provider: String? get() = user.provider
-    val providerUserId: String? get() = user.providerUserId
-    val role: UserRole get() = user.role
-    val createdAt: Instant get() = user.createdAt
-    val updatedAt: Instant? get() = user.updatedAt
+    val loginAttemptCount: Int get() = user.loginAttemptCount
+    val isAccountLocked: Boolean get() = user.loginAttemptCount > MAX_LOGIN_ATTEMPTS
 
+    fun failLogin(): UserAggregate {
+        user = user.copy(loginAttemptCount = user.loginAttemptCount + 1)
+        return this
+    }
+
+    fun succeedLogin(): UserAggregate {
+        user = user.copy(loginAttemptCount = 0)
+        return this
+    }
 
     companion object {
+        const val MAX_LOGIN_ATTEMPTS = 5
+
         fun from(user: User): UserAggregate = UserAggregate(user)
     }
 }
