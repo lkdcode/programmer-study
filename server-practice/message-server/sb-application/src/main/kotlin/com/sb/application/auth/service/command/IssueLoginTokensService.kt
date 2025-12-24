@@ -1,4 +1,4 @@
-package com.sb.application.auth.service
+package com.sb.application.auth.service.command
 
 import com.sb.application.auth.dto.IssueLoginTokensCommand
 import com.sb.application.auth.dto.TokenPair
