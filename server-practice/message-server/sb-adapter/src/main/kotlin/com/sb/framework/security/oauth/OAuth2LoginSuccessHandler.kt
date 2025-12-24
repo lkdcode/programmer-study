@@ -3,8 +3,8 @@ package com.sb.framework.security.oauth
 import com.sb.adapter.auth.input.web.TokenIssueWebAdapter
 import com.sb.application.user.ports.output.query.UserQueryPort
 import com.sb.domain.user.value.Email
+import com.sb.framework.mono.monoSuspend
 import com.sb.framework.security.authentication.userAuthentication
-import kotlinx.coroutines.reactor.mono
 import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
 import org.springframework.security.oauth2.core.user.OAuth2User
@@ -30,16 +30,12 @@ class OAuth2LoginSuccessHandler(
         val mapper = mappers.first { it.supports(provider) }
         val emailValue = mapper.getEmail(oauthUser.attributes)
 
-        return Mono
-            .defer {
-                mono {
-                    val authentication = userQueryPort
-                        .loadByEmail(Email.of(emailValue))
-                        .userAuthentication()
+        return monoSuspend {
+            val authentication = userQueryPort
+                .loadByEmail(Email.of(emailValue))
+                .userAuthentication()
 
-                    tokenIssueWebAdapter.issue(webFilterExchange, authentication)
-                }
-            }
-            .then()
+            tokenIssueWebAdapter.issue(webFilterExchange, authentication)
+        }
     }
 }

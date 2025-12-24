@@ -13,14 +13,18 @@ class ReactiveJwtValidator(
 ) {
 
     fun validate(jwtProperties: JwtProperties, token: String): Mono<Boolean> =
-        Mono
-            .zip(
-                isNotRemoved(token),
-                isNotExpired(jwtProperties, token),
-                validateProperty(jwtProperties, token),
-            )
-            .map { it.t1 && it.t2 && it.t3 }
-            .defaultIfEmpty(false)
+        reactiveParser
+            .removePrefix(token)
+            .flatMap {
+                Mono
+                    .zip(
+                        isNotRemoved(token),
+                        isNotExpired(jwtProperties, token),
+                        validateProperty(jwtProperties, token),
+                    )
+                    .map { it.t1 && it.t2 && it.t3 }
+                    .defaultIfEmpty(false)
+            }
 
     private fun isNotRemoved(token: String): Mono<Boolean> =
         reactiveRemover.isRemove(token).map { !it }

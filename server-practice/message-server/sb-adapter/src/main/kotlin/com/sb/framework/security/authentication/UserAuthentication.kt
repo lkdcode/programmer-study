@@ -1,6 +1,7 @@
 package com.sb.framework.security.authentication
 
 import com.sb.domain.user.aggregate.UserAggregate
+import com.sb.domain.user.entity.User
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
@@ -13,6 +14,8 @@ data class UserAuthentication(
     val isNotDeleted: Boolean,
     val isNonLocked: Boolean,
 ) : UserDetails {
+
+    val userId get() = User.UserId(id)
 
     val authority get() = role.first()
     val authorityStringValue get() = role.first().toString()
@@ -34,11 +37,15 @@ data class UserAuthentication(
 
 fun Authentication.userAuthentication(): UserAuthentication = this.principal as UserAuthentication
 
-fun UserAggregate.userAuthentication(): UserAuthentication = UserAuthentication(
-    id = this.idValue,
-    role = listOf(SimpleGrantedAuthority(this.role.name)),
-    loginId = this.emailValue,
-    encodedPassword = this.passwordValue,
-    isNotDeleted = false,
-    isNonLocked = false,
-)
+fun UserAggregate.userAuthentication(): UserAuthentication {
+    val user = this.snapshot
+
+    return UserAuthentication(
+        id = user.id.value,
+        role = listOf(SimpleGrantedAuthority(user.role.name)),
+        loginId = user.email.value,
+        encodedPassword = user.password?.value,
+        isNotDeleted = false,
+        isNonLocked = this.isAccountLocked,
+    )
+}
