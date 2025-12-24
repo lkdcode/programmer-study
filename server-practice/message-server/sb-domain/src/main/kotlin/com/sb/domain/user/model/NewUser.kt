@@ -3,8 +3,8 @@ package com.sb.domain.user.model
 import com.sb.domain.user.entity.User
 import com.sb.domain.user.value.Email
 import com.sb.domain.user.value.Nickname
-import com.sb.domain.user.value.OAuthSubject
 import com.sb.domain.user.value.Password
+import com.sb.domain.user.value.UserRole
 import java.time.Instant
 
 data class NewUser(
@@ -12,7 +12,10 @@ data class NewUser(
     val nickname: Nickname,
     val password: Password?,
     val signUpType: User.SignUpType,
-    val oauthSubject: OAuthSubject?,
+    val provider: String?,
+    val providerUserId: String?,
+    val profileImage: String?,
+    val role: UserRole,
     val createdAt: Instant,
     val updatedAt: Instant,
 ) {
@@ -27,7 +30,10 @@ data class NewUser(
             nickname = nickname,
             password = password,
             signUpType = User.SignUpType.EMAIL,
-            oauthSubject = null,
+            provider = null,
+            providerUserId = null,
+            profileImage = null,
+            role = UserRole.USER,
             createdAt = now,
             updatedAt = now,
         )
@@ -35,14 +41,19 @@ data class NewUser(
         fun registerWithGoogle(
             email: Email,
             nickname: Nickname,
-            subject: OAuthSubject,
+            provider: String,
+            providerUserId: String,
+            profileImage: String? = null,
             now: Instant = Instant.now(),
         ): NewUser = NewUser(
             email = email,
             nickname = nickname,
             password = null,
             signUpType = User.SignUpType.GOOGLE,
-            oauthSubject = subject,
+            provider = provider,
+            providerUserId = providerUserId,
+            profileImage = profileImage,
+            role = UserRole.USER,
             createdAt = now,
             updatedAt = now,
         )
