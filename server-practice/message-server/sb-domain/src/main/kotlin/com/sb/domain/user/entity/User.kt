@@ -12,10 +12,15 @@ data class User(
     val nickname: Nickname,
     val password: Password?,
     val signUpType: SignUpType,
+
     val provider: String?,
     val providerUserId: String?,
+    val profileImage: String?,
+
     val role: UserRole,
     val loginAttemptCount: Int = 0,
+    val lastLoginAt: Instant?,
+
     val createdAt: Instant,
     val updatedAt: Instant?,
 ) {
