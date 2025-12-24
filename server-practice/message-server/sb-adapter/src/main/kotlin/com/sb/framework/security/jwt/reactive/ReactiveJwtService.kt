@@ -1,9 +1,11 @@
 package com.sb.framework.security.jwt.reactive
 
 import com.sb.application.auth.dto.TokenPair
+import com.sb.domain.user.value.Email
 import com.sb.framework.security.jwt.spec.JwtSpec
 import com.sb.framework.security.jwt.value.AccessTokenProperties
 import com.sb.framework.security.jwt.value.RefreshTokenProperties
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import java.time.Instant
@@ -68,17 +70,32 @@ class ReactiveJwtService(
             .removePrefix(token)
             .flatMap { parsed -> reactiveJwtParser.getUsername(accessTokenProperties, parsed) }
 
+    fun loadUsername(
+        token: String,
+    ): Mono<Email> =
+        reactiveJwtParser
+            .removePrefix(token)
+            .flatMap { parsed ->
+                reactiveJwtParser
+                    .getUsername(accessTokenProperties, parsed)
+                    .map { Email.of(it) }
+            }
+            .switchIfEmpty(Mono.error(BadCredentialsException("Invalid Token")))
+
     fun remove(token: String): Mono<Void> =
         reactiveJwtParser
             .removePrefix(token)
             .flatMap { reactiveJwtRemover.remove(it) }
 
-    fun isValidAccessToken(token: String): Mono<Boolean> =
-        reactiveJwtParser
-            .removePrefix(token)
-            .filter { it.isNotBlank() }
-            .flatMap { reactiveJwtValidator.validate(accessTokenProperties, it) }
-            .defaultIfEmpty(false)
+    fun validateAccessToken(token: String): Mono<Void> =
+        Mono
+            .zip(
+                reactiveJwtValidator.validate(accessTokenProperties, token),
+                getUsername(token).filter { it.isNotBlank() }.hasElement()
+            )
+            .filter { it.t1 && it.t2 }
+            .switchIfEmpty(Mono.error(BadCredentialsException("Invalid Token")))
+            .then()
 
     fun parsePrefix(token: String): Mono<String> =
         reactiveJwtParser.removePrefix(token)

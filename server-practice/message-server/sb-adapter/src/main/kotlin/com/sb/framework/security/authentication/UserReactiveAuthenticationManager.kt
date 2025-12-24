@@ -1,9 +1,9 @@
 package com.sb.framework.security.authentication
 
-import com.sb.adapter.user.output.infrastructure.r2dbc.repository.UserR2dbcRepository
+import com.sb.application.user.ports.output.query.UserQueryPort
+import com.sb.domain.user.aggregate.UserAggregate
+import com.sb.framework.mono.monoSuspend
 import com.sb.framework.security.jwt.reactive.ReactiveJwtService
-import com.sb.framework.security.login.policy.AuthenticationPolicy
-import com.sb.framework.security.login.repository.SecurityUserRepository
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -16,50 +16,32 @@ import reactor.core.publisher.Mono
 @Component
 class UserReactiveAuthenticationManager(
     private val reactiveJwtService: ReactiveJwtService,
-    private val securityUserRepository: SecurityUserRepository,
-    private val authenticationPolicy: AuthenticationPolicy,
-    private val userR2dbcRepository: UserR2dbcRepository,
+    private val userQueryPort: UserQueryPort,
 ) : ReactiveAuthenticationManager {
 
-    override fun authenticate(authentication: Authentication): Mono<Authentication> {
-        val token = authentication.credentials as? String
-            ?: return Mono.error(BadCredentialsException("Invalid-UserApiReactiveAuthenticationManager1"))
-
-        return reactiveJwtService
-            .isValidAccessToken(token)
-            .flatMap { valid ->
-                if (!valid) return@flatMap Mono.error(BadCredentialsException("Invalid-UserApiReactiveAuthenticationManager2"))
-
-                if (!valid) {
-                    Mono.error(BadCredentialsException("Invalid-UserApiReactiveAuthenticationManager3"))
-                } else {
-                    reactiveJwtService
-                        .getUsername(token)
-                        .switchIfEmpty(Mono.error(BadCredentialsException("Invalid Username Claim")))
-                }
-            }
-            .flatMap {
-                userR2dbcRepository
-                    .findByEmailAndIsDeletedFalse(it)
-                    .switchIfEmpty(Mono.error(BadCredentialsException("Invalid-UserApiReactiveAuthenticationManager4")))
-                    .flatMap { entity ->
-                        reactiveJwtService
-                            .parsePrefix(token)
-                            .map { parsedToken ->
-                                UsernamePasswordAuthenticationToken(
-                                    UserAuthentication(
-                                        id = entity.id!!,
-                                        role = listOf(SimpleGrantedAuthority(entity.role.name)),
-                                        loginId = entity.email,
-                                        encodedPassword = entity.password,
-                                        isNotDeleted = entity.isNotDeleted(),
-                                        isNonLocked = entity.isNonLocked,
-                                    ),
-                                    null,
-                                    listOf(SimpleGrantedAuthority(entity.role.name))
-                                )
-                            }
+    override fun authenticate(authentication: Authentication): Mono<Authentication> =
+        Mono
+            .fromCallable { authentication.credentials as String }
+            .flatMap { reactiveJwtService.validateAccessToken(it).thenReturn(it) }
+            .flatMap { reactiveJwtService.loadUsername(it) }
+            .flatMap { email ->
+                monoSuspend<UserAggregate> { userQueryPort.loadByEmail(email) }
+                    .map { aggregate ->
+                        val user = aggregate.snapshot
+                        UsernamePasswordAuthenticationToken(
+                            UserAuthentication(
+                                id = user.id.value,
+                                role = listOf(SimpleGrantedAuthority(user.role.name)),
+                                loginId = user.email.value,
+                                encodedPassword = user.password?.value,
+                                isNotDeleted = false,
+                                isNonLocked = aggregate.isAccountLocked,
+                            ),
+                            null,
+                            listOf(SimpleGrantedAuthority(user.role.name))
+                        )
                     }
             }
-    }
+            .onErrorResume { Mono.error(BadCredentialsException("Invalid Token")) }
+            .map { it }
 }

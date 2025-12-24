@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component
 
 @Component
 class UserLoginFilter(
+    private val adminReactiveAuthenticationManager: UserLoginReactiveAuthenticationManager,
     private val userLoginConverter: UserLoginConverter,
     private val userLoginSuccessHandler: UserLoginSuccessHandler,
     private val userAuthenticationFailureHandler: UserAuthenticationFailureHandler,
-    private val adminReactiveAuthenticationManager: UserLoginReactiveAuthenticationManager,
 ) {
 
     fun adminAuthenticationWebFilter(): AuthenticationWebFilter =

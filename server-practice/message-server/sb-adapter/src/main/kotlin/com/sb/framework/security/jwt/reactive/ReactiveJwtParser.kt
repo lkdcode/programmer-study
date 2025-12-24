@@ -12,37 +12,37 @@ import reactor.core.publisher.Mono
 class ReactiveJwtParser {
 
     fun removePrefix(token: String): Mono<String> =
-        Mono.justOrEmpty(token)
-            .map {
-                if (it.startsWith(JwtSpec.TOKEN_PREFIX))
-                    it.substring(JwtSpec.TOKEN_PREFIX.length)
+        Mono
+            .fromCallable {
+                if (token.startsWith(JwtSpec.TOKEN_PREFIX))
+                    token.substring(JwtSpec.TOKEN_PREFIX.length)
                 else
-                    it
+                    token
             }
 
     fun getClaims(
         jwtProperties: JwtProperties,
         token: String,
-    ): Mono<Claims> = Mono.fromCallable {
-        Jwts.parser()
-            .verifyWith(jwtProperties.secretKey())
-            .build()
-            .parseSignedClaims(token)
-            .payload
-    }.onErrorResume {
-        Mono.empty()
-    }
+    ): Mono<Claims> =
+        Mono
+            .fromCallable {
+                Jwts.parser()
+                    .verifyWith(jwtProperties.secretKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .payload
+            }
+            .onErrorResume {
+                Mono.empty()
+            }
 
     fun getUsername(
         jwtProperties: JwtProperties,
         token: String,
     ): Mono<String> =
-        getClaims(jwtProperties, token)
+        this
+            .getClaims(jwtProperties, token)
             .mapNotNull { claims ->
                 claims.get(JwtSpec.USERNAME_KEY, JwtSpec.USERNAME_TYPE)
             }
-
-    private fun String.substringPrefix(): String? =
-        takeIf { it.startsWith(JwtSpec.TOKEN_PREFIX) }
-            ?.substring(JwtSpec.TOKEN_PREFIX.length)
 }

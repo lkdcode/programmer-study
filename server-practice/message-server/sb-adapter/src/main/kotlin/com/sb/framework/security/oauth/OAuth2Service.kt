@@ -1,7 +1,7 @@
 package com.sb.framework.security.oauth
 
 import com.sb.application.user.ports.input.command.OAuth2UserProvisioningUsecase
-import kotlinx.coroutines.reactor.mono
+import com.sb.framework.mono.monoSuspend
 import org.springframework.security.oauth2.client.userinfo.DefaultReactiveOAuth2UserService
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
 import org.springframework.security.oauth2.client.userinfo.ReactiveOAuth2UserService
@@ -26,12 +26,7 @@ class OAuth2Service(
 
                 val command = mapper.map(oauthUser.attributes)
 
-                Mono
-                    .defer {
-                        mono {
-                            oAuth2UserProvisioningUsecase.provision(command)
-                        }
-                    }
+                monoSuspend { oAuth2UserProvisioningUsecase.provision(command) }
                     .thenReturn(oauthUser.defaultOAuth2User())
             }
 
