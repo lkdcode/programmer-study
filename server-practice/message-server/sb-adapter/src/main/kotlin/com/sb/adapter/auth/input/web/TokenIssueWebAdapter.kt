@@ -21,7 +21,8 @@ class TokenIssueWebAdapter(
         val username = authentication.username
         val role = authentication.authorityStringValue
 
-        return jwtService.issueTokens(username, role)
+        return jwtService
+            .issueTokens(username, role)
             .doOnNext { tokens ->
                 addAccessTokenHeader(exchange, tokens.accessToken)
                 addRefreshTokenCookie(exchange, tokens.refreshToken, tokens.refreshTokenExpiresAt)
@@ -32,14 +33,14 @@ class TokenIssueWebAdapter(
     private fun addAccessTokenHeader(exchange: ServerWebExchange, accessToken: String) {
         exchange.response.headers.add(
             JwtSpec.TOKEN_HEADER_KEY,
-            JwtSpec.TOKEN_PREFIX + accessToken
+            accessToken
         )
     }
 
     private fun addRefreshTokenCookie(exchange: ServerWebExchange, refreshToken: String, expiresAt: Instant) {
         val maxAge = Duration.between(Instant.now(), expiresAt).coerceAtLeast(Duration.ZERO)
         val cookie = ResponseCookie
-            .from("refresh_token", refreshToken)
+            .from(JwtSpec.REFRESH_COOKIE_KEY, refreshToken)
             .httpOnly(true)
             .secure(true)
             .path("/")
