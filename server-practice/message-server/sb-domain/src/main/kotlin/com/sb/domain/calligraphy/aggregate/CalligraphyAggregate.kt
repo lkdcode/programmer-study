@@ -1,63 +1,40 @@
 package com.sb.domain.calligraphy.aggregate
 
 import com.sb.domain.calligraphy.entity.Calligraphy
-import com.sb.domain.calligraphy.value.CalligraphyResult
-import com.sb.domain.calligraphy.value.Prompt
-import com.sb.domain.calligraphy.value.Seed
-import com.sb.domain.calligraphy.value.StyleType
-import com.sb.domain.calligraphy.value.User
+import com.sb.domain.calligraphy.value.*
 import java.time.Instant
 
 class CalligraphyAggregate private constructor(
     private val calligraphy: Calligraphy
 ) {
-    val getCalligraphy: Calligraphy get() = calligraphy
-
-    fun revise(
-        additionalPrompt: Prompt,
-        newStyle: StyleType,
-        newResult: CalligraphyResult,
-        newSeed: Seed,
-        requester: User,
-    ): CalligraphyAggregate {
-        val now = Instant.now()
-        val next = calligraphy.createNext(
-            additionalPrompt = additionalPrompt,
-            newStyle = newStyle,
-            newResult = newResult,
-            newSeed = newSeed,
-            requester = requester,
-            newId = generateCalligraphyId(),
-            now = now,
-        )
-
-        return CalligraphyAggregate(next)
-    }
+    val snapshot: Calligraphy get() = calligraphy
 
     companion object {
         fun restore(calligraphy: Calligraphy): CalligraphyAggregate = CalligraphyAggregate(calligraphy)
 
         fun create(
+            text: Text,
             prompt: Prompt,
             style: StyleType,
-            user: User,
+            user: Author,
             result: CalligraphyResult,
             seed: Seed = Seed.generate(),
+            now: Instant = Instant.now(),
         ): CalligraphyAggregate = CalligraphyAggregate(
             Calligraphy(
-                id = generateCalligraphyId(),
+                id = generateCalligraphyId(now),
+                text = text,
                 seed = seed,
                 prompt = prompt,
                 style = style,
                 user = user,
                 result = result,
-                createdAt = Instant.now(),
-                updatedAt = Instant.now(),
+                createdAt = now,
+                updatedAt = now,
             )
         )
 
-        private fun generateCalligraphyId(): Calligraphy.CalligraphyId =
-            Calligraphy.CalligraphyId(Instant.now().toEpochMilli())
+        private fun generateCalligraphyId(now: Instant): Calligraphy.CalligraphyId =
+            Calligraphy.CalligraphyId(now.toEpochMilli())
     }
 }
-
