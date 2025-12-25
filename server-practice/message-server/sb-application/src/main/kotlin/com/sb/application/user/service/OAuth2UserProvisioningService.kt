@@ -6,7 +6,7 @@ import com.sb.application.user.dto.OAuth2ProvisioningCommand
 import com.sb.application.user.ports.input.command.OAuth2UserProvisioningUsecase
 import com.sb.application.user.ports.output.command.UserCommandPort
 import com.sb.application.user.ports.output.query.UserQueryPort
-import com.sb.application.user.usecase.OAuth2UserProvisioningDsl
+import com.sb.application.user.service.dsl.OAuth2UserProvisioningDsl
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
