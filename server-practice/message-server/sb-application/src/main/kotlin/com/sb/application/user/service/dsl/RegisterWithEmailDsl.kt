@@ -1,4 +1,4 @@
-package com.sb.application.user.usecase
+package com.sb.application.user.service.dsl
 
 import com.sb.application.common.validator.throwUnless
 import com.sb.application.user.dto.RegisterWithEmailCommand

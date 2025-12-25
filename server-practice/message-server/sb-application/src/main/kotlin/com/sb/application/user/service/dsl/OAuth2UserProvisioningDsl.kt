@@ -1,4 +1,4 @@
-package com.sb.application.user.usecase
+package com.sb.application.user.service.dsl
 
 import com.sb.application.user.dto.OAuth2ProvisioningCommand
 import com.sb.domain.user.value.Email

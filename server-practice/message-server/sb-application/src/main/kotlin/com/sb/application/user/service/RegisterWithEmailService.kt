@@ -6,7 +6,7 @@ import com.sb.application.user.guard.UserGuard
 import com.sb.application.user.ports.input.command.RegisterWithEmailUsecase
 import com.sb.application.user.ports.output.cache.EmailVerificationPort
 import com.sb.application.user.ports.output.command.UserCommandPort
-import com.sb.application.user.usecase.RegisterWithEmailDsl
+import com.sb.application.user.service.dsl.RegisterWithEmailDsl
 import com.sb.domain.user.value.Email
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
