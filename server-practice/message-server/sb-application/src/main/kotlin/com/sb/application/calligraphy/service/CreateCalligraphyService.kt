@@ -18,7 +18,7 @@ class CreateCalligraphyService(
     internal val calligraphyPaymentPort: CalligraphyPaymentPort,
     internal val calligraphyCreditChecker: CalligraphyCreditChecker,
 
-    private val generatePort: CalligraphyGeneratePort, // TODO
+    private val generatePort: CalligraphyGeneratePort,
 ) : CreateCalligraphyCommandUsecase {
 
     override suspend fun create(command: CreateCalligraphyCommand): CalligraphyId =
@@ -27,6 +27,9 @@ class CreateCalligraphyService(
                 checkCreditSufficiency()
             }
             pay()
-            save()
+            save(
+                commandPort::save,
+                generatePort::generate
+            )
         }
 }
