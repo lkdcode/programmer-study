@@ -1,15 +1,13 @@
-package com.sb.domain.plan.entity
+package com.sb.domain.credit.entity
 
-import com.sb.domain.plan.value.Credit
-import java.time.Instant
+import com.sb.domain.credit.value.Credit
 
 data class CreditWallet(
     val id: WalletId,
     val userId: Long,
     val balance: Credit,
-    val createdAt: Instant,
-    val updatedAt: Instant,
 ) {
+
     @JvmInline
     value class WalletId(val value: Long)
 }

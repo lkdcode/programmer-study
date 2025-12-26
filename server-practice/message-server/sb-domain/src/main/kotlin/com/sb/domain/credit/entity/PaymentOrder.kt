@@ -1,9 +1,8 @@
-package com.sb.domain.plan.entity
+package com.sb.domain.credit.entity
 
-import com.sb.domain.plan.value.Credit
-import com.sb.domain.plan.value.Money
-import com.sb.domain.plan.value.PaymentMethod
-import java.time.Instant
+import com.sb.domain.credit.value.Credit
+import com.sb.domain.credit.value.Money
+import com.sb.domain.credit.value.PaymentMethod
 
 data class PaymentOrder(
     val id: PaymentOrderId,
@@ -13,8 +12,6 @@ data class PaymentOrder(
     val creditsToGrant: Credit,
     val status: Status,
     val providerPaymentId: String?,
-    val createdAt: Instant,
-    val updatedAt: Instant,
 ) {
     @JvmInline
     value class PaymentOrderId(val value: Long)
@@ -23,5 +20,3 @@ data class PaymentOrder(
         PENDING, PAID, CANCELLED, FAILED
     }
 }
-
-

@@ -1,7 +1,7 @@
-package com.sb.domain.plan.value
+package com.sb.domain.credit.value
 
 import com.sb.domain.exception.domainRequire
-import com.sb.domain.plan.exception.PlanErrorCode
+import com.sb.domain.credit.exception.CreditErrorCode
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -10,19 +10,19 @@ data class Money(
     val currency: Currency,
 ) {
     init {
-        domainRequire(amount >= BigDecimal.ZERO, PlanErrorCode.MONEY_NEGATIVE) { REQUIRE_MESSAGE }
-        domainRequire(amount.scale() <= MAX_SCALE, PlanErrorCode.MONEY_SCALE_INVALID) { SCALE_MESSAGE }
+        domainRequire(amount >= BigDecimal.ZERO, CreditErrorCode.MONEY_NEGATIVE) { REQUIRE_MESSAGE }
+        domainRequire(amount.scale() <= MAX_SCALE, CreditErrorCode.MONEY_SCALE_INVALID) { SCALE_MESSAGE }
     }
 
     fun plus(other: Money): Money {
-        domainRequire(currency == other.currency, PlanErrorCode.MONEY_CURRENCY_MISMATCH) { CURRENCY_MESSAGE }
+        domainRequire(currency == other.currency, CreditErrorCode.MONEY_CURRENCY_MISMATCH) { CURRENCY_MESSAGE }
         return copy(amount = (amount + other.amount).setScale(MAX_SCALE, RoundingMode.UNNECESSARY))
     }
 
     fun minus(other: Money): Money {
-        domainRequire(currency == other.currency, PlanErrorCode.MONEY_CURRENCY_MISMATCH) { CURRENCY_MESSAGE }
+        domainRequire(currency == other.currency, CreditErrorCode.MONEY_CURRENCY_MISMATCH) { CURRENCY_MESSAGE }
         val next = amount - other.amount
-        domainRequire(next >= BigDecimal.ZERO, PlanErrorCode.MONEY_NEGATIVE_AFTER_MINUS) { NEGATIVE_MESSAGE }
+        domainRequire(next >= BigDecimal.ZERO, CreditErrorCode.MONEY_NEGATIVE_AFTER_MINUS) { NEGATIVE_MESSAGE }
         return copy(amount = next.setScale(MAX_SCALE, RoundingMode.UNNECESSARY))
     }
 

@@ -1,6 +1,6 @@
-package com.sb.domain.plan.model
+package com.sb.domain.credit.model
 
-import com.sb.domain.plan.value.Credit
+import com.sb.domain.credit.value.Credit
 import java.time.Instant
 
 data class NewCreditWallet(
@@ -9,6 +9,7 @@ data class NewCreditWallet(
     val createdAt: Instant,
     val updatedAt: Instant,
 ) {
+
     companion object {
         fun create(userId: Long, now: Instant = Instant.now()): NewCreditWallet =
             NewCreditWallet(
