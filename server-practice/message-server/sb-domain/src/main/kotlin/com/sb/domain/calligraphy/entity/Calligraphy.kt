@@ -4,13 +4,11 @@ import com.sb.domain.calligraphy.value.*
 
 data class Calligraphy(
     val id: CalligraphyId,
-
     val seed: Seed,
     val text: Text,
-    val prompt: Prompt,
-
+    val prompt: Prompt?,
     val style: StyleType,
-    val user: Author,
+    val author: Author,
 ) {
 
     @JvmInline

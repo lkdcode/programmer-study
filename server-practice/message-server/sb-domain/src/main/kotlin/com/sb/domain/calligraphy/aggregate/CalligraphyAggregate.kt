@@ -15,19 +15,18 @@ class CalligraphyAggregate private constructor(
             id: Calligraphy.CalligraphyId,
             seed: Seed,
             text: Text,
-            prompt: Prompt,
+            prompt: Prompt?,
             style: StyleType,
             user: Author,
-        ): CalligraphyAggregate =
-            CalligraphyAggregate(
-                Calligraphy(
-                    id = id,
-                    seed = seed,
-                    text = text,
-                    prompt = prompt,
-                    style = style,
-                    user = user,
-                )
+        ): CalligraphyAggregate = CalligraphyAggregate(
+            Calligraphy(
+                id = id,
+                seed = seed,
+                text = text,
+                prompt = prompt,
+                style = style,
+                author = user,
             )
+        )
     }
 }
