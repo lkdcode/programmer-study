@@ -1,7 +1,7 @@
 package com.sb.application.calligraphy.service
 
 import com.sb.application.calligraphy.event.CalligraphyGenerationEvent
-import com.sb.application.calligraphy.ports.input.command.CreateCalligraphyCommandUsecase
+import com.sb.application.calligraphy.ports.input.command.CreateCalligraphyUsecase
 import com.sb.application.calligraphy.ports.output.checker.CalligraphyCreditChecker
 import com.sb.application.calligraphy.ports.output.command.CalligraphyCommandPort
 import com.sb.application.calligraphy.ports.output.command.CalligraphyPaymentPort
@@ -21,7 +21,7 @@ class CreateCalligraphyService(
     internal val calligraphyCreditChecker: CalligraphyCreditChecker,
 
     private val calligraphyEventPublisher: CalligraphyEventPublisher,
-) : CreateCalligraphyCommandUsecase {
+) : CreateCalligraphyUsecase {
 
     override suspend fun create(command: CreateCalligraphyCommand): CalligraphyId =
         CreateCalligraphyDsl.execute(command) {
