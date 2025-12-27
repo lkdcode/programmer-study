@@ -21,16 +21,14 @@ internal class CreateCalligraphyDsl private constructor(
     internal suspend fun CreateCalligraphyService.pay() =
         calligraphyPaymentPort.payForCreate(command.author)
 
-    internal suspend fun CreateCalligraphyService.creation(create: (CalligraphyId, CreateCalligraphyCommand) -> CalligraphyId): CalligraphyId {
-        TODO()
-    }
-
     internal suspend fun CreateCalligraphyService.save(
         save: suspend (CreateCalligraphyCommand) -> CalligraphyAggregate,
-        generate: suspend (CalligraphyAggregate) -> CalligraphyId,
+        eventPublisher: suspend (CalligraphyAggregate) -> Unit,
     ): CalligraphyId {
         val aggregate = save(command)
-        return generate(aggregate)
+        eventPublisher(aggregate)
+
+        return aggregate.snapshot.id
     }
 
     companion object {
