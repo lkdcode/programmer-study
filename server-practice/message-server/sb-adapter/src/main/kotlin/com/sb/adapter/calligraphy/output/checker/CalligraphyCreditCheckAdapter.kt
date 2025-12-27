@@ -1,10 +1,10 @@
 package com.sb.adapter.calligraphy.output.checker
 
 import com.sb.application.calligraphy.ports.output.checker.CalligraphyCreditChecker
-import com.sb.application.plan.ports.output.CreditChecker
+import com.sb.application.credit.ports.output.CreditChecker
 import com.sb.domain.calligraphy.policy.CreateCalligraphyPolicy
 import com.sb.domain.calligraphy.value.Author
-import com.sb.domain.plan.value.Credit
+import com.sb.domain.credit.value.Credit
 import org.springframework.stereotype.Component
 
 

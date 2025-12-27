@@ -1,5 +1,6 @@
 package com.sb.adapter.calligraphy.output.event
 
+import com.sb.application.calligraphy.event.CalligraphyDeleteEvent
 import com.sb.application.calligraphy.event.CalligraphyGenerationEvent
 import com.sb.application.calligraphy.ports.output.publish.CalligraphyEventPublisher
 import org.springframework.context.ApplicationEventPublisher
@@ -12,6 +13,10 @@ class CalligraphyEventPublisherAdapter(
 ) : CalligraphyEventPublisher {
 
     override suspend fun publish(event: CalligraphyGenerationEvent) {
+        applicationEventPublisher.publishEvent(event)
+    }
+
+    override suspend fun publish(event: CalligraphyDeleteEvent) {
         applicationEventPublisher.publishEvent(event)
     }
 }
