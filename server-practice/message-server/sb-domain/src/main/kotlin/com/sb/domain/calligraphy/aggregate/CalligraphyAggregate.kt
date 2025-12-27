@@ -2,7 +2,6 @@ package com.sb.domain.calligraphy.aggregate
 
 import com.sb.domain.calligraphy.entity.Calligraphy
 import com.sb.domain.calligraphy.value.*
-import java.time.Instant
 
 class CalligraphyAggregate private constructor(
     private val calligraphy: Calligraphy
@@ -13,28 +12,22 @@ class CalligraphyAggregate private constructor(
         fun restore(calligraphy: Calligraphy): CalligraphyAggregate = CalligraphyAggregate(calligraphy)
 
         fun create(
+            id: Calligraphy.CalligraphyId,
+            seed: Seed,
             text: Text,
             prompt: Prompt,
             style: StyleType,
             user: Author,
-            result: CalligraphyResult,
-            seed: Seed = Seed.generate(),
-            now: Instant = Instant.now(),
-        ): CalligraphyAggregate = CalligraphyAggregate(
-            Calligraphy(
-                id = generateCalligraphyId(now),
-                text = text,
-                seed = seed,
-                prompt = prompt,
-                style = style,
-                user = user,
-                result = result,
-                createdAt = now,
-                updatedAt = now,
+        ): CalligraphyAggregate =
+            CalligraphyAggregate(
+                Calligraphy(
+                    id = id,
+                    seed = seed,
+                    text = text,
+                    prompt = prompt,
+                    style = style,
+                    user = user,
+                )
             )
-        )
-
-        private fun generateCalligraphyId(now: Instant): Calligraphy.CalligraphyId =
-            Calligraphy.CalligraphyId(now.toEpochMilli())
     }
 }

@@ -1,7 +1,6 @@
 package com.sb.domain.calligraphy.entity
 
 import com.sb.domain.calligraphy.value.*
-import java.time.Instant
 
 data class Calligraphy(
     val id: CalligraphyId,
@@ -12,10 +11,6 @@ data class Calligraphy(
 
     val style: StyleType,
     val user: Author,
-    val result: CalligraphyResult,
-
-    val createdAt: Instant,
-    val updatedAt: Instant,
 ) {
 
     @JvmInline
