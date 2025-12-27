@@ -4,6 +4,6 @@ import com.sb.domain.calligraphy.command.CreateCalligraphyCommand
 import com.sb.domain.calligraphy.entity.Calligraphy.CalligraphyId
 
 
-interface CreateCalligraphyCommandUsecase {
+interface CreateCalligraphyUsecase {
     suspend fun create(command: CreateCalligraphyCommand): CalligraphyId
 }
