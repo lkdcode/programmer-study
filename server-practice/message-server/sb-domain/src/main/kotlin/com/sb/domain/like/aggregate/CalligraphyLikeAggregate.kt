@@ -1,31 +1,28 @@
 package com.sb.domain.like.aggregate
 
 import com.sb.domain.calligraphy.entity.Calligraphy
-import com.sb.domain.calligraphy.value.User
 import com.sb.domain.like.entity.CalligraphyLike
-import java.time.Instant
+import com.sb.domain.like.entity.NewCalligraphyLike
+import com.sb.domain.like.policy.LikePolicy
+import com.sb.domain.user.entity.User
 
 class CalligraphyLikeAggregate private constructor(
     private val like: CalligraphyLike
 ) {
-    val getLike: CalligraphyLike get() = like
+    val snapshot get() = like
 
     companion object {
-        fun restore(like: CalligraphyLike): CalligraphyLikeAggregate = CalligraphyLikeAggregate(like)
-
         fun create(
             calligraphyId: Calligraphy.CalligraphyId,
-            user: User,
-        ): CalligraphyLikeAggregate = CalligraphyLikeAggregate(
-            CalligraphyLike(
-                id = generateLikeId(),
-                calligraphyId = calligraphyId,
-                user = user,
-                createdAt = Instant.now(),
-            )
-        )
+            userId: User.UserId,
+            policy: LikePolicy
+        ): NewCalligraphyLike {
+            policy.requireNotLiked(calligraphyId, userId)
 
-        private fun generateLikeId(): CalligraphyLike.CalligraphyLikeId =
-            CalligraphyLike.CalligraphyLikeId(Instant.now().toEpochMilli())
+            return NewCalligraphyLike(
+                calligraphyId = calligraphyId,
+                userId = userId
+            )
+        }
     }
 }
