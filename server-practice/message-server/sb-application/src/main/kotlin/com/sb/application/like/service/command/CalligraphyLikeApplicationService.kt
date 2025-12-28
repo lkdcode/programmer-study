@@ -1,4 +1,4 @@
-package com.sb.application.like.service
+package com.sb.application.like.service.command
 
 import com.sb.application.like.dto.LikeCalligraphyCommand
 import com.sb.application.like.dto.UnlikeCalligraphyCommand
@@ -20,7 +20,7 @@ class CalligraphyLikeApplicationService(
         val entity = command.convert(policy)
         val saved = commandPort.save(entity)
 
-        return saved.id
+        return saved.snapshot.id
     }
 
     override suspend fun unlike(command: UnlikeCalligraphyCommand) {

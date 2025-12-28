@@ -10,7 +10,8 @@ data class LikeCalligraphyCommand(
     val calligraphyId: Calligraphy.CalligraphyId,
     val userId: User.UserId,
 ) {
-    fun convert(policy: LikePolicy): NewCalligraphyLike = CalligraphyLikeAggregate.create(
+
+    fun convert(policy: LikePolicy): NewCalligraphyLike = CalligraphyLikeAggregate.createNewCalligraphyLike(
         calligraphyId = calligraphyId,
         userId = userId,
         policy = policy,
