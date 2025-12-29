@@ -1,6 +1,6 @@
 package com.sb.application.user.service
 
-import com.sb.application.plan.ports.input.command.RewardSignupBonusUsecase
+import com.sb.application.credit.ports.input.command.RewardSignupBonusUsecase
 import com.sb.application.user.dto.RegisterWithEmailCommand
 import com.sb.application.user.guard.UserGuard
 import com.sb.application.user.ports.input.command.RegisterWithEmailUsecase

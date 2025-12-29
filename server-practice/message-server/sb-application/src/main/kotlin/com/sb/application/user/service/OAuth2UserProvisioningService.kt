@@ -1,7 +1,7 @@
 package com.sb.application.user.service
 
 import com.sb.application.auth.ports.input.command.LoginUsecase
-import com.sb.application.plan.ports.input.command.RewardSignupBonusUsecase
+import com.sb.application.credit.ports.input.command.RewardSignupBonusUsecase
 import com.sb.application.user.dto.OAuth2ProvisioningCommand
 import com.sb.application.user.ports.input.command.OAuth2UserProvisioningUsecase
 import com.sb.application.user.ports.output.command.UserCommandPort
@@ -29,9 +29,9 @@ class OAuth2UserProvisioningService(
                 rewardSignupBonusUsecase.reward(userId)
             }
 
-            whenExistingUser {
-                loginUsecase.onLoginSuccess(command.emailVo)
-            }
+//            whenExistingUser {
+            loginUsecase.onLoginSuccess(command.emailVo)
+//            }
         }
     }
 }

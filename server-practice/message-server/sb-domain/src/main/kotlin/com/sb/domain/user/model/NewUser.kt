@@ -5,7 +5,6 @@ import com.sb.domain.user.value.Email
 import com.sb.domain.user.value.Nickname
 import com.sb.domain.user.value.Password
 import com.sb.domain.user.value.UserRole
-import java.time.Instant
 
 data class NewUser(
     val email: Email,
@@ -16,15 +15,12 @@ data class NewUser(
     val providerUserId: String?,
     val profileImage: String?,
     val role: UserRole,
-    val createdAt: Instant,
-    val updatedAt: Instant,
 ) {
     companion object {
         fun registerWithEmail(
             email: Email,
             nickname: Nickname,
             password: Password,
-            now: Instant = Instant.now(),
         ): NewUser = NewUser(
             email = email,
             nickname = nickname,
@@ -34,8 +30,6 @@ data class NewUser(
             providerUserId = null,
             profileImage = null,
             role = UserRole.USER,
-            createdAt = now,
-            updatedAt = now,
         )
 
         fun registerWithGoogle(
@@ -44,7 +38,6 @@ data class NewUser(
             provider: String,
             providerUserId: String,
             profileImage: String? = null,
-            now: Instant = Instant.now(),
         ): NewUser = NewUser(
             email = email,
             nickname = nickname,
@@ -54,8 +47,6 @@ data class NewUser(
             providerUserId = providerUserId,
             profileImage = profileImage,
             role = UserRole.USER,
-            createdAt = now,
-            updatedAt = now,
         )
     }
 }
