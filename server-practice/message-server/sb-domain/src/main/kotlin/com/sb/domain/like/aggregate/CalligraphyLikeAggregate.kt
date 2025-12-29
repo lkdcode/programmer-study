@@ -2,8 +2,8 @@ package com.sb.domain.like.aggregate
 
 import com.sb.domain.calligraphy.entity.Calligraphy
 import com.sb.domain.like.entity.CalligraphyLike
+import com.sb.domain.like.entity.CalligraphyLike.CalligraphyLikeId
 import com.sb.domain.like.entity.NewCalligraphyLike
-import com.sb.domain.like.policy.LikePolicy
 import com.sb.domain.user.entity.User
 
 class CalligraphyLikeAggregate private constructor(
@@ -13,16 +13,24 @@ class CalligraphyLikeAggregate private constructor(
 
     companion object {
         fun create(
+            id: CalligraphyLikeId,
             calligraphyId: Calligraphy.CalligraphyId,
             userId: User.UserId,
-            policy: LikePolicy
-        ): NewCalligraphyLike {
-            policy.requireNotLiked(calligraphyId, userId)
+        ): CalligraphyLikeAggregate = CalligraphyLikeAggregate(
+            CalligraphyLike(
+                id,
+                calligraphyId,
+                userId,
+            )
+        )
 
-            return NewCalligraphyLike(
+        fun createNewCalligraphyLike(
+            calligraphyId: Calligraphy.CalligraphyId,
+            userId: User.UserId,
+        ): NewCalligraphyLike =
+            NewCalligraphyLike(
                 calligraphyId = calligraphyId,
                 userId = userId
             )
-        }
     }
 }
