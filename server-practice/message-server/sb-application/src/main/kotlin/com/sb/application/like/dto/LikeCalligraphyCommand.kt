@@ -3,7 +3,6 @@ package com.sb.application.like.dto
 import com.sb.domain.calligraphy.entity.Calligraphy
 import com.sb.domain.like.aggregate.CalligraphyLikeAggregate
 import com.sb.domain.like.entity.NewCalligraphyLike
-import com.sb.domain.like.policy.LikePolicy
 import com.sb.domain.user.entity.User
 
 data class LikeCalligraphyCommand(
@@ -11,9 +10,8 @@ data class LikeCalligraphyCommand(
     val userId: User.UserId,
 ) {
 
-    fun convert(policy: LikePolicy): NewCalligraphyLike = CalligraphyLikeAggregate.createNewCalligraphyLike(
+    fun convert(): NewCalligraphyLike = CalligraphyLikeAggregate.createNewCalligraphyLike(
         calligraphyId = calligraphyId,
         userId = userId,
-        policy = policy,
     )
 }
