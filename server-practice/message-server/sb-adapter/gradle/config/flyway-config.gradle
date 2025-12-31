@@ -1,0 +1,32 @@
+import com.sb.yml.YmlService
+
+def ymlParser = new YmlService(project)
+
+def flywayDriver = ymlParser.getFlywayDriver()
+def flywayUrl = ymlParser.getFlywayUrl()
+def flywayUser = ymlParser.getFlywayUser()
+def flywayPassword = ymlParser.getFlywayPassword()
+def flywaySchema = ymlParser.getFlywaySchema()
+def flywayLocations = ymlParser.getFlywayLocations()
+
+flyway {
+    driver = flywayDriver
+    url = flywayUrl
+    user = flywayUser
+    password = flywayPassword
+    defaultSchema = flywaySchema
+    locations = flywayLocations
+    cleanDisabled = false
+}
+
+tasks.named('flywayMigrate') {
+    dependsOn processResources
+}
+
+tasks.named('flywayClean') {
+    dependsOn processResources
+}
+
+tasks.named('flywayInfo') {
+    dependsOn processResources
+}

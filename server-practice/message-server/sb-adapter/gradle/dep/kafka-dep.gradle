@@ -1,0 +1,5 @@
+dependencies {
+    implementation(KafkaLibs.KAFKA)
+    implementation(KafkaLibs.REACTOR_KAFKA)
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+}
