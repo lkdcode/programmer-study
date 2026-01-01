@@ -5,14 +5,14 @@ import com.sb.domain.exception.DomainValidationException
 import reactor.core.publisher.Mono
 
 
-fun throwIf(condition: Boolean, exception: Throwable) =
-    if (condition) throw exception else Unit
+fun throwIf(condition: Boolean?, exception: Throwable) =
+    if (condition != null && condition) throw exception else Unit
 
 fun throwUnless(condition: Boolean, exception: Throwable) =
     if (!condition) throw exception else Unit
 
-fun throwIf(condition: Boolean, domainErrorCode: DomainErrorCode) =
-    if (condition) throw DomainValidationException(domainErrorCode) else Unit
+fun throwIf(condition: Boolean?, domainErrorCode: DomainErrorCode) =
+    if (condition != null && condition) throw DomainValidationException(domainErrorCode) else Unit
 
 fun throwUnless(condition: Boolean, domainErrorCode: DomainErrorCode) =
     if (!condition) throw DomainValidationException(domainErrorCode) else Unit
