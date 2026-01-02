@@ -1,4 +1,4 @@
-package com.sb.application.like.dto
+package com.sb.application.like.dto.command
 
 import com.sb.domain.calligraphy.entity.Calligraphy
 import com.sb.domain.like.aggregate.CalligraphyLikeAggregate

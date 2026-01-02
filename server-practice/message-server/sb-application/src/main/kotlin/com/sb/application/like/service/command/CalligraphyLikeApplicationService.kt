@@ -1,7 +1,7 @@
 package com.sb.application.like.service.command
 
-import com.sb.application.like.dto.LikeCalligraphyCommand
-import com.sb.application.like.dto.UnlikeCalligraphyCommand
+import com.sb.application.like.dto.command.LikeCalligraphyCommand
+import com.sb.application.like.dto.command.UnlikeCalligraphyCommand
 import com.sb.application.like.ports.input.command.LikeCalligraphyCommandUsecase
 import com.sb.application.like.ports.output.command.CalligraphyLikeCommandPort
 import com.sb.application.like.ports.validator.LikeCalligraphyValidator

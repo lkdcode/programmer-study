@@ -1,8 +1,8 @@
 package com.sb.application.like.ports.input.command
 
 import com.sb.domain.like.entity.CalligraphyLike
-import com.sb.application.like.dto.LikeCalligraphyCommand
-import com.sb.application.like.dto.UnlikeCalligraphyCommand
+import com.sb.application.like.dto.command.LikeCalligraphyCommand
+import com.sb.application.like.dto.command.UnlikeCalligraphyCommand
 
 interface LikeCalligraphyCommandUsecase {
     suspend fun like(command: LikeCalligraphyCommand): CalligraphyLike.CalligraphyLikeId
