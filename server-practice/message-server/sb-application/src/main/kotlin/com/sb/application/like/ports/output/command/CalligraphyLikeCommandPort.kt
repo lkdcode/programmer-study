@@ -1,6 +1,6 @@
 package com.sb.application.like.ports.output.command
 
-import com.sb.application.like.dto.UnlikeCalligraphyCommand
+import com.sb.application.like.dto.command.UnlikeCalligraphyCommand
 import com.sb.domain.like.aggregate.CalligraphyLikeAggregate
 import com.sb.domain.like.entity.NewCalligraphyLike
 
