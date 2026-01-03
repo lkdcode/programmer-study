@@ -1,10 +1,10 @@
 package com.sb.domain.feedback.aggregate
 
 import com.sb.domain.calligraphy.entity.Calligraphy
-import com.sb.domain.calligraphy.value.User
 import com.sb.domain.feedback.entity.CalligraphyFeedback
+import com.sb.domain.feedback.entity.CalligraphyFeedback.CalligraphyFeedbackId
 import com.sb.domain.feedback.value.FeedbackContent
-import java.time.Instant
+import com.sb.domain.user.entity.User
 
 class CalligraphyFeedbackAggregate private constructor(
     private val feedback: CalligraphyFeedback
@@ -12,23 +12,18 @@ class CalligraphyFeedbackAggregate private constructor(
     val getFeedback: CalligraphyFeedback get() = feedback
 
     companion object {
-        fun restore(feedback: CalligraphyFeedback): CalligraphyFeedbackAggregate = CalligraphyFeedbackAggregate(feedback)
-
         fun create(
+            id: CalligraphyFeedbackId,
             calligraphyId: Calligraphy.CalligraphyId,
-            user: User,
+            userId: User.UserId,
             content: FeedbackContent,
         ): CalligraphyFeedbackAggregate = CalligraphyFeedbackAggregate(
             CalligraphyFeedback(
-                id = generateFeedbackId(),
+                id = id,
                 calligraphyId = calligraphyId,
-                user = user,
+                userId = userId,
                 content = content,
-                createdAt = Instant.now(),
             )
         )
-
-        private fun generateFeedbackId(): CalligraphyFeedback.CalligraphyFeedbackId =
-            CalligraphyFeedback.CalligraphyFeedbackId(Instant.now().toEpochMilli())
     }
 }
