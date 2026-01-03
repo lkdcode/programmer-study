@@ -1,16 +1,14 @@
 package com.sb.domain.feedback.entity
 
 import com.sb.domain.calligraphy.entity.Calligraphy
-import com.sb.domain.calligraphy.value.User
 import com.sb.domain.feedback.value.FeedbackContent
-import java.time.Instant
+import com.sb.domain.user.entity.User
 
 data class CalligraphyFeedback(
     val id: CalligraphyFeedbackId,
     val calligraphyId: Calligraphy.CalligraphyId,
-    val user: User,
+    val userId: User.UserId,
     val content: FeedbackContent,
-    val createdAt: Instant,
 ) {
     @JvmInline
     value class CalligraphyFeedbackId(val value: Long)
