@@ -3,11 +3,12 @@ package com.sb.adapter.calligraphy.output.validator
 import com.sb.adapter.calligraphy.output.infrastructure.r2dbc.repository.CalligraphyR2dbcRepository
 import com.sb.adapter.calligraphy.output.infrastructure.r2dbc.repository.loadById
 import com.sb.application.calligraphy.ports.output.validator.CalligraphyValidator
-import com.sb.application.common.validator.monoErrorIf
+import com.sb.application.common.validator.throwIf
 import com.sb.domain.calligraphy.entity.Calligraphy
-import com.sb.domain.calligraphy.exception.CalligraphyErrorCode
 import com.sb.domain.user.entity.User
-import kotlinx.coroutines.reactive.awaitFirstOrNull
+import com.sb.framework.api.ApiException
+import com.sb.framework.api.ApiResponseCode
+import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.stereotype.Component
 
 
@@ -20,11 +21,10 @@ class CalligraphyValidationAdapter(
         userId: User.UserId,
         calligraphyId: Calligraphy.CalligraphyId
     ) {
-        repository
+        val entity = repository
             .loadById(calligraphyId)
-            .flatMap {
-                monoErrorIf(it.userId != userId.value, CalligraphyErrorCode.DELETE_DENIED)
-            }
-            .awaitFirstOrNull()
+            .awaitSingle()
+
+        throwIf(entity.userId != userId.value, ApiException(ApiResponseCode.INVALID)) // TODO : ApiCode
     }
 }
