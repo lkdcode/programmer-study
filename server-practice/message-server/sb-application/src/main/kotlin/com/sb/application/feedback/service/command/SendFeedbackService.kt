@@ -4,7 +4,6 @@ import com.sb.application.calligraphy.ports.output.validator.CalligraphyValidato
 import com.sb.application.feedback.dto.command.CreateFeedbackCommand
 import com.sb.application.feedback.ports.input.command.SendFeedbackUsecase
 import com.sb.application.feedback.ports.output.command.CalligraphyFeedbackCommandPort
-import com.sb.application.feedback.ports.output.validator.FeedbackValidator
 import com.sb.domain.feedback.aggregate.CalligraphyFeedbackAggregate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
