@@ -1,8 +1,8 @@
 import asyncio
 import logging
-import os
 
 from src.api.dto.calligraphy_dto import ImageGenerationRequest
+from src.infrastructure.dto.calligraph_webhook_request import CalligraphyWebhookRequest, ProcessStatus
 from src.infrastructure.s3_adapter import S3Adapter
 from src.infrastructure.webhook_adapter import WebhookAdapter
 from src.services.ai_service import AIService
@@ -21,18 +21,21 @@ class ImageGenerationUseCase:
             logger.info(f"Processing image generation for {request.uuid}")
 
             await asyncio.sleep(1)
-            image_bytes = await self.ai_service.generate_image(request.prompt)
-            image_url = await self.s3_adapter.upload(image_bytes, request.file_name)
 
-            await self.webhook_adapter.send_result({
-                "uuid": str(request.uuid),
-                "image_url": image_url,
-                "status": "SUCCESS"
-            })
+            await self.webhook_adapter.send_result(
+                CalligraphyWebhookRequest(
+                    calligraphyId="testId",
+                    status=ProcessStatus.FAILED,
+                    progress=15
+                )
+            )
 
         except Exception as e:
-            await self.webhook_adapter.send_result({
-                "uuid": str(request.uuid),
-                "status": "FAILED",
-                "error": str(e)
-            })
+            logger.warning(e)
+            await self.webhook_adapter.send_result(
+                CalligraphyWebhookRequest(
+                    calligraphyId="testId",
+                    status=ProcessStatus.FAILED,
+                    progress=15
+                )
+            )
