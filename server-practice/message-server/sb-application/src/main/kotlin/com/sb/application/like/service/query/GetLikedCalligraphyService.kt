@@ -1,6 +1,11 @@
 package com.sb.application.like.service.query
 
-import com.sb.application.calligraphy.dto.query.*
+import com.sb.application.calligraphy.dto.query.ShowcaseCalligraphyCursor
+import com.sb.application.calligraphy.dto.query.ShowcaseCalligraphyPage
+import com.sb.application.calligraphy.dto.query.ShowcaseCalligraphySlice
+import com.sb.application.like.dto.query.GetLikedCalligraphiesCursorQuery
+import com.sb.application.like.dto.query.GetLikedCalligraphiesPageQuery
+import com.sb.application.like.dto.query.GetLikedCalligraphiesSliceQuery
 import com.sb.application.like.ports.input.query.LikeCalligraphyQueryUsecase
 import com.sb.application.like.ports.output.query.CalligraphyLikeQueryPort
 import com.sb.domain.calligraphy.entity.Calligraphy
