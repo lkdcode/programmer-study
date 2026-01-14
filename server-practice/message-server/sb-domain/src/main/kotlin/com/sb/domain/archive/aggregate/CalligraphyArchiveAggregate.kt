@@ -2,7 +2,7 @@ package com.sb.domain.archive.aggregate
 
 import com.sb.domain.archive.entity.CalligraphyArchive
 import com.sb.domain.calligraphy.entity.Calligraphy
-import com.sb.domain.calligraphy.value.User
+import com.sb.domain.calligraphy.value.Author
 import java.time.Instant
 
 class CalligraphyArchiveAggregate private constructor(
@@ -15,7 +15,7 @@ class CalligraphyArchiveAggregate private constructor(
 
         fun create(
             calligraphyId: Calligraphy.CalligraphyId,
-            user: User,
+            user: Author,
         ): CalligraphyArchiveAggregate = CalligraphyArchiveAggregate(
             CalligraphyArchive(
                 id = generateArchiveId(),
