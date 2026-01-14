@@ -9,8 +9,6 @@ class CalligraphyAggregate private constructor(
     val snapshot: Calligraphy get() = calligraphy
 
     companion object {
-        fun restore(calligraphy: Calligraphy): CalligraphyAggregate = CalligraphyAggregate(calligraphy)
-
         fun create(
             id: Calligraphy.CalligraphyId,
             seed: Seed,
