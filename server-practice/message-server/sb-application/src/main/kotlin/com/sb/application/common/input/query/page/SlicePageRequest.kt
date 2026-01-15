@@ -5,14 +5,14 @@ import com.sb.application.common.input.query.sort.SortOptionList
 import com.sb.application.exception.applicationRequire
 
 data class SlicePageRequest(
-    val page: Long,
-    val size: Int,
+    val pageNumber: Long,
+    val pageSize: Int,
     val sort: SortOptionList? = null,
 ) {
-    val offset: Long get() = (page * size)
+    val offset: Long get() = (pageNumber * pageSize)
 
     init {
-        applicationRequire(page >= 0, ApplicationPageErrorCode.INVALID_PAGE_INDEX)
-        applicationRequire(size > 0, ApplicationPageErrorCode.INVALID_PAGE_SIZE)
+        applicationRequire(pageNumber >= 0, ApplicationPageErrorCode.INVALID_PAGE_INDEX)
+        applicationRequire(pageSize > 0, ApplicationPageErrorCode.INVALID_PAGE_SIZE)
     }
 }
