@@ -1,6 +1,6 @@
 package com.sb.application.user.service
 
-import com.sb.application.credit.ports.input.command.RewardSignupBonusUsecase
+import com.sb.application.credit.ports.input.command.CreateWalletUsecase
 import com.sb.application.user.dto.RegisterWithEmailCommand
 import com.sb.application.user.guard.UserGuard
 import com.sb.application.user.ports.input.command.RegisterWithEmailUsecase
@@ -19,7 +19,7 @@ class RegisterWithEmailService(
 
     internal val userCommandPort: UserCommandPort,
     internal val emailVerificationPort: EmailVerificationPort,
-    internal val rewardSignupBonusUsecase: RewardSignupBonusUsecase,
+    internal val createWalletUsecase: CreateWalletUsecase,
 ) : RegisterWithEmailUsecase {
 
     internal suspend fun guardEmailNotRegistered(email: Email) =
@@ -32,7 +32,7 @@ class RegisterWithEmailService(
             requireEmailNotRegistered()
 
             val userId = register()
-            rewardSignupBonus(userId)
+            createWallet(userId)
             consumeVerification()
         }
 }

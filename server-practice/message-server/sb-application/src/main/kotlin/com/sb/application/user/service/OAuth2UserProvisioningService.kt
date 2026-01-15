@@ -1,7 +1,7 @@
 package com.sb.application.user.service
 
 import com.sb.application.auth.ports.input.command.LoginUsecase
-import com.sb.application.credit.ports.input.command.RewardSignupBonusUsecase
+import com.sb.application.credit.ports.input.command.CreateWalletUsecase
 import com.sb.application.user.dto.OAuth2ProvisioningCommand
 import com.sb.application.user.ports.input.command.OAuth2UserProvisioningUsecase
 import com.sb.application.user.ports.output.command.UserCommandPort
@@ -10,13 +10,12 @@ import com.sb.application.user.service.dsl.OAuth2UserProvisioningDsl
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-
 @Service
 @Transactional
 class OAuth2UserProvisioningService(
     private val userQueryPort: UserQueryPort,
     private val userCommandPort: UserCommandPort,
-    private val rewardSignupBonusUsecase: RewardSignupBonusUsecase,
+    private val createWalletUsecase: CreateWalletUsecase,
     private val loginUsecase: LoginUsecase,
 ) : OAuth2UserProvisioningUsecase {
 
@@ -26,12 +25,10 @@ class OAuth2UserProvisioningService(
 
             whenNewUser {
                 val userId = userCommandPort.save(command.newUser)
-                rewardSignupBonusUsecase.reward(userId)
+                createWalletUsecase.create(userId)
             }
 
-//            whenExistingUser {
             loginUsecase.onLoginSuccess(command.emailVo)
-//            }
         }
     }
 }
