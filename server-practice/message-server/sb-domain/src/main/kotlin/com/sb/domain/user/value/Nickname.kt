@@ -13,7 +13,7 @@ value class Nickname private constructor(
     }
 
     companion object {
-        const val MIN_LENGTH = 2
+        const val MIN_LENGTH = 1
         const val MAX_LENGTH = 20
 
         const val REQUIRE_MESSAGE = "닉네임은 필수입니다."

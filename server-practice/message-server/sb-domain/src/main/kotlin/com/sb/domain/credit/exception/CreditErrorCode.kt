@@ -23,6 +23,7 @@ enum class CreditErrorCode(
     PAYMENT_ORDER_INVALID_USER_ID("CRD012", "userId가 올바르지 않습니다."),
     PAYMENT_ORDER_INVALID_CREDITS_TO_GRANT("CRD013", "부여할 크레딧은 1 이상이어야 합니다."),
 
+    WALLET_ALREADY_EXISTS("CRD014", "이미 지갑이 존재합니다."),
 
     ;
 }
