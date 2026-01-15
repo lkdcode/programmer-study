@@ -33,8 +33,8 @@ internal class RegisterWithEmailDsl private constructor(
     internal suspend fun RegisterWithEmailService.consumeVerification() =
         emailVerificationPort.remove(signUpKey)
 
-    internal suspend fun RegisterWithEmailService.rewardSignupBonus(userId: User.UserId) =
-        rewardSignupBonusUsecase.reward(userId)
+    internal suspend fun RegisterWithEmailService.createWallet(userId: User.UserId) =
+        createWalletUsecase.create(userId)
 
     companion object {
         internal suspend fun execute(
