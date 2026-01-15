@@ -1,6 +1,7 @@
 package com.sb.domain.credit.model
 
 import com.sb.domain.credit.value.Credit
+import com.sb.domain.user.entity.User
 import java.time.Instant
 
 data class NewCreditWallet(
@@ -11,9 +12,9 @@ data class NewCreditWallet(
 ) {
 
     companion object {
-        fun create(userId: Long, now: Instant = Instant.now()): NewCreditWallet =
+        fun create(userId: User.UserId, now: Instant = Instant.now()): NewCreditWallet =
             NewCreditWallet(
-                userId = userId,
+                userId = userId.value,
                 balance = Credit.zero(),
                 createdAt = now,
                 updatedAt = now,
