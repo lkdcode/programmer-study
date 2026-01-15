@@ -15,7 +15,7 @@ internal class CreateCalligraphyDsl private constructor(
     internal suspend fun CreateCalligraphyService.validateCanCreate(
         sufficiency: suspend CreateCalligraphyService.() -> CreateCalligraphyPolicy.CreditSufficiency
     ) {
-        CreateCalligraphyPolicy.validateCanCreate(command.author, sufficiency())
+        CreateCalligraphyPolicy.validateCanCreate(sufficiency())
     }
 
     internal suspend fun CreateCalligraphyService.pay() =
