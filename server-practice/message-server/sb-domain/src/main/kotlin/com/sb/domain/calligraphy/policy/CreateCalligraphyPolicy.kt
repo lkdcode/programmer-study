@@ -18,7 +18,7 @@ class CreateCalligraphyPolicy {
     }
 
     companion object {
-        const val CREATION_COST = 200L
+        const val CREATION_COST = 60L
 
         fun validateCanCreate(canAfford: CreditSufficiency) {
             domainRequire(canAfford.isSufficient, INSUFFICIENT_CREDIT) { INSUFFICIENT_CREDIT.message }
