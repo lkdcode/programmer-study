@@ -1,6 +1,7 @@
 package com.sb.domain.calligraphy.entity
 
 import com.sb.domain.calligraphy.value.*
+import java.util.*
 
 data class Calligraphy(
     val id: CalligraphyId,
@@ -12,5 +13,5 @@ data class Calligraphy(
 ) {
 
     @JvmInline
-    value class CalligraphyId(val value: Long)
+    value class CalligraphyId(val value: UUID)
 }
