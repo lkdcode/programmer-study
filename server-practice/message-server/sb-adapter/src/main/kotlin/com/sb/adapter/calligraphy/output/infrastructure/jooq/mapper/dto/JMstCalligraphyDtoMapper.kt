@@ -8,9 +8,10 @@ import com.sb.domain.calligraphy.value.Seed
 import com.sb.domain.calligraphy.value.StyleType
 import com.sb.domain.calligraphy.value.Text
 import java.time.Instant
+import java.util.*
 
 data class JMstCalligraphyDto(
-    val calligraphyId: Long,
+    val calligraphyId: UUID,
     val seed: String,
     val text: String,
     val prompt: String?,

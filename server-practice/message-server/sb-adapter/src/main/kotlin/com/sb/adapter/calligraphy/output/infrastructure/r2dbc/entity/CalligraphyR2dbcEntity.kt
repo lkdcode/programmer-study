@@ -3,28 +3,36 @@ package com.sb.adapter.calligraphy.output.infrastructure.r2dbc.entity
 import com.sb.domain.calligraphy.value.StyleType
 import com.sb.framework.r2dbc.entity.BaseEntity
 import org.springframework.data.annotation.Id
+import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
+import java.util.*
 
 @Table("mst_calligraphy")
 data class CalligraphyR2dbcEntity(
     @Id
     @Column("id")
-    val id: Long? = null,
+    var calligraphyId: UUID,
 
     @Column("seed")
-    val seed: String,
+    var seed: String,
 
     @Column("text")
-    val text: String,
+    var text: String,
 
     @Column("prompt")
-    val prompt: String?,
+    var prompt: String?,
 
     @Column("style")
-    val style: StyleType,
+    var style: StyleType,
 
     @Column("user_id")
-    val userId: Long,
-) : BaseEntity() {
+    var userId: Long,
+
+    @Column("path")
+    var path: String,
+) : BaseEntity(), Persistable<UUID> {
+    override fun getId(): UUID? = calligraphyId
+
+    override fun isNew(): Boolean = true
 }
