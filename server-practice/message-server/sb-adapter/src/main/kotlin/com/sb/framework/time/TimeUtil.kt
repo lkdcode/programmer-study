@@ -4,6 +4,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 val KST: ZoneId = ZoneId.of("Asia/Seoul")
@@ -18,6 +19,8 @@ val BASIC_ISO_DATE: DateTimeFormatter = DateTimeFormatter.BASIC_ISO_DATE
 
 fun nowUTC(): Instant = Instant.now()
 fun nowTS(): Long = nowUTC().toEpochMilli()
+fun nowZoneDateTime() : ZonedDateTime = nowUTC().atZone(KST)
+
 fun convertUTC(target: String): Instant = Instant.parse(target)
 fun convertKstOffsetDateTime(target: String): OffsetDateTime = convertUTC(target).atZone(KST).toOffsetDateTime()
 fun convertKstOffsetDateTime(): OffsetDateTime = Instant.now().atZone(KST).toOffsetDateTime()

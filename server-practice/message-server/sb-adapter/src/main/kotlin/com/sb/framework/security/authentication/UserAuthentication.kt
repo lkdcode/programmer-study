@@ -1,5 +1,6 @@
 package com.sb.framework.security.authentication
 
+import com.sb.domain.calligraphy.value.Author
 import com.sb.domain.user.aggregate.UserAggregate
 import com.sb.domain.user.entity.User
 import org.springframework.security.core.Authentication
@@ -15,7 +16,8 @@ data class UserAuthentication(
     val isNonLocked: Boolean,
 ) : UserDetails {
 
-    val userId get() = User.UserId(id)
+    val userIdVo get() = User.UserId(id)
+    val authorVo get() = Author(userIdVo)
 
     val authority get() = role.first()
     val authorityStringValue get() = role.first().toString()
@@ -35,9 +37,9 @@ data class UserAuthentication(
     override fun isEnabled(): Boolean = isNotDeleted
 }
 
-fun Authentication.userAuthentication(): UserAuthentication = this.principal as UserAuthentication
+fun Authentication.toUserAuthentication(): UserAuthentication = this.principal as UserAuthentication
 
-fun UserAggregate.userAuthentication(): UserAuthentication {
+fun UserAggregate.toUserAuthentication(): UserAuthentication {
     val user = this.snapshot
 
     return UserAuthentication(

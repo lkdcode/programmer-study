@@ -41,6 +41,10 @@ enum class ApiResponseCode(
     /* PLAN */
     PLAN_NOT_FOUND("PLN001", HttpStatus.NOT_FOUND, "해당 플랜을 찾을 수 없습니다."),
 
+    /* FEEDBACK */
+    FEEDBACK_NOT_FOUND("FEB001", HttpStatus.NOT_FOUND, "해당 피드백을 찾을 수 없습니다."),
+    FEEDBACK_INVALID_OWNER("FEB002", HttpStatus.FORBIDDEN, "삭제 권한이 없습니다."),
+
     /* HIS_PLAN */
     HIS_PLAN_NOT_FOUND("HPL001", HttpStatus.NOT_FOUND, "해당 플랜을 찾을 수 없습니다."),
 

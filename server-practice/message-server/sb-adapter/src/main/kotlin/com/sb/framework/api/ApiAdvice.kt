@@ -23,13 +23,13 @@ import java.sql.SQLException
 class ApiAdvice {
 
     @ExceptionHandler(ApiException::class)
-    suspend fun handleApiException(e: ApiException): MonoApiEntity<Any> =
-        clientErrorEntity(e.getApiResponseCode(), e.payload).also {
+    suspend fun handleApiException(e: ApiException): ApiResponseEntity<Any> =
+        clientError(e.getApiResponseCode(), e.payload).also {
             logInfo("ApiResponseCode: ${e.getApiResponseCode()}, Message: ${e.message()} Status: ${e.status()}")
         }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    suspend fun handleMethodArgumentNotValidException(e: MethodArgumentNotValidException): MonoApiEntity<List<*>> {
+    suspend fun handleMethodArgumentNotValidException(e: MethodArgumentNotValidException): ApiResponseEntity<List<*>> {
         val response = e.bindingResult.fieldErrors.map {
             logInfo("Field: ${it.field}, Rejected value: ${it.rejectedValue}, Message: ${it.defaultMessage}")
 
@@ -40,11 +40,11 @@ class ApiAdvice {
             )
         }
 
-        return clientErrorEntity(ApiResponseCode.REQUEST_INVALID, response)
+        return clientError(ApiResponseCode.REQUEST_INVALID, response)
     }
 
     @ExceptionHandler(ConstraintViolationException::class)
-    suspend fun handleConstraintViolationException(e: ConstraintViolationException): MonoApiEntity<List<*>> {
+    suspend fun handleConstraintViolationException(e: ConstraintViolationException): ApiResponseEntity<List<*>> {
         val response = e.constraintViolations.map {
             logInfo("Path: ${it.rootBeanClass}, Property: ${it.propertyPath} Invalid value: ${it.invalidValue}, Message: ${it.message}")
 
@@ -54,12 +54,12 @@ class ApiAdvice {
             )
         }
 
-        return clientErrorEntity(ApiResponseCode.REQUEST_INVALID_DATA, response)
+        return clientError(ApiResponseCode.REQUEST_INVALID_DATA, response)
     }
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
-    suspend fun handleHttpMessageNotReadableException(e: HttpMessageNotReadableException): MonoApiEntity<String> =
-        clientErrorEntity(
+    suspend fun handleHttpMessageNotReadableException(e: HttpMessageNotReadableException): ApiResponseEntity<String> =
+        clientError(
             apiResponseCode = ApiResponseCode.REQUEST_INVALID_BODY,
             payload = "${e.message}",
         ).also {
@@ -67,8 +67,8 @@ class ApiAdvice {
         }
 
     @ExceptionHandler(ServerWebInputException::class)
-    suspend fun handleServerWebInputException(e: ServerWebInputException): MonoApiEntity<String> =
-        clientErrorEntity(
+    suspend fun handleServerWebInputException(e: ServerWebInputException): ApiResponseEntity<String> =
+        clientError(
             apiResponseCode = ApiResponseCode.REQUEST_INVALID_BODY,
             payload = e.message,
         ).also {
@@ -79,11 +79,11 @@ class ApiAdvice {
     suspend fun handleWebExchangeBindException(
         e: WebExchangeBindException,
         request: ServerHttpRequest,
-    ): MonoApiEntity<String> {
+    ): ApiResponseEntity<String> {
         val errorMessage = e.allErrors
             .joinToString("; ") { it.defaultMessage ?: "Invalid request" }
 
-        return clientErrorEntity(
+        return clientError(
             apiResponseCode = ApiResponseCode.REQUEST_INVALID_BODY,
             payload = errorMessage
         ).also {
@@ -95,8 +95,8 @@ class ApiAdvice {
     suspend fun handleMethodNotAllowedException(
         e: MethodNotAllowedException,
         request: ServerHttpRequest
-    ): MonoApiEntity<String> =
-        clientErrorEntity(
+    ): ApiResponseEntity<String> =
+        clientError(
             apiResponseCode = ApiResponseCode.REQUEST_UNSUPPORTED_METHOD,
             payload = "${e.httpMethod} ${request.uri.path} ${e.message}"
         ).also {
@@ -104,8 +104,8 @@ class ApiAdvice {
         }
 
     @ExceptionHandler(NoResourceFoundException::class)
-    suspend fun handleNoResourceFoundException(e: NoResourceFoundException): MonoApiEntity<String> =
-        clientErrorEntity(
+    suspend fun handleNoResourceFoundException(e: NoResourceFoundException): ApiResponseEntity<String> =
+        clientError(
             apiResponseCode = ApiResponseCode.REQUEST_UNSUPPORTED_REQUEST,
             payload = "API: /${e.message}, Message: ${e.message}",
         ).also {
@@ -113,8 +113,8 @@ class ApiAdvice {
         }
 
     @ExceptionHandler(SQLException::class)
-    suspend fun handleSQLException(e: SQLException): MonoApiEntity<Unit> =
-        serverErrorEntity<Unit>(
+    suspend fun handleSQLException(e: SQLException): ApiResponseEntity<Void> =
+        serverError<Void>(
             apiResponseCode = ApiResponseCode.SEVER_SQL_EXCEPTION,
             payload = null,
         ).also {
@@ -122,8 +122,8 @@ class ApiAdvice {
         }
 
     @ExceptionHandler(R2dbcDataIntegrityViolationException::class)
-    suspend fun handleR2dbcDataIntegrityViolationException(e: R2dbcDataIntegrityViolationException): MonoApiEntity<Unit> =
-        serverErrorEntity<Unit>(
+    suspend fun handleR2dbcDataIntegrityViolationException(e: R2dbcDataIntegrityViolationException): ApiResponseEntity<Void> =
+        serverError<Void>(
             apiResponseCode = ApiResponseCode.SEVER_DATA_INTEGRITY_VIOLATION_EXCEPTION,
             payload = null,
         ).also {
@@ -131,8 +131,8 @@ class ApiAdvice {
         }
 
     @ExceptionHandler(R2dbcTransientResourceException::class)
-    suspend fun handleR2dbcTransientResourceException(e: R2dbcTransientResourceException): MonoApiEntity<Unit> =
-        serverErrorEntity<Unit>(
+    suspend fun handleR2dbcTransientResourceException(e: R2dbcTransientResourceException): ApiResponseEntity<Void> =
+        serverError<Void>(
             apiResponseCode = ApiResponseCode.SEVER_TRANSIENT_RESOURCE_EXCEPTION,
             payload = null,
         ).also {
@@ -140,8 +140,8 @@ class ApiAdvice {
         }
 
     @ExceptionHandler(R2dbcNonTransientResourceException::class)
-    suspend fun handleR2dbcNonTransientResourceException(e: R2dbcNonTransientResourceException): MonoApiEntity<Unit> =
-        serverErrorEntity<Unit>(
+    suspend fun handleR2dbcNonTransientResourceException(e: R2dbcNonTransientResourceException): ApiResponseEntity<Void> =
+        serverError<Void>(
             apiResponseCode = ApiResponseCode.SEVER_NON_TRANSIENT_RESOURCE_EXCEPTION,
             payload = null,
         ).also {
@@ -149,8 +149,8 @@ class ApiAdvice {
         }
 
     @ExceptionHandler(R2dbcRollbackException::class)
-    suspend fun handleR2dbcRollbackException(e: R2dbcRollbackException): MonoApiEntity<Unit> =
-        serverErrorEntity<Unit>(
+    suspend fun handleR2dbcRollbackException(e: R2dbcRollbackException): ApiResponseEntity<Void> =
+        serverError<Void>(
             apiResponseCode = ApiResponseCode.SEVER_ROLL_BACK_EXCEPTION,
             payload = null,
         ).also {
@@ -158,8 +158,8 @@ class ApiAdvice {
         }
 
     @ExceptionHandler(RuntimeException::class)
-    suspend fun handleRuntimeException(e: RuntimeException): MonoApiEntity<Unit> =
-        serverErrorEntity<Unit>(
+    suspend fun handleRuntimeException(e: RuntimeException): ApiResponseEntity<Void> =
+        serverError<Void>(
             apiResponseCode = ApiResponseCode.SEVER_UNHANDLED_EXCEPTION,
             payload = null,
         ).also {
@@ -167,8 +167,8 @@ class ApiAdvice {
         }
 
     @ExceptionHandler(Exception::class)
-    suspend fun handleException(e: Exception): MonoApiEntity<Unit> =
-        serverErrorEntity<Unit>(
+    suspend fun handleException(e: Exception): ApiResponseEntity<Void> =
+        serverError<Void>(
             apiResponseCode = ApiResponseCode.SEVER_CRITICAL_EXCEPTION,
             payload = null,
         ).also {
