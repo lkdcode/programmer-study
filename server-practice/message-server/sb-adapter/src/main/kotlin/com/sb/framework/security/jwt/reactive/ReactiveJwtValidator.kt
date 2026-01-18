@@ -15,12 +15,12 @@ class ReactiveJwtValidator(
     fun validate(jwtProperties: JwtProperties, token: String): Mono<Boolean> =
         reactiveParser
             .removePrefix(token)
-            .flatMap {
+            .flatMap { parsed ->
                 Mono
                     .zip(
-                        isNotRemoved(token),
-                        isNotExpired(jwtProperties, token),
-                        validateProperty(jwtProperties, token),
+                        isNotRemoved(parsed),
+                        isNotExpired(jwtProperties, parsed),
+                        validateProperty(jwtProperties, parsed),
                     )
                     .map { it.t1 && it.t2 && it.t3 }
                     .defaultIfEmpty(false)

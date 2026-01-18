@@ -80,7 +80,7 @@ class ReactiveJwtService(
                     .getUsername(accessTokenProperties, parsed)
                     .map { Email.of(it) }
             }
-            .switchIfEmpty(Mono.error(BadCredentialsException("Invalid Token")))
+            .switchIfEmpty(Mono.error(BadCredentialsException("Invalid Token Claims")))
 
     fun remove(token: String): Mono<Void> =
         reactiveJwtParser
@@ -94,7 +94,7 @@ class ReactiveJwtService(
                 getUsername(token).filter { it.isNotBlank() }.hasElement()
             )
             .filter { it.t1 && it.t2 }
-            .switchIfEmpty(Mono.error(BadCredentialsException("Invalid Token")))
+            .switchIfEmpty(Mono.error(BadCredentialsException("Invalid Access Token")))
             .then()
 
     fun parsePrefix(token: String): Mono<String> =

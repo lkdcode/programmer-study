@@ -15,5 +15,5 @@ class UserAuthenticationSuccessHandler(
 
     override fun onAuthenticationSuccess(
         webFilterExchange: WebFilterExchange, authentication: Authentication
-    ): Mono<Void> = tokenIssueWebAdapter.issue(webFilterExchange, authentication.userAuthentication())
+    ): Mono<Void> = tokenIssueWebAdapter.issue(webFilterExchange, authentication.toUserAuthentication())
 }

@@ -56,6 +56,8 @@ class UserApiSecurityFilter(
             "/login",
             "/public",
             "/public/**",
+
+            "/api/calligraphies/webhook",
         )
 
         val AUTHENTICATED_URL = arrayOf(

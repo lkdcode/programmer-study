@@ -4,9 +4,8 @@ import com.sb.application.user.ports.output.query.UserQueryPort
 import com.sb.domain.user.value.Email
 import com.sb.framework.mono.monoSuspend
 import com.sb.framework.security.authentication.UserAuthentication
-import com.sb.framework.security.authentication.userAuthentication
+import com.sb.framework.security.authentication.toUserAuthentication
 import com.sb.framework.security.login.policy.AuthenticationPolicy
-import kotlinx.coroutines.reactor.mono
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -38,7 +37,7 @@ class UserLoginReactiveAuthenticationManager(
         monoSuspend<UserAuthentication> {
             userQueryPort
                 .loadByEmail(Email.of(loginId))
-                .userAuthentication()
+                .toUserAuthentication()
         }
             .onErrorResume { Mono.error(BadCredentialsException("Invalid Authentication")) }
 
