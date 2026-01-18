@@ -1,12 +1,12 @@
 package com.sb.adapter.calligraphy.output.command
 
-import com.sb.adapter.calligraphy.output.infrastructure.r2dbc.mapper.toAggregate
-import com.sb.adapter.calligraphy.output.infrastructure.r2dbc.mapper.toR2dbcEntity
+import com.sb.adapter.calligraphy.output.infrastructure.r2dbc.mapper.entity.toAggregate
+import com.sb.adapter.calligraphy.output.infrastructure.r2dbc.mapper.entity.toR2dbcEntity
 import com.sb.adapter.calligraphy.output.infrastructure.r2dbc.repository.CalligraphyR2dbcRepository
 import com.sb.adapter.calligraphy.output.infrastructure.r2dbc.repository.loadById
 import com.sb.application.calligraphy.ports.output.command.CalligraphyCommandPort
 import com.sb.domain.calligraphy.aggregate.CalligraphyAggregate
-import com.sb.domain.calligraphy.command.CreateCalligraphyCommand
+import com.sb.application.calligraphy.dto.command.CreateCalligraphyCommand
 import com.sb.domain.calligraphy.entity.Calligraphy
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle

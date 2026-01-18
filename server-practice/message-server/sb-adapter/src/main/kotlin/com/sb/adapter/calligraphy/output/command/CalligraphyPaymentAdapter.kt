@@ -21,7 +21,7 @@ class CalligraphyPaymentAdapter(
             SpendCreditsCommand(
                 userId = author.userId.value,
                 amount = Credit.of(CreateCalligraphyPolicy.CREATION_COST),
-                type = TransactionType.CREDIT,
+                type = TransactionType.DEBIT,
                 reason = TransactionReason.CALLIGRAPHY_CREATE,
             )
         )
