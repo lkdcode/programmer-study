@@ -1,42 +1,33 @@
 package com.sb.adapter.calligraphy.input.web.rest.command
 
 import com.sb.framework.api.ApiResponseEntity
-import com.sb.framework.api.success
+import com.sb.framework.api.created
 import com.sb.framework.cloudflare.r2.R2PresignedUrlService
 import com.sb.framework.util.PathUtil
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RestController
-import java.util.UUID
 
 @RestController
 class CalligraphyUploadApi(
-    private val r2PresignedUrlService: R2PresignedUrlService,
+    private val service: R2PresignedUrlService
 ) {
 
-    @PostMapping("/public/calligraphies/{calligraphyId}/upload-url")
-    suspend fun generateUploadUrl(
-        @PathVariable calligraphyId: UUID,
-    ): ApiResponseEntity<CalligraphyUploadUrlResponse> {
-        val path = PathUtil.createCalligraphyPath(calligraphyId)
-        val putUrl = r2PresignedUrlService.generatePutUrl(path, CONTENT_TYPE_PNG)
+    @PostMapping("/public/calligraphies/{key}/upload-url")
+    suspend fun getPut(
+        @PathVariable(name = "key") key: String,
+        @RequestHeader("X-Upload-Content-Type") contentType: String
+    ): ApiResponseEntity<String> {
+        val path = PathUtil.getCalligraphyPath
 
-        return success(
-            CalligraphyUploadUrlResponse(
-                calligraphyId = calligraphyId.toString(),
-                path = path,
-                uploadUrl = putUrl,
-            )
-        )
+        return created(payload = service.generatePutUrl(path, contentType))
     }
 
-    companion object {
-        private const val CONTENT_TYPE_PNG = "image/png"
+    @PostMapping("/public/calligraphies/{key}/view-url")
+    suspend fun getGet(
+        @PathVariable(name = "key") key: String
+    ): ApiResponseEntity<String> {
+        return created(payload = service.generateGetUrl(key))
     }
 }
-
-data class CalligraphyUploadUrlResponse(
-    val calligraphyId: String,
-    val path: String,
-    val uploadUrl: String,
-)
