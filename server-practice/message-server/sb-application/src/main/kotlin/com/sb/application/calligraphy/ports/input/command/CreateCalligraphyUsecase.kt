@@ -1,6 +1,6 @@
 package com.sb.application.calligraphy.ports.input.command
 
-import com.sb.domain.calligraphy.command.CreateCalligraphyCommand
+import com.sb.application.calligraphy.dto.command.CreateCalligraphyCommand
 import com.sb.domain.calligraphy.entity.Calligraphy.CalligraphyId
 
 

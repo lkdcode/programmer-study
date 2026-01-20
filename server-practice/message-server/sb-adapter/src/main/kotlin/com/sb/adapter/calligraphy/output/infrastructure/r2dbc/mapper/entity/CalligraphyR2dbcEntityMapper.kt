@@ -2,9 +2,10 @@ package com.sb.adapter.calligraphy.output.infrastructure.r2dbc.mapper.entity
 
 import com.sb.adapter.calligraphy.output.infrastructure.r2dbc.entity.CalligraphyR2dbcEntity
 import com.sb.adapter.calligraphy.output.infrastructure.r2dbc.mapper.vo.*
-import com.sb.domain.calligraphy.aggregate.CalligraphyAggregate
 import com.sb.application.calligraphy.dto.command.CreateCalligraphyCommand
+import com.sb.domain.calligraphy.aggregate.CalligraphyAggregate
 import com.sb.domain.calligraphy.value.Author
+import com.sb.framework.util.PathUtil
 
 
 fun CalligraphyR2dbcEntity.toAggregate(): CalligraphyAggregate =
@@ -27,7 +28,7 @@ fun CalligraphyAggregate.toR2dbcEntity(): CalligraphyR2dbcEntity {
         prompt = calligraphy.prompt?.value,
         style = calligraphy.style,
         userId = calligraphy.author.userId.value,
-        path = "",
+        path = PathUtil.createCalligraphyPath(calligraphy.id.value),
     )
 }
 
@@ -39,5 +40,5 @@ fun CreateCalligraphyCommand.toR2dbcEntity(): CalligraphyR2dbcEntity =
         prompt = this.prompt?.value,
         style = this.style,
         userId = this.author.userId.value,
-        path = "",
+        path = PathUtil.createCalligraphyPath(this.id.value),
     )
