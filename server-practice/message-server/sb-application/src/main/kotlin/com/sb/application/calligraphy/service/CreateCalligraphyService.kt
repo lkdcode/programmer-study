@@ -7,7 +7,7 @@ import com.sb.application.calligraphy.ports.output.command.CalligraphyCommandPor
 import com.sb.application.calligraphy.ports.output.command.CalligraphyPaymentPort
 import com.sb.application.calligraphy.ports.output.publish.CalligraphyEventPublisher
 import com.sb.application.calligraphy.service.dsl.CreateCalligraphyDsl
-import com.sb.domain.calligraphy.command.CreateCalligraphyCommand
+import com.sb.application.calligraphy.dto.command.CreateCalligraphyCommand
 import com.sb.domain.calligraphy.entity.Calligraphy.CalligraphyId
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
