@@ -1,0 +1,9 @@
+dependencies {
+    implementation(SpringWebFluxLibs.WEB_FLUX)
+    implementation(SpringWebFluxLibs.REDIS_REACTIVE)
+    implementation(SpringWebFluxLibs.AOP)
+
+    implementation(SpringWebFluxLibs.REACTIVE_STREAMS)
+    implementation(SpringWebFluxLibs.REACTOR_CORE)
+    implementation(SpringWebFluxLibs.NETTY_WITH_MAC_OS_AARCH)
+}
