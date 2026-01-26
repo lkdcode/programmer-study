@@ -1,5 +1,6 @@
 package dev.lkdcode.cache.config
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory
@@ -14,10 +15,11 @@ class ReactiveRedisConfig {
 
     @Bean
     fun reactiveRedisOperations(
-        connectionFactory: ReactiveRedisConnectionFactory
+        connectionFactory: ReactiveRedisConnectionFactory,
+        redisTemplateObjectMapper: ObjectMapper
     ): ReactiveRedisOperations<String, Any> {
         val keySerializer = StringRedisSerializer()
-        val valueSerializer = GenericJackson2JsonRedisSerializer()
+        val valueSerializer = GenericJackson2JsonRedisSerializer(redisTemplateObjectMapper)
 
         val serializationContext = RedisSerializationContext
             .newSerializationContext<String, Any>(keySerializer)

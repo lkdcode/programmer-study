@@ -13,6 +13,7 @@ class ReactiveService(
 ) {
 
     @ReactiveCacheable(
+        key = "#userId",
         ttl = 300,
         condition = "#userId > 0",
         unless = "#result == null"
@@ -24,6 +25,7 @@ class ReactiveService(
     }
 
     @ReactiveCachePut(
+        key = "#userId",
         ttl = 300
     )
     fun create(userId: Long): Mono<String> {
@@ -33,6 +35,7 @@ class ReactiveService(
     }
 
     @ReactiveCachePut(
+        key = "#userId",
         ttl = 300
     )
     fun update(userId: Long): Mono<String> {
@@ -41,7 +44,9 @@ class ReactiveService(
         return reactiveRepository.updateByUserId(userId).map { "→ ReactiveService.update → $it" }
     }
 
-    @ReactiveCacheEvict()
+    @ReactiveCacheEvict(
+        key = "#userId",
+    )
     fun delete(userId: Long): Mono<String> {
         println("ReactiveService.delete USER_ID: $userId")
 
