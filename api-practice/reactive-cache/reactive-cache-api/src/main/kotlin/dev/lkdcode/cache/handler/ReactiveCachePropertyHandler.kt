@@ -19,7 +19,7 @@ class ReactiveCachePropertyHandler(
         joinPoint: ProceedingJoinPoint,
         reactiveCacheable: ReactiveCacheable
     ): Triple<String, Duration, String> {
-        val cacheKey = resolveKey(joinPoint, reactiveCacheable.keyGenerator)
+        val cacheKey = resolveKey(joinPoint, reactiveCacheable.keyGenerator, reactiveCacheable.key)
         val ttl = Duration.ofSeconds(reactiveCacheable.ttl)
         val unless = reactiveCacheable.unless
 
@@ -30,7 +30,7 @@ class ReactiveCachePropertyHandler(
         joinPoint: ProceedingJoinPoint,
         reactiveCachePut: ReactiveCachePut
     ): Triple<String, Duration, String> {
-        val cacheKey = resolveKey(joinPoint, reactiveCachePut.keyGenerator)
+        val cacheKey = resolveKey(joinPoint, reactiveCachePut.keyGenerator, reactiveCachePut.key)
         val ttl = Duration.ofSeconds(reactiveCachePut.ttl)
         val unless = reactiveCachePut.unless
 
@@ -41,13 +41,19 @@ class ReactiveCachePropertyHandler(
         joinPoint: ProceedingJoinPoint,
         reactiveCacheEvict: ReactiveCacheEvict
     ): String {
-        return resolveKey(joinPoint, reactiveCacheEvict.keyGenerator)
+        return resolveKey(joinPoint, reactiveCacheEvict.keyGenerator, reactiveCacheEvict.key)
     }
 
-    private fun resolveKey(joinPoint: ProceedingJoinPoint, keyGenerator: String): String {
+    private fun resolveKey(joinPoint: ProceedingJoinPoint, keyGenerator: String, key: String): String {
         val keyGenerator = applicationContext.getBean(keyGenerator, ReactiveKeyGenerator::class.java)
         val signature = joinPoint.signature as MethodSignature
 
-        return keyGenerator.generate(joinPoint.target, signature.method, *joinPoint.args)
+        return keyGenerator.generate(
+            joinPoint.target,
+            signature.method,
+            key,
+            joinPoint.args,
+            signature.parameterNames
+        )
     }
 }
