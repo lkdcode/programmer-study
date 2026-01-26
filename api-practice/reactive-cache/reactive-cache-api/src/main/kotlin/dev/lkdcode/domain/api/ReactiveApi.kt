@@ -14,25 +14,27 @@ class ReactiveApi(
     fun fetch(@PathVariable(name = "userId") userId: Long): MonoResponseEntity<String> =
         reactiveService
             .fetch(userId)
-            .map { ResponseEntity.ok().body(it) }
+            .map { monoResponseEntity(it) }
 
     @PostMapping("/reactive/{userId}")
     fun create(@PathVariable(name = "userId") userId: Long): MonoResponseEntity<String> =
         reactiveService
             .create(userId)
-            .map { ResponseEntity.ok().body(it) }
+            .map { monoResponseEntity(it) }
 
     @PutMapping("/reactive/{userId}")
     fun update(@PathVariable(name = "userId") userId: Long): MonoResponseEntity<String> =
         reactiveService
             .update(userId)
-            .map { ResponseEntity.ok().body(it) }
+            .map { monoResponseEntity(it) }
 
     @DeleteMapping("/reactive/{userId}")
     fun delete(@PathVariable(name = "userId") userId: Long): MonoResponseEntity<String> =
         reactiveService
             .delete(userId)
-            .map { ResponseEntity.ok().body(it) }
+            .map { monoResponseEntity(it) }
 }
 
 typealias MonoResponseEntity<T> = Mono<ResponseEntity<T>>
+
+fun <T> monoResponseEntity(payload: T) = ResponseEntity.ok().body(payload)
