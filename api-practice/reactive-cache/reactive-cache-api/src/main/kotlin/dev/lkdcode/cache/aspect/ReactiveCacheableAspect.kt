@@ -8,6 +8,7 @@ import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.reflect.MethodSignature
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -20,6 +21,7 @@ class ReactiveCacheableAspect(
     private val conditionHandler: ReactiveCacheConditionHandler,
     private val reactiveCachePropertyHandler: ReactiveCachePropertyHandler,
 ) {
+    private val log = LoggerFactory.getLogger(ReactiveCacheableAspect::class.java)
 
     @Around("@annotation(reactiveCacheable)")
     fun handleCacheable(joinPoint: ProceedingJoinPoint, reactiveCacheable: ReactiveCacheable): Any {
@@ -45,13 +47,16 @@ class ReactiveCacheableAspect(
         cacheService
             .getValue(cacheKey)
             .flatMap { cached -> Mono.just(cached) }
+            .onErrorResume { Mono.empty() }
             .switchIfEmpty(
                 Mono.defer {
                     val result = joinPoint.proceed() as Mono<*>
 
                     result.flatMap { value ->
                         if (conditionHandler.shouldCacheResult(value, unless, joinPoint)) {
-                            cacheService.save(cacheKey, value as Any, ttl).thenReturn(value)
+                            cacheService.save(cacheKey, value as Any, ttl)
+                                .onErrorResume { Mono.empty() }
+                                .thenReturn(value)
                         } else {
                             Mono.just(value)
                         }
@@ -67,6 +72,7 @@ class ReactiveCacheableAspect(
     ): Flux<*> =
         cacheService
             .getValue(cacheKey)
+            .onErrorResume { Mono.empty() }
             .flatMapMany { cached ->
                 when (cached) {
                     is List<*> -> Flux.fromIterable(cached)
@@ -81,7 +87,9 @@ class ReactiveCacheableAspect(
                         .collectList()
                         .flatMap { list ->
                             if (conditionHandler.shouldCacheResult(list, unless, joinPoint)) {
-                                cacheService.save(cacheKey, list as Any, ttl).thenReturn(list)
+                                cacheService.save(cacheKey, list as Any, ttl)
+                                    .onErrorResume { Mono.empty() }
+                                    .thenReturn(list)
                             } else {
                                 Mono.just(list)
                             }
