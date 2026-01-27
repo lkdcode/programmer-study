@@ -10,9 +10,6 @@ class KotlinTypeResolver(
 ) : ObjectMapper.DefaultTypeResolverBuilder(defaultTyping, polymorphicTypeValidator) {
 
     override fun useForType(javaType: JavaType): Boolean {
-        if (javaType.isPrimitive || javaType.rawClass == String::class.java) return false
-        if (super.useForType(javaType)) return true
-
-        return true
+        return !(javaType.isPrimitive || javaType.rawClass == String::class.java)
     }
 }
