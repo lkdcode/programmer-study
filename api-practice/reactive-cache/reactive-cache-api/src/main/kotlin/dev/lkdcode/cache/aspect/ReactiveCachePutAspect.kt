@@ -7,6 +7,7 @@ import dev.lkdcode.cache.service.CacheService
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -19,6 +20,7 @@ class ReactiveCachePutAspect(
     private val conditionHandler: ReactiveCacheConditionHandler,
     private val reactiveCachePropertyHandler: ReactiveCachePropertyHandler,
 ) {
+    private val log = LoggerFactory.getLogger(ReactiveCachePutAspect::class.java)
 
     @Around("@annotation(reactiveCachePut)")
     fun handleCachePut(joinPoint: ProceedingJoinPoint, reactiveCachePut: ReactiveCachePut): Any {
@@ -41,7 +43,9 @@ class ReactiveCachePutAspect(
     ): Mono<*> {
         return result.flatMap { value ->
             if (conditionHandler.shouldCacheResult(value, unless, joinPoint)) {
-                cacheService.save(cacheKey, value as Any, ttl).thenReturn(value)
+                cacheService.save(cacheKey, value as Any, ttl)
+                    .onErrorResume { Mono.empty() }
+                    .thenReturn(value)
             } else {
                 Mono.just(value)
             }
@@ -59,12 +63,13 @@ class ReactiveCachePutAspect(
             .collectList()
             .flatMap { list ->
                 if (conditionHandler.shouldCacheResult(list, unless, joinPoint)) {
-                    cacheService.save(cacheKey, list as Any, ttl).thenReturn(list)
+                    cacheService.save(cacheKey, list as Any, ttl)
+                        .onErrorResume { Mono.empty() }
+                        .thenReturn(list)
                 } else {
                     Mono.just(list)
                 }
             }
             .flatMapMany { Flux.fromIterable(it) }
     }
-
 }
