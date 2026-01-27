@@ -1,6 +1,7 @@
 package dev.lkdcode.cache.service
 
 import org.springframework.data.redis.core.ReactiveRedisOperations
+import org.springframework.data.redis.core.ScanOptions
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import java.time.Duration
@@ -18,4 +19,12 @@ class ReactiveRedisCacheService(
 
     override fun delete(key: String): Mono<Void> =
         redisOps.opsForValue().delete(key).then()
+
+    override fun deleteByPrefix(prefix: String): Mono<Long> {
+        val pattern = "$prefix*"
+        val scanOptions = ScanOptions.scanOptions().match(pattern).count(1_000).build()
+        val keys = redisOps.scan(scanOptions)
+
+        return redisOps.unlink(keys)
+    }
 }

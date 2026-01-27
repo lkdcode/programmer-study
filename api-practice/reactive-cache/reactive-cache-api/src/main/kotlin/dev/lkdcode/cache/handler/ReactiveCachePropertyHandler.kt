@@ -40,15 +40,25 @@ class ReactiveCachePropertyHandler(
     fun cacheProperty(
         joinPoint: ProceedingJoinPoint,
         reactiveCacheEvict: ReactiveCacheEvict
-    ): String {
-        return resolveKey(joinPoint, reactiveCacheEvict.keyGenerator, reactiveCacheEvict.key)
+    ): Pair<String, Boolean> {
+        return if (reactiveCacheEvict.allEntries) {
+            Pair(resolvePrefix(joinPoint), true)
+        } else {
+            Pair(resolveKey(joinPoint, reactiveCacheEvict.keyGenerator, reactiveCacheEvict.key), false)
+        }
+    }
+
+    private fun resolvePrefix(joinPoint: ProceedingJoinPoint): String {
+        val className = joinPoint.target.javaClass.simpleName
+        val methodName = joinPoint.signature.name
+        return "$className::$methodName::"
     }
 
     private fun resolveKey(joinPoint: ProceedingJoinPoint, keyGenerator: String, key: String): String {
-        val keyGenerator = applicationContext.getBean(keyGenerator, ReactiveKeyGenerator::class.java)
+        val reactiveKeyGenerator = applicationContext.getBean(keyGenerator, ReactiveKeyGenerator::class.java)
         val signature = joinPoint.signature as MethodSignature
 
-        return keyGenerator.generate(
+        return reactiveKeyGenerator.generate(
             joinPoint.target,
             signature.method,
             key,

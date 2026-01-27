@@ -20,7 +20,7 @@ class ReactiveCacheConditionHandler {
             joinPoint.target,
             signature.method,
             joinPoint.args,
-            DefaultParameterNameDiscoverer()
+            parameterNameDiscoverer
         )
 
         return parser
