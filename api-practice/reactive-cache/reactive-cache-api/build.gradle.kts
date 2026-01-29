@@ -11,5 +11,9 @@ apply {
     from(KotlinLibs.PATH)
 }
 
+dependencies {
+    implementation("io.projectreactor.tools:blockhound:1.0.15.RELEASE")
+}
+
 tasks.bootJar { enabled = false }
 tasks.jar { enabled = true }
