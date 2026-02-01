@@ -5,10 +5,11 @@ import com.sb.domain.calligraphy.value.*
 import com.sb.domain.user.entity.User
 import com.sb.jooq.tables.records.JMstCalligraphyRecord
 import java.time.Instant
+import java.util.UUID
 
 
 val JMstCalligraphyRecord.toCalligraphyIdVo: Calligraphy.CalligraphyId
-    get(): Calligraphy.CalligraphyId = Calligraphy.CalligraphyId(this.id!!)
+    get(): Calligraphy.CalligraphyId = Calligraphy.CalligraphyId(this.get("id", UUID::class.java)!!)
 
 val JMstCalligraphyRecord.toSeedVo: Seed
     get() = Seed.of(this.seed)

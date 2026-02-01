@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.util.UUID
 
 @RestController
 class CalligraphyLikeQueryApi(
@@ -22,7 +23,7 @@ class CalligraphyLikeQueryApi(
     @GetMapping("/api/calligraphies/like")
     suspend fun fetchCursor(
         @AuthenticationPrincipal auth: UserAuthentication,
-        @RequestParam(required = false) calligraphyId: Long? = null,
+        @RequestParam(required = false) calligraphyId: UUID? = null,
         @PageableDefault(size = 10, page = 0) pageable: Pageable,
     ): ApiResponseEntity<ShowcaseCalligraphyCursor<Calligraphy.CalligraphyId>> {
         val query = toGetLikedCalligraphiesCursorQuery(auth, calligraphyId, pageable)

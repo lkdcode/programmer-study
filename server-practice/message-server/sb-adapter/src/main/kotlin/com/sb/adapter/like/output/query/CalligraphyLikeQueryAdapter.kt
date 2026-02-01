@@ -1,14 +1,8 @@
 package com.sb.adapter.like.output.query
 
 import com.sb.adapter.like.output.infrastructure.jooq.mapper.sort.toCalligraphyLikeSortField
-import com.sb.adapter.like.output.infrastructure.jooq.mapper.vo.createdAtToInstant
-import com.sb.adapter.like.output.infrastructure.jooq.mapper.vo.toAuthorVo
-import com.sb.adapter.like.output.infrastructure.jooq.mapper.vo.toCalligraphyIdVo
-import com.sb.adapter.like.output.infrastructure.jooq.mapper.vo.toPromptVo
-import com.sb.adapter.like.output.infrastructure.jooq.mapper.vo.toSeedVo
-import com.sb.adapter.like.output.infrastructure.jooq.mapper.vo.toStyleVo
-import com.sb.adapter.like.output.infrastructure.jooq.mapper.vo.toTextVo
-import com.sb.adapter.user.output.infrastructure.jooq.mapper.toNicknameVo
+import com.sb.adapter.like.output.infrastructure.jooq.mapper.vo.*
+import com.sb.adapter.user.output.infrastructure.jooq.mapper.vo.toNicknameVo
 import com.sb.application.calligraphy.dto.query.ShowcaseCalligraphy
 import com.sb.application.calligraphy.dto.query.ShowcaseCalligraphyCursor
 import com.sb.application.calligraphy.dto.query.ShowcaseCalligraphyPage
@@ -31,7 +25,7 @@ import org.jooq.impl.DSL
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-
+import java.util.UUID
 
 @Component
 class CalligraphyLikeQueryAdapter(
@@ -54,6 +48,10 @@ class CalligraphyLikeQueryAdapter(
                         JMST_CALLIGRAPHY.USER_ID,
                         JMST_CALLIGRAPHY.CREATED_AT,
 
+                        JMST_USER.ID,
+                        JMST_USER.NICKNAME,
+                        JMST_USER.PROFILE_IMAGE,
+
                         JMST_CALLIGRAPHY_LIKE.ID,
                         JMST_CALLIGRAPHY_LIKE.CALLIGRAPHY_ID,
                         JMST_CALLIGRAPHY_LIKE.USER_ID,
@@ -61,14 +59,14 @@ class CalligraphyLikeQueryAdapter(
                     )
                     .from(JMST_CALLIGRAPHY_LIKE)
 
+                    .join(JMST_CALLIGRAPHY)
+                    .on(
+                        JMST_CALLIGRAPHY.ID.cast(UUID::class.java).eq(JMST_CALLIGRAPHY_LIKE.CALLIGRAPHY_ID.cast(UUID::class.java)),
+                    )
+
                     .join(JMST_USER)
                     .on(
                         JMST_USER.ID.eq(JMST_CALLIGRAPHY.USER_ID),
-                    )
-
-                    .join(JMST_CALLIGRAPHY)
-                    .on(
-                        JMST_CALLIGRAPHY.ID.eq(JMST_CALLIGRAPHY_LIKE.CALLIGRAPHY_ID),
                     )
 
                     .where(condition(userId))
@@ -102,17 +100,18 @@ class CalligraphyLikeQueryAdapter(
             .from(
                 dsl
                     .selectCount()
-                    .from(JMST_CALLIGRAPHY)
+                    .from(JMST_CALLIGRAPHY_LIKE)
+
+                    .join(JMST_CALLIGRAPHY)
+                    .on(
+                        JMST_CALLIGRAPHY.ID.cast(UUID::class.java).eq(JMST_CALLIGRAPHY_LIKE.CALLIGRAPHY_ID.cast(UUID::class.java)),
+                        JMST_CALLIGRAPHY.IS_DELETED.isFalse
+                    )
+
                     .join(JMST_USER)
                     .on(
                         JMST_USER.ID.eq(JMST_CALLIGRAPHY.USER_ID),
                         JMST_USER.IS_DELETED.isFalse
-                    )
-
-                    .join(JMST_CALLIGRAPHY)
-                    .on(
-                        JMST_CALLIGRAPHY.ID.eq(JMST_CALLIGRAPHY_LIKE.CALLIGRAPHY_ID),
-                        JMST_CALLIGRAPHY.IS_DELETED.isFalse
                     )
                     .where(condition(userId))
             )
@@ -153,6 +152,10 @@ class CalligraphyLikeQueryAdapter(
                         JMST_CALLIGRAPHY.USER_ID,
                         JMST_CALLIGRAPHY.CREATED_AT,
 
+                        JMST_USER.ID,
+                        JMST_USER.NICKNAME,
+                        JMST_USER.PROFILE_IMAGE,
+
                         JMST_CALLIGRAPHY_LIKE.ID,
                         JMST_CALLIGRAPHY_LIKE.CALLIGRAPHY_ID,
                         JMST_CALLIGRAPHY_LIKE.USER_ID,
@@ -160,14 +163,14 @@ class CalligraphyLikeQueryAdapter(
                     )
                     .from(JMST_CALLIGRAPHY_LIKE)
 
+                    .join(JMST_CALLIGRAPHY)
+                    .on(
+                        JMST_CALLIGRAPHY.ID.cast(UUID::class.java).eq(JMST_CALLIGRAPHY_LIKE.CALLIGRAPHY_ID.cast(UUID::class.java)),
+                    )
+
                     .join(JMST_USER)
                     .on(
                         JMST_USER.ID.eq(JMST_CALLIGRAPHY.USER_ID),
-                    )
-
-                    .join(JMST_CALLIGRAPHY)
-                    .on(
-                        JMST_CALLIGRAPHY.ID.eq(JMST_CALLIGRAPHY_LIKE.CALLIGRAPHY_ID),
                     )
 
                     .where(condition(userId))
@@ -223,7 +226,9 @@ class CalligraphyLikeQueryAdapter(
         userId: User.UserId,
         cursorPageRequest: CursorPageRequest<Calligraphy.CalligraphyId>
     ): ShowcaseCalligraphyCursor<Calligraphy.CalligraphyId> {
-        val keyCondition = cursorPageRequest.key?.let { JMST_CALLIGRAPHY.ID.eq(it.value) } ?: DSL.noCondition()
+        val keyCondition = cursorPageRequest.key?.let {
+            JMST_CALLIGRAPHY.ID.cast(UUID::class.java).gt(it.value)
+        } ?: DSL.noCondition()
 
         return Flux
             .from(
@@ -237,6 +242,10 @@ class CalligraphyLikeQueryAdapter(
                         JMST_CALLIGRAPHY.USER_ID,
                         JMST_CALLIGRAPHY.CREATED_AT,
 
+                        JMST_USER.ID,
+                        JMST_USER.NICKNAME,
+                        JMST_USER.PROFILE_IMAGE,
+
                         JMST_CALLIGRAPHY_LIKE.ID,
                         JMST_CALLIGRAPHY_LIKE.CALLIGRAPHY_ID,
                         JMST_CALLIGRAPHY_LIKE.USER_ID,
@@ -244,14 +253,14 @@ class CalligraphyLikeQueryAdapter(
                     )
                     .from(JMST_CALLIGRAPHY_LIKE)
 
+                    .join(JMST_CALLIGRAPHY)
+                    .on(
+                        JMST_CALLIGRAPHY.ID.cast(UUID::class.java).eq(JMST_CALLIGRAPHY_LIKE.CALLIGRAPHY_ID.cast(UUID::class.java)),
+                    )
+
                     .join(JMST_USER)
                     .on(
                         JMST_USER.ID.eq(JMST_CALLIGRAPHY.USER_ID),
-                    )
-
-                    .join(JMST_CALLIGRAPHY)
-                    .on(
-                        JMST_CALLIGRAPHY.ID.eq(JMST_CALLIGRAPHY_LIKE.CALLIGRAPHY_ID),
                     )
 
                     .where(
@@ -320,7 +329,9 @@ class CalligraphyLikeQueryAdapter(
                             JMST_CALLIGRAPHY_LIKE
                         )
                         .where(
-                            JMST_CALLIGRAPHY_LIKE.CALLIGRAPHY_ID.eq(JMST_CALLIGRAPHY.ID)
+                            JMST_CALLIGRAPHY_LIKE.CALLIGRAPHY_ID.cast(UUID::class.java)
+                                .eq(JMST_CALLIGRAPHY.ID.cast(UUID::class.java))
+                                .and(JMST_CALLIGRAPHY_LIKE.IS_DELETED.isFalse)
                         )
                 )
                 .`as`(LIKE_COUNT_ALIAS)

@@ -1,6 +1,6 @@
 package com.sb.adapter.like.output.validator
 
-import com.sb.adapter.like.output.infrastructure.r2dbc.mapper.userIdVo
+import com.sb.adapter.like.output.infrastructure.r2dbc.mapper.vo.userIdVo
 import com.sb.adapter.like.output.infrastructure.r2dbc.repository.CalligraphyLikeR2dbcRepository
 import com.sb.adapter.like.output.infrastructure.r2dbc.repository.loadById
 import com.sb.application.common.validator.throwIf
