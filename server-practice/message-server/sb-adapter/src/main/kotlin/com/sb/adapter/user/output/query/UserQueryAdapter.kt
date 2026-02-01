@@ -1,6 +1,7 @@
 package com.sb.adapter.user.output.query
 
 import com.sb.adapter.user.output.infrastructure.r2dbc.entity.UserR2dbcEntity
+import com.sb.adapter.user.output.infrastructure.r2dbc.mapper.toAggregate
 import com.sb.adapter.user.output.infrastructure.r2dbc.repository.UserR2dbcRepository
 import com.sb.adapter.user.output.infrastructure.r2dbc.repository.loadByEmail
 import com.sb.adapter.user.output.infrastructure.r2dbc.repository.loadById
@@ -31,7 +32,7 @@ class UserQueryAdapter(
     override suspend fun existsByEmail(email: Email): Boolean =
         repository
             .existsByEmail(email.value)
-            .awaitSingle() == true
+            .awaitSingle()
 
     override suspend fun alreadyRegisterByEmail(email: Email): Boolean =
         !existsByEmail(email)

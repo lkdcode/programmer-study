@@ -1,7 +1,7 @@
 package com.sb.adapter.user.input.rest.request
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.sb.application.user.dto.RegisterWithEmailCommand
-import com.sb.domain.user.value.EmailVerificationToken
 import com.sb.domain.user.value.Nickname
 import com.sb.domain.user.value.Password
 import jakarta.validation.constraints.Email
@@ -37,16 +37,14 @@ data class RegisterWithEmailRequest(
         message = Password.INVALID_LENGTH_MESSAGE
     )
     val passwordConfirm: String,
-
-    @field:NotBlank(message = EmailVerificationToken.REQUIRE_MESSAGE)
-    val verificationToken: String,
 ) {
+
+    @get:JsonIgnore
     val convert
         get() = RegisterWithEmailCommand(
             email = this.email,
             nickname = this.nickname,
             password = this.password,
             passwordConfirm = this.passwordConfirm,
-            verificationToken = this.verificationToken,
         )
 }

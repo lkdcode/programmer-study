@@ -7,6 +7,7 @@ import com.sb.framework.api.ApiException
 import com.sb.framework.api.ApiResponseCode
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.r2dbc.repository.R2dbcRepository
+import org.springframework.data.repository.query.Param
 import reactor.core.publisher.Mono
 
 interface UserR2dbcRepository : R2dbcRepository<UserR2dbcEntity, Long> {
@@ -18,14 +19,14 @@ interface UserR2dbcRepository : R2dbcRepository<UserR2dbcEntity, Long> {
 
     @Query(
         """
-        SELECT EXISTS (
-            SELECT 1
-              FROM mst_user
-             WHERE email = :email
-        )
-    """
+SELECT EXISTS (
+    SELECT 1
+      FROM mst_user
+     WHERE email = :email
+)
+"""
     )
-    fun existsByEmail(email: String): Mono<Boolean>
+    fun existsByEmail(@Param("email") email: String): Mono<Boolean>
 }
 
 fun UserR2dbcRepository.loadById(id: Long): Mono<UserR2dbcEntity> =

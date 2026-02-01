@@ -1,18 +1,14 @@
 package com.sb.adapter.user.input.rest
 
 import com.sb.adapter.user.input.rest.request.RegisterWithEmailRequest
-import com.sb.adapter.user.input.rest.request.RegisterWithGoogleRequest
 import com.sb.adapter.user.input.rest.request.RequestEmailVerificationRequest
 import com.sb.adapter.user.input.rest.request.VerifyEmailRequest
-import com.sb.adapter.user.input.rest.response.RegisterResponse
 import com.sb.application.user.ports.input.command.RegisterWithEmailUsecase
-import com.sb.application.user.ports.input.command.RegisterWithGoogleUsecase
 import com.sb.application.user.ports.input.command.RequestEmailVerificationUsecase
 import com.sb.application.user.ports.input.command.VerifyEmailUsecase
-import com.sb.framework.api.ApiEntity
-import com.sb.framework.api.toApiResponseEntity
+import com.sb.framework.api.ApiResponseEntity
+import com.sb.framework.api.success
 import jakarta.validation.Valid
-import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -24,42 +20,32 @@ class UserRegistrationApi(
     private val requestEmailVerificationUsecase: RequestEmailVerificationUsecase,
     private val verifyEmailUsecase: VerifyEmailUsecase,
     private val registerWithEmailUsecase: RegisterWithEmailUsecase,
-    private val registerWithGoogleUsecase: RegisterWithGoogleUsecase,
 ) {
 
-    @PostMapping("/public/users/email-verifications")
+    @PostMapping("/public/sign-up/email-verifications")
     suspend fun requestEmailVerification(
         @RequestBody @Valid request: RequestEmailVerificationRequest,
-    ): ApiEntity<Unit> {
+    ): ApiResponseEntity<Void> {
         requestEmailVerificationUsecase.request(request.convert)
 
-        return Unit.toApiResponseEntity(status = HttpStatus.CREATED, message = "OK")
+        return success()
     }
 
-    @PostMapping("/public/users/email-verifications/verify")
+    @PostMapping("/public/sign-up/email-verifications/verify")
     suspend fun verifyEmail(
         @RequestBody @Valid request: VerifyEmailRequest,
-    ): ApiEntity<Unit> {
+    ): ApiResponseEntity<Void> {
         verifyEmailUsecase.verify(request.convert)
 
-        return Unit.toApiResponseEntity(status = HttpStatus.OK, message = "OK")
+        return success()
     }
 
-    @PostMapping("/public/users/register/email")
+    @PostMapping("/public/sign-up/email")
     suspend fun registerWithEmail(
         @RequestBody @Valid request: RegisterWithEmailRequest,
-    ): ApiEntity<Unit> {
+    ): ApiResponseEntity<Void> {
         registerWithEmailUsecase.register(request.convert)
 
-        return Unit.toApiResponseEntity(status = HttpStatus.CREATED, message = "OK")
-    }
-
-    @PostMapping("/public/users/register/google")
-    suspend fun registerWithGoogle(
-        @RequestBody @Valid request: RegisterWithGoogleRequest,
-    ): ApiEntity<RegisterResponse> {
-        val userId = registerWithGoogleUsecase.register(request.convert)
-
-        return RegisterResponse(userId).toApiResponseEntity(status = HttpStatus.CREATED, message = "OK")
+        return success()
     }
 }
