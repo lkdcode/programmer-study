@@ -17,7 +17,7 @@ class AuthenticationPolicyAdapter(
 ) : AuthenticationPolicy {
 
     override fun onFailure(loginId: String): Mono<Void> =
-        monoSuspend { loginUsecase.onLoginFail(Email.of(loginId)) }
+        monoSuspend { loginUsecase.onLoginFail(Email.of(loginId)) }.then()
 
     override fun isAttemptAllowed(loginId: String): Mono<Boolean> =
         monoSuspend<Boolean> {
