@@ -6,6 +6,7 @@ import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.r2dbc.repository.R2dbcRepository
 import org.springframework.data.repository.query.Param
 import reactor.core.publisher.Mono
+import java.util.UUID
 
 interface CalligraphyLikeR2dbcRepository : R2dbcRepository<CalligraphyLikeR2dbcEntity, Long> {
 
@@ -20,7 +21,7 @@ SELECT EXISTS (
 """
     )
     fun existsByCalligraphyIdAndUserId(
-        @Param("calligraphyId") calligraphyId: Long,
+        @Param("calligraphyId") calligraphyId: UUID,
         @Param("userId") userId: Long,
     ): Mono<Boolean>
 
@@ -31,7 +32,7 @@ SELECT COUNT(*)
  WHERE calligraphy_id = :calligraphyId
 """
     )
-    fun countByCalligraphyId(@Param("calligraphyId") calligraphyId: Long): Mono<Long>
+    fun countByCalligraphyId(@Param("calligraphyId") calligraphyId: UUID): Mono<Long>
 }
 
 fun CalligraphyLikeR2dbcRepository.removeById(id: CalligraphyLike.CalligraphyLikeId): Mono<Void> =

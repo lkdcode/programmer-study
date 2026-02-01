@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
+import java.util.*
 
 
 @RestController
@@ -24,7 +25,7 @@ class CalligraphyLikeCommandApi(
     @PostMapping("/api/calligraphies/like/{calligraphyId}")
     suspend fun like(
         @AuthenticationPrincipal auth: UserAuthentication,
-        @PathVariable(name = "calligraphyId") calligraphyId: Long,
+        @PathVariable(name = "calligraphyId") calligraphyId: UUID,
     ): ApiResponseEntity<Unit> {
         likeCalligraphyCommandUsecase.like(
             LikeCalligraphyCommand(

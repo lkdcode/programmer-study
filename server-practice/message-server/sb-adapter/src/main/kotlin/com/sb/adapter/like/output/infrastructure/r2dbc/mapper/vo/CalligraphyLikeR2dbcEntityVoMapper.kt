@@ -1,4 +1,4 @@
-package com.sb.adapter.like.output.infrastructure.r2dbc.mapper
+package com.sb.adapter.like.output.infrastructure.r2dbc.mapper.vo
 
 import com.sb.adapter.like.output.infrastructure.r2dbc.entity.CalligraphyLikeR2dbcEntity
 import com.sb.domain.calligraphy.entity.Calligraphy
