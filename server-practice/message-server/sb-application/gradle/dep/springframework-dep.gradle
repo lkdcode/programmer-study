@@ -1,0 +1,5 @@
+dependencies {
+    implementation(SpringframeworkLibs.CONTEXT)
+    implementation(SpringframeworkLibs.TX)
+    implementation(SpringframeworkLibs.AOP)
+}

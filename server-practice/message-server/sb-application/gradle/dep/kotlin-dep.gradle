@@ -1,0 +1,11 @@
+dependencies {
+    implementation(KotlinLibs.COROUTINES)
+    implementation(KotlinLibs.COROUTINES_REACTOR)
+    implementation(KotlinLibs.REACTOR_EXTENSIONS)
+}
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll(KotlinLibs.JSR305_STRICT_MODE)
+    }
+}
