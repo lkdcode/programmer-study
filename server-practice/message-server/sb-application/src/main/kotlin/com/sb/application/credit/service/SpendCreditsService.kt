@@ -23,6 +23,6 @@ class SpendCreditsService(
         walletCommandPort.update(wallet)
 
         val transaction = command.createTransactionAggregate(CreditTransaction.TransactionId.generate())
-        txCommandPort.append(transaction)
+        txCommandPort.append(transaction.snapshot)
     }
 }

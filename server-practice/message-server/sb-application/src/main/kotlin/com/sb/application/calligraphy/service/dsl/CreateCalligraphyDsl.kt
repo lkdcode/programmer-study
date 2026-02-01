@@ -2,7 +2,7 @@ package com.sb.application.calligraphy.service.dsl
 
 import com.sb.application.calligraphy.service.CreateCalligraphyService
 import com.sb.domain.calligraphy.aggregate.CalligraphyAggregate
-import com.sb.domain.calligraphy.command.CreateCalligraphyCommand
+import com.sb.application.calligraphy.dto.command.CreateCalligraphyCommand
 import com.sb.domain.calligraphy.entity.Calligraphy.CalligraphyId
 import com.sb.domain.calligraphy.policy.CreateCalligraphyPolicy
 
