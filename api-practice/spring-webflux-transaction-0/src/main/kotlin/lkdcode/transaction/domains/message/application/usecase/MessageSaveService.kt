@@ -1,11 +1,15 @@
 package lkdcode.transaction.domains.message.application.usecase
 
+import lkdcode.transaction.domains.message.application.port.out.NoSqlPort
+import lkdcode.transaction.domains.message.application.port.out.RdbPort
 import lkdcode.transaction.domains.message.domain.model.ChatMessage
 import lkdcode.transaction.domains.message.domain.model.MessageMetadata
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.stereotype.Service
 import org.springframework.transaction.reactive.TransactionalOperator
 import reactor.core.publisher.Mono
 
+@Service
 class MessageSaveService(
     @Qualifier("r2dbcTransactionalOperator")
     private val r2dbcTransactionalOperator: TransactionalOperator,
@@ -15,6 +19,37 @@ class MessageSaveService(
     private val rdbPort: RdbPort,
 ) {
 
+    fun saveWithoutCompensation(message: ChatMessage): Mono<Void> =
+        nosqlPort.save(message)
+            .then(rdbPort.save(message.toMetadata()))
+            .then()
+
+    fun saveWithCompensation(message: ChatMessage): Mono<Void> =
+        nosqlPort.save(message)
+            .flatMap { messageId ->
+                rdbPort.save(message.toMetadata())
+                    .onErrorResume { error ->
+                        // 보상 트랜잭션: MongoDB 데이터 삭제
+                        nosqlPort.deleteById(messageId)
+                            .then(Mono.error(error))
+                    }
+            }
+            .then()
+
+    fun saveWithOutboxPattern(message: ChatMessage): Mono<Void> =
+        r2dbcTransactionalOperator.transactional(
+            rdbPort.saveOutbox(
+                OutboxEvent(
+                    aggregateType = "ChatMessage",
+                    aggregateId = message.messageId,
+                    payload = message.toJson(),
+                )
+            )
+        ).then()
+
+    fun saveOnlyMongo(message: ChatMessage): Mono<String> =
+        nosqlPort.save(message)
+
     fun saveMessage(message: ChatMessage): Mono<Void> =
         r2dbcTransactionalOperator.transactional(
             nosqlPort
@@ -23,14 +58,14 @@ class MessageSaveService(
                 .then()
         )
 
-fun saveMessageWithCompensation(message: ChatMessage): Mono<Void> =
-    nosqlPort.save(message)
-        .flatMap { messageId ->
-            r2dbcTransactionalOperator
-                .transactional(rdbPort.save(message.toMetadata()))
-                .onErrorResume { error -> nosqlPort.deleteById(messageId).then(Mono.error(error)) }
-        }
-        .then()
+    fun saveMessageWithCompensation(message: ChatMessage): Mono<Void> =
+        nosqlPort.save(message)
+            .flatMap { messageId ->
+                r2dbcTransactionalOperator
+                    .transactional(rdbPort.save(message.toMetadata()))
+                    .onErrorResume { error -> nosqlPort.deleteById(messageId).then(Mono.error(error)) }
+            }
+            .then()
 
     fun saveMessageWithOutbox(message: ChatMessage): Mono<Void> =
         r2dbcTransactionalOperator.transactional(
@@ -63,16 +98,9 @@ fun saveMessageWithCompensation(message: ChatMessage): Mono<Void> =
             tagId = tag?.tagId,
             tagDescription = tag?.description,
         )
-}
 
-interface NoSqlPort {
-    fun save(message: ChatMessage): Mono<String>
-    fun deleteById(messageId: String): Mono<Boolean>
-}
-
-interface RdbPort {
-    fun save(metadata: MessageMetadata): Mono<Long>
-    fun saveOutbox(event: OutboxEvent): Mono<Long>
+    private fun ChatMessage.toJson(): String =
+        """{"messageId":"$messageId","content":"$content","senderId":"$senderId","roomId":"$roomId"}"""
 }
 
 data class OutboxEvent(

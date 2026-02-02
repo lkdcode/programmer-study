@@ -5,7 +5,7 @@ import java.util.*
 data class ChatMessage(
     val messageId: String = UUID.randomUUID().toString(),
     val content: String,
-    val senderId: String,
+    val senderId: Long,
     val roomId: String,
     val tag: MessageTag?,
 )
