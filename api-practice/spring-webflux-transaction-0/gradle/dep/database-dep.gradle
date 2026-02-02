@@ -1,0 +1,7 @@
+dependencies {
+    implementation(DatabaseLibs.JDBC)
+    implementation(DatabaseLibs.MONGODB_REACTIVE)
+
+    runtimeOnly(DatabaseLibs.POSTGRESQL_CONNECTOR)
+    runtimeOnly(DatabaseLibs.R2DBC_POSTGRESQL)
+}

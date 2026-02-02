@@ -2,40 +2,38 @@ package lkdcode.transaction.domains.message.application.usecase
 
 import lkdcode.transaction.domains.message.domain.model.ChatMessage
 import lkdcode.transaction.domains.message.domain.model.MessageMetadata
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.transaction.reactive.TransactionalOperator
 import reactor.core.publisher.Mono
 
 class MessageSaveService(
-    private val transactionalOperator: TransactionalOperator,
+    @Qualifier("r2dbcTransactionalOperator")
+    private val r2dbcTransactionalOperator: TransactionalOperator,
+    @Qualifier("nosqlTransactionalOperator")
+    private val nosqlTransactionalOperator: TransactionalOperator,
     private val nosqlPort: NoSqlPort,
     private val rdbPort: RdbPort,
 ) {
 
     fun saveMessage(message: ChatMessage): Mono<Void> =
-        transactionalOperator.transactional(
+        r2dbcTransactionalOperator.transactional(
             nosqlPort
                 .save(message)
                 .then(rdbPort.save(message.toMetadata()))
                 .then()
         )
 
-    fun saveMessageWithCompensation(message: ChatMessage): Mono<Void> =
-        nosqlPort
-            .save(message)
-            .then(
-                transactionalOperator.transactional(
-                    rdbPort.save(message.toMetadata())
-                )
-            )
-            .then()
-            .onErrorResume { error ->
-                nosqlPort
-                    .deleteById(message.messageId)
-                    .then(Mono.error(error))
-            }
+fun saveMessageWithCompensation(message: ChatMessage): Mono<Void> =
+    nosqlPort.save(message)
+        .flatMap { messageId ->
+            r2dbcTransactionalOperator
+                .transactional(rdbPort.save(message.toMetadata()))
+                .onErrorResume { error -> nosqlPort.deleteById(messageId).then(Mono.error(error)) }
+        }
+        .then()
 
     fun saveMessageWithOutbox(message: ChatMessage): Mono<Void> =
-        transactionalOperator.transactional(
+        r2dbcTransactionalOperator.transactional(
             rdbPort
                 .save(message.toMetadata())
                 .then(
@@ -50,20 +48,14 @@ class MessageSaveService(
                 .then()
         )
 
-    /**
-     * [해결책 3] 두 개의 TransactionalOperator 사용
-     *
-     * R2DBC 용, NoSQL 용 각각의 TransactionalOperator 를 주입받아 관리할 수 있다.
-     * 하지만 두 트랜잭션은 여전히 독립적이므로 완벽한 원자성을 보장하지는 않는다.
-     */
-    // fun saveMessageWithDualOperator(message: ChatMessage): Mono<Void> =
-    //     nosqlTransactionalOperator.transactional(
-    //         nosqlPort.save(message)
-    //     ).then(
-    //         r2dbcTransactionalOperator.transactional(
-    //             rdbPort.save(message.toMetadata())
-    //         )
-    //     )
+    fun saveMessageWithDualOperator(message: ChatMessage): Mono<Void> =
+        nosqlTransactionalOperator.transactional(
+            nosqlPort.save(message)
+        ).then(
+            r2dbcTransactionalOperator.transactional(
+                rdbPort.save(message.toMetadata())
+            )
+        ).then()
 
     private fun ChatMessage.toMetadata(): MessageMetadata =
         MessageMetadata(
@@ -73,7 +65,6 @@ class MessageSaveService(
         )
 }
 
-// 예제용 인터페이스
 interface NoSqlPort {
     fun save(message: ChatMessage): Mono<String>
     fun deleteById(messageId: String): Mono<Boolean>

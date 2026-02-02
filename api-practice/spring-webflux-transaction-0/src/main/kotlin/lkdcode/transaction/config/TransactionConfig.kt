@@ -17,29 +17,26 @@ class TransactionConfig {
     @Bean
     @Primary
     @Qualifier("r2dbcTransactionManager")
-    fun r2dbcTransactionManager(connectionFactory: ConnectionFactory): ReactiveTransactionManager =
-        R2dbcTransactionManager(connectionFactory)
+    fun r2dbcTransactionManager(
+        connectionFactory: ConnectionFactory
+    ): ReactiveTransactionManager = R2dbcTransactionManager(connectionFactory)
 
     @Bean
     @Primary
     @Qualifier("r2dbcTransactionalOperator")
     fun r2dbcTransactionalOperator(
         @Qualifier("r2dbcTransactionManager") transactionManager: ReactiveTransactionManager,
-    ): TransactionalOperator =
-        TransactionalOperator.create(transactionManager)
-
+    ): TransactionalOperator = TransactionalOperator.create(transactionManager)
 
     @Bean
     @Qualifier("nosqlTransactionManager")
     fun nosqlTransactionManager(
         reactiveMongoDatabaseFactory: ReactiveMongoDatabaseFactory,
-    ): ReactiveTransactionManager =
-        ReactiveMongoTransactionManager(reactiveMongoDatabaseFactory)
+    ): ReactiveTransactionManager = ReactiveMongoTransactionManager(reactiveMongoDatabaseFactory)
 
     @Bean
     @Qualifier("nosqlTransactionalOperator")
     fun nosqlTransactionalOperator(
         @Qualifier("nosqlTransactionManager") transactionManager: ReactiveTransactionManager,
-    ): TransactionalOperator =
-        TransactionalOperator.create(transactionManager)
+    ): TransactionalOperator = TransactionalOperator.create(transactionManager)
 }
