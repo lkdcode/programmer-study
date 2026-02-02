@@ -1,0 +1,3 @@
+dependencies {
+    implementation(RedisLibs.REACTIVE_REDIS)
+}

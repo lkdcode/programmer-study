@@ -1,0 +1,6 @@
+dependencies {
+    implementation(DatabaseLibs.JDBC)
+
+    runtimeOnly(DatabaseLibs.H2_DATABASE)
+    runtimeOnly(DatabaseLibs.H2_R2DBC)
+}
