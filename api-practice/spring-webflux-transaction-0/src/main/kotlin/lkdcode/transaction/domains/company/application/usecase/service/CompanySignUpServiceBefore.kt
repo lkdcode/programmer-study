@@ -11,7 +11,6 @@ import lkdcode.transaction.domains.company.application.validator.PasswordValidat
 import lkdcode.transaction.domains.company.domain.model.CompanyCode
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.transaction.reactive.TransactionalOperator
 import reactor.core.publisher.Mono
 
 class CompanySignUpServiceBefore(
@@ -36,12 +35,9 @@ class CompanySignUpServiceBefore(
             .then(identityAuthenticationValidator.requireVerified(command.signUpKey))
             .then(validateCompanyUsecase.validate(command.convertValidateCompanyModel()))
             .then(companyValidator.validateDuplicateBrn(command.brn))
-            .map { command.toDomain() }
+            .then(Mono.fromCallable { command.toDomain() })
             .flatMap { model ->
-                identityAuthenticationValidator.requireVerified(model.signUpKey)
-                    .then(validateCompanyUsecase.validate(model.convertValidateCompanyModel()))
-                    .then(companyValidator.validateDuplicateBrn(model.brn))
-                    .then(nextAvailableCompanyCode())
+                nextAvailableCompanyCode()
                     .flatMap { code -> companyCommandPort.save(code, model) }
                     .flatMap { companyId ->
                         createPlanUsecase
