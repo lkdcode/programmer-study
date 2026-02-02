@@ -1,19 +1,29 @@
-spring:
-  application:
-    name: spring-webflux-transaction-0
+server:
+  port: 18080
 
+spring:
   r2dbc:
-    url: r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1
-    username: sa
-    password:
+    url: r2dbc:postgresql://localhost:15432/lkdcode-tx
+    username: lkdcode
+    password: lkdcode
+
+  data:
+    mongodb:
+      host: localhost
+      port: 17017
+      username: lkdcode
+      password: lkdcode
+      database: lkdcode-tx
+      authentication-database: admin
 
   sql:
     init:
       mode: always
       schema-locations: classpath:schema.sql
 
-logging:
-  level:
-    io.r2dbc.h2: DEBUG
-    org.springframework.r2dbc: DEBUG
-    org.springframework.transaction: DEBUG
+#logging:
+#  level:
+#    io.r2dbc.postgresql: DEBUG
+#    org.springframework.r2dbc: DEBUG
+#    org.springframework.transaction: DEBUG
+#    org.springframework.data.mongodb: DEBUG

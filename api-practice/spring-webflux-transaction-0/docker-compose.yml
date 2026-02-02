@@ -1,0 +1,43 @@
+version: "3.9"
+
+name: dev-lkdcode-transaction
+services:
+  mongo:
+    image: mongo:7.0
+    container_name: lkdcode-tx-mongoDB
+    restart: unless-stopped
+    ports:
+      - "17017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: lkdcode
+      MONGO_INITDB_ROOT_PASSWORD: lkdcode
+    volumes:
+      - mongodata:/data/db
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: lkdcode-tx-postgreSQL
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: lkdcode
+      POSTGRES_PASSWORD: lkdcode
+      POSTGRES_DB: lkdcode-tx
+    ports:
+      - "15432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: lkdcode-tx-redis
+    restart: unless-stopped
+    command: [ "redis-server", "--requirepass", "lkdcode" ]
+    ports:
+      - "16379:6379"
+    volumes:
+      - redisdata:/data
+
+volumes:
+  pgdata:
+  mongodata:
+  redisdata:
