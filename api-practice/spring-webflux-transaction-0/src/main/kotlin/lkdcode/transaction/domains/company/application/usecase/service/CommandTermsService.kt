@@ -12,5 +12,5 @@ class CommandTermsService(
 ) : CommandTermsUsecase {
 
     override fun saveTermsWhenCompanySignUp(userId: UserId, termsList: List<String>): Mono<Void> =
-        termsCommandPort.saveAll(userId, termsList)
+        termsCommandPort.saveAll(userId, termsList).then()
 }

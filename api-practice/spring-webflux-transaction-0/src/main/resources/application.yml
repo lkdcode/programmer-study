@@ -21,9 +21,15 @@ spring:
       mode: always
       schema-locations: classpath:schema.sql
 
-#logging:
-#  level:
-#    io.r2dbc.postgresql: DEBUG
-#    org.springframework.r2dbc: DEBUG
-#    org.springframework.transaction: DEBUG
-#    org.springframework.data.mongodb: DEBUG
+logging:
+  level:
+    io.r2dbc.postgresql: DEBUG
+    io.r2dbc.pool: DEBUG
+    org.mongodb.driver.connection: DEBUG
+    org.springframework.r2dbc: DEBUG
+    org.springframework.transaction: DEBUG
+    org.springframework.data.mongodb: DEBUG
+    org.mongodb.driver.protocol: DEBUG
+
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } --- [%-25.25t] %-40.40logger{39} : %m%n"

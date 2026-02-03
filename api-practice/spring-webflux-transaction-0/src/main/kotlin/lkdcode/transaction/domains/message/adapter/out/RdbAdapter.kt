@@ -6,6 +6,7 @@ import lkdcode.transaction.domains.message.domain.model.MessageMetadata
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Mono
+import kotlin.random.Random
 
 @Repository
 class RdbAdapter(
@@ -13,7 +14,27 @@ class RdbAdapter(
 ) : RdbPort {
 
     override fun save(metadata: MessageMetadata): Mono<Long> =
-        Mono.error(IllegalArgumentException("--Error--"))
+        databaseClient
+            .sql(
+                """
+            INSERT INTO message_metadata (message_id, tag_id, tag_description)
+            VALUES (:messageId, :tagId, :tagDescription)
+            """
+            )
+            .bind("messageId", metadata.messageId)
+            .bindNullable("tagId", metadata.tagId, String::class.java)
+            .bindNullable("tagDescription", metadata.tagDescription, String::class.java)
+            .filter { statement -> statement.returnGeneratedValues("id") }
+            .map { readable ->
+                if (Random.nextBoolean()) {
+                    throw IllegalArgumentException("--Error after Connection Acquired--")
+                }
+
+                readable.get("id", java.lang.Long::class.java)!!.toLong()
+            }
+            .one()
+//    override fun save(metadata: MessageMetadata): Mono<Long> =
+////        Mono.error(IllegalArgumentException("--Error--"))
 //        databaseClient
 //            .sql(
 //                """

@@ -3,9 +3,10 @@ package lkdcode.transaction.domains.message.application.usecase
 import lkdcode.transaction.domains.message.application.port.out.NoSqlPort
 import lkdcode.transaction.domains.message.application.port.out.RdbPort
 import lkdcode.transaction.domains.message.domain.model.ChatMessage
-import lkdcode.transaction.domains.message.domain.model.MessageMetadata
+import lkdcode.transaction.domains.message.domain.model.toMetadata
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.reactive.TransactionalOperator
 import reactor.core.publisher.Mono
 
@@ -19,37 +20,6 @@ class MessageSaveService(
     private val rdbPort: RdbPort,
 ) {
 
-    fun saveWithoutCompensation(message: ChatMessage): Mono<Void> =
-        nosqlPort.save(message)
-            .then(rdbPort.save(message.toMetadata()))
-            .then()
-
-    fun saveWithCompensation(message: ChatMessage): Mono<Void> =
-        nosqlPort.save(message)
-            .flatMap { messageId ->
-                rdbPort.save(message.toMetadata())
-                    .onErrorResume { error ->
-                        // 보상 트랜잭션: MongoDB 데이터 삭제
-                        nosqlPort.deleteById(messageId)
-                            .then(Mono.error(error))
-                    }
-            }
-            .then()
-
-    fun saveWithOutboxPattern(message: ChatMessage): Mono<Void> =
-        r2dbcTransactionalOperator.transactional(
-            rdbPort.saveOutbox(
-                OutboxEvent(
-                    aggregateType = "ChatMessage",
-                    aggregateId = message.messageId,
-                    payload = message.toJson(),
-                )
-            )
-        ).then()
-
-    fun saveOnlyMongo(message: ChatMessage): Mono<String> =
-        nosqlPort.save(message)
-
     fun saveMessage(message: ChatMessage): Mono<Void> =
         r2dbcTransactionalOperator.transactional(
             nosqlPort
@@ -58,11 +28,39 @@ class MessageSaveService(
                 .then()
         )
 
+    fun saveMessageWithDualOperator(message: ChatMessage): Mono<Void> =
+        nosqlTransactionalOperator.transactional(nosqlPort.save(message))
+            .then(
+                r2dbcTransactionalOperator.transactional(
+                    rdbPort.save(message.toMetadata())
+                )
+            )
+            .then()
+
+    @Transactional
+    fun saveWithoutCompensation(message: ChatMessage): Mono<Void> =
+        nosqlPort
+            .save(message)
+            .then(rdbPort.save(message.toMetadata()))
+            .then()
+
     fun saveMessageWithCompensation(message: ChatMessage): Mono<Void> =
-        nosqlPort.save(message)
+        nosqlPort
+            .save(message)
             .flatMap { messageId ->
                 r2dbcTransactionalOperator
                     .transactional(rdbPort.save(message.toMetadata()))
+                    .onErrorResume { error -> nosqlPort.deleteById(messageId).then(Mono.error(error)) }
+            }
+            .then()
+
+    @Transactional
+    fun saveWithCompensation(message: ChatMessage): Mono<Void> =
+        nosqlPort
+            .save(message)
+            .flatMap { messageId ->
+                rdbPort
+                    .save(message.toMetadata())
                     .onErrorResume { error -> nosqlPort.deleteById(messageId).then(Mono.error(error)) }
             }
             .then()
@@ -81,22 +79,6 @@ class MessageSaveService(
                     )
                 )
                 .then()
-        )
-
-    fun saveMessageWithDualOperator(message: ChatMessage): Mono<Void> =
-        nosqlTransactionalOperator.transactional(
-            nosqlPort.save(message)
-        ).then(
-            r2dbcTransactionalOperator.transactional(
-                rdbPort.save(message.toMetadata())
-            )
-        ).then()
-
-    private fun ChatMessage.toMetadata(): MessageMetadata =
-        MessageMetadata(
-            messageId = messageId,
-            tagId = tag?.tagId,
-            tagDescription = tag?.description,
         )
 
     private fun ChatMessage.toJson(): String =

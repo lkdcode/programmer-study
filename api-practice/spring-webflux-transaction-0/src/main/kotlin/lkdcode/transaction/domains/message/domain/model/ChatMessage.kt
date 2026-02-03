@@ -21,3 +21,10 @@ data class MessageMetadata(
     val tagId: String?,
     val tagDescription: String?,
 )
+
+fun ChatMessage.toMetadata(): MessageMetadata =
+    MessageMetadata(
+        messageId = messageId,
+        tagId = tag?.tagId,
+        tagDescription = tag?.description,
+    )

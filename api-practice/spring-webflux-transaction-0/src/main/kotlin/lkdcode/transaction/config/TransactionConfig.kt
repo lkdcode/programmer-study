@@ -29,12 +29,14 @@ class TransactionConfig {
     ): TransactionalOperator = TransactionalOperator.create(transactionManager)
 
     @Bean
+//    @Primary
     @Qualifier("nosqlTransactionManager")
     fun nosqlTransactionManager(
         reactiveMongoDatabaseFactory: ReactiveMongoDatabaseFactory,
     ): ReactiveTransactionManager = ReactiveMongoTransactionManager(reactiveMongoDatabaseFactory)
 
     @Bean
+//    @Primary
     @Qualifier("nosqlTransactionalOperator")
     fun nosqlTransactionalOperator(
         @Qualifier("nosqlTransactionManager") transactionManager: ReactiveTransactionManager,
