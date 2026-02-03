@@ -1,0 +1,75 @@
+version: "3.9"
+
+name: dev-lkdcode-transaction
+services:
+  mongo-node-01:
+    image: mongo:7.0
+    container_name: lkdcode-mongoDB-node-01
+    command: mongod --replSet rs0 --keyFile /etc/mongo/mongo-keyfile --bind_ip_all
+    restart: unless-stopped
+    ports:
+      - "17017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: lkdcode
+      MONGO_INITDB_ROOT_PASSWORD: lkdcode
+    volumes:
+      - mongo-node-01:/data/db
+      - ./mongo-keyfile:/etc/mongo/mongo-keyfile:ro
+
+  mongo-node-02:
+    image: mongo:7.0
+    container_name: lkdcode-mongoDB-node-02
+    command: mongod --replSet rs0 --keyFile /etc/mongo/mongo-keyfile --bind_ip_all
+    restart: unless-stopped
+    ports:
+      - "17018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: lkdcode
+      MONGO_INITDB_ROOT_PASSWORD: lkdcode
+    volumes:
+      - mongo-node-02:/data/db
+      - ./mongo-keyfile:/etc/mongo/mongo-keyfile:ro
+
+  mongo-node-03:
+    image: mongo:7.0
+    container_name: lkdcode-mongoDB-node-03
+    command: mongod --replSet rs0 --keyFile /etc/mongo/mongo-keyfile --bind_ip_all
+    restart: unless-stopped
+    ports:
+      - "17019:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: lkdcode
+      MONGO_INITDB_ROOT_PASSWORD: lkdcode
+    volumes:
+      - mongo-node-03:/data/db
+      - ./mongo-keyfile:/etc/mongo/mongo-keyfile:ro
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: lkdcode-tx-postgreSQL
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: lkdcode
+      POSTGRES_PASSWORD: lkdcode
+      POSTGRES_DB: lkdcode-tx
+    ports:
+      - "15432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: lkdcode-tx-redis
+    restart: unless-stopped
+    command: [ "redis-server", "--requirepass", "lkdcode" ]
+    ports:
+      - "16379:6379"
+    volumes:
+      - redisdata:/data
+
+volumes:
+  pgdata:
+  mongo-node-01:
+  mongo-node-02:
+  mongo-node-03:
+  redisdata:
