@@ -27,4 +27,17 @@ class ReactiveRedisCacheService(
 
         return redisOps.unlink(keys)
     }
+
+    override fun tryLock(key: String, ttl: Duration): Mono<Boolean> =
+        redisOps.opsForValue().setIfAbsent(lockKey(key), LOCK_VALUE, ttl)
+            .map { it ?: false }
+
+    override fun unlock(key: String): Mono<Void> =
+        redisOps.opsForValue().delete(lockKey(key)).then()
+
+    private fun lockKey(key: String): String = "$LOCK_VALUE:$key"
+
+    companion object {
+        private const val LOCK_VALUE = "LOCKED"
+    }
 }
