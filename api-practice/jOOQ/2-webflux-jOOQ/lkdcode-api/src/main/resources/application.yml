@@ -1,0 +1,8 @@
+server:
+  port: 28080
+
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:15432/lkdcode
+    username: lkdcode
+    password: lkdcode

@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS kiwi (
+    id    BIGSERIAL    PRIMARY KEY,
+    name  VARCHAR(255) NOT NULL,
+    price INTEGER      NOT NULL DEFAULT 0
+);

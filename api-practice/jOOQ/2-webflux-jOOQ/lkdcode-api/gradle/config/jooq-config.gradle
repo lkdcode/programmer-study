@@ -1,0 +1,58 @@
+dependencies {
+    jooqGenerator(project(":jooq-config"))
+}
+
+jooq {
+    version = JooqLibs.JOOQ_VERSION
+
+    configurations {
+        main {
+            generateSchemaSourceOnCompilation = true
+
+            jooqConfiguration.with {
+                jdbc.with {
+                    driver = 'org.postgresql.Driver'
+                    url = 'jdbc:postgresql://localhost:15432/lkdcode'
+                    user = 'lkdcode'
+                    password = 'lkdcode'
+                }
+
+                generator.with {
+                    name = 'org.jooq.codegen.KotlinGenerator'
+
+                    strategy.name = JooqLibs.STRATEGY_NAME
+
+                    database.with {
+                        name = 'org.jooq.meta.postgres.PostgresDatabase'
+                        inputSchema = 'public'
+                    }
+
+                    generate.with {
+                        javaTimeTypes = true
+                        deprecated = false
+                        fluentSetters = true
+                        records = true
+                        daos = false
+
+                        kotlinNotNullPojoAttributes = true
+                        kotlinNotNullRecordAttributes = true
+                        kotlinNotNullInterfaceAttributes = true
+                    }
+
+                    target.with {
+                        packageName = JooqLibs.TARGET_PACKAGE_NAME
+                        directory = layout.buildDirectory.dir(JooqLibs.DEFAULT_DIRECTORY).get().asFile.path
+                    }
+                }
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir layout.buildDirectory.dir(JooqLibs.DEFAULT_DIRECTORY).get().asFile.path
+        }
+    }
+}
