@@ -45,11 +45,11 @@ class JooqConfig {
 
     @Bean
     fun jooqDsl(
-        @Qualifier("transactionManager") tm: R2dbcTransactionManager
+        tm: R2dbcTransactionManager
     ): DSLContext {
         val originalFactory = tm.connectionFactory!!
         val transactionAwareProxy = TransactionAwareConnectionFactoryProxy(originalFactory)
-        val jooqWrapperFactory = JooqContextAwareConnectionFactory(transactionAwareProxy)
+//        val jooqWrapperFactory = JooqContextAwareConnectionFactory(transactionAwareProxy)
 
         val settings = Settings()
             .withRenderFormatted(true)
@@ -57,7 +57,8 @@ class JooqConfig {
 
         return DSL.using(
             DefaultConfiguration()
-                .set(jooqWrapperFactory)
+//                .set(jooqWrapperFactory)
+                .set(transactionAwareProxy)
                 .set(SQLDialect.POSTGRES)
                 .set(settings)
                 .set(DefaultExecuteListenerProvider(LoggerListener()))

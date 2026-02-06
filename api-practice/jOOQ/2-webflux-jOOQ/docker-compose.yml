@@ -12,3 +12,42 @@ services:
       POSTGRES_DB: lkdcode
     volumes:
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  mongo-node-01:
+    image: mongo:7.0
+    container_name: lkdcode-mongoDB-node-01
+    command: mongod --replSet rs0 --keyFile /etc/mongo/mongo-keyfile --bind_ip_all
+    restart: unless-stopped
+    ports:
+      - "17017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: lkdcode
+      MONGO_INITDB_ROOT_PASSWORD: lkdcode
+    volumes:
+      - ./mongo-keyfile:/etc/mongo/mongo-keyfile:ro
+
+  mongo-node-02:
+    image: mongo:7.0
+    container_name: lkdcode-mongoDB-node-02
+    command: mongod --replSet rs0 --keyFile /etc/mongo/mongo-keyfile --bind_ip_all
+    restart: unless-stopped
+    ports:
+      - "17018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: lkdcode
+      MONGO_INITDB_ROOT_PASSWORD: lkdcode
+    volumes:
+      - ./mongo-keyfile:/etc/mongo/mongo-keyfile:ro
+
+  mongo-node-03:
+    image: mongo:7.0
+    container_name: lkdcode-mongoDB-node-03
+    command: mongod --replSet rs0 --keyFile /etc/mongo/mongo-keyfile --bind_ip_all
+    restart: unless-stopped
+    ports:
+      - "17019:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: lkdcode
+      MONGO_INITDB_ROOT_PASSWORD: lkdcode
+    volumes:
+      - ./mongo-keyfile:/etc/mongo/mongo-keyfile:ro

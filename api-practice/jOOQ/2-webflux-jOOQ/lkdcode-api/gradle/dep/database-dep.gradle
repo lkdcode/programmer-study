@@ -1,4 +1,5 @@
 dependencies {
     implementation(DatabaseLibs.R2DBC)
+    implementation(DatabaseLibs.REACTIVE_MONGODB)
     runtimeOnly(DatabaseLibs.R2DBC_POSTGRESQL)
 }

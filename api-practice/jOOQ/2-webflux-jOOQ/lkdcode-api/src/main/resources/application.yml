@@ -6,3 +6,30 @@ spring:
     url: r2dbc:postgresql://localhost:15432/lkdcode
     username: lkdcode
     password: lkdcode
+
+  data:
+    mongodb:
+#      uri: mongodb://lkdcode:lkdcode@localhost:17017/lkdcode?authSource=admin&replicaSet=rs0
+      host: localhost
+      port: 17017
+      username: lkdcode
+      password: lkdcode
+      database: lkdcode
+      authentication-database: admin
+
+logging:
+  level:
+    io.r2dbc.postgresql.QUERY: DEBUG
+    io.r2dbc.postgresql.PARAM: TRACE
+
+    reactor.netty.http.server: DEBUG
+    io.netty: DEBUG
+
+    org.springframework.web.reactive: INFO
+    org.springframework.web.reactive.socket: DEBUG
+    org.springframework.kafka: INFO
+
+    org.jooq.tools.LoggerListener: DEBUG
+
+    org.springframework.r2dbc.connection: TRACE
+    org.springframework.transaction.reactive: TRACE

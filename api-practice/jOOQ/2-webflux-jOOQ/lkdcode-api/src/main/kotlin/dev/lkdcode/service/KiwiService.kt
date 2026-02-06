@@ -14,6 +14,8 @@ class KiwiService(
     private val kiwiJooq: KiwiJooq,
 ) {
 
+    fun fetch() = kiwiJooq.findAll().collectList()
+
     @Transactional
     fun insert(count: Int = BULK_SIZE): Mono<Void> {
         val entities = List(count) { randomKiwi() }
@@ -30,7 +32,7 @@ class KiwiService(
     fun deleteAndFetch(name: String): Mono<List<Kiwi>> =
         kiwiRepository
             .deleteAllByName(name)
-            .flatMap { kiwiJooq.findAll().collectList() }
+            .then(kiwiJooq.findAll().collectList())
 
     companion object {
         private const val BULK_SIZE = 10
