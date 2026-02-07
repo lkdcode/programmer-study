@@ -49,7 +49,7 @@ class JooqConfig {
     ): DSLContext {
         val originalFactory = tm.connectionFactory!!
         val transactionAwareProxy = TransactionAwareConnectionFactoryProxy(originalFactory)
-//        val jooqWrapperFactory = JooqContextAwareConnectionFactory(transactionAwareProxy)
+        val jooqWrapperFactory = JooqContextAwareConnectionFactory(transactionAwareProxy)
 
         val settings = Settings()
             .withRenderFormatted(true)
@@ -57,12 +57,12 @@ class JooqConfig {
 
         return DSL.using(
             DefaultConfiguration()
-//                .set(jooqWrapperFactory)
                 .set(transactionAwareProxy)
+//                .set(jooqWrapperFactory)
                 .set(SQLDialect.POSTGRES)
                 .set(settings)
                 .set(DefaultExecuteListenerProvider(LoggerListener()))
-                .set(ReactorSubscriberProvider())
+//                .set(ReactorSubscriberProvider())
         )
     }
 }

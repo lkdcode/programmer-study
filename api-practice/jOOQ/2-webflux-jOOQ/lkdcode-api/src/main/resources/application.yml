@@ -21,6 +21,7 @@ logging:
   level:
     io.r2dbc.postgresql.QUERY: DEBUG
     io.r2dbc.postgresql.PARAM: TRACE
+    io.r2dbc.postgresql.client.ReactorNettyClient: DEBUG
 
     reactor.netty.http.server: DEBUG
     io.netty: DEBUG
