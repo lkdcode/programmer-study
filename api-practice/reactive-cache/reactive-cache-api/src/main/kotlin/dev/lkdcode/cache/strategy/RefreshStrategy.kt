@@ -1,7 +1,7 @@
 package dev.lkdcode.cache.strategy
 
 enum class RefreshStrategy {
-    DEFAULT,
+    NONE,
     ON_EXPIRE,
-    SOFT_TTL
+    SOFT_TTL,
 }
