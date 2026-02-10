@@ -15,46 +15,56 @@ class PubSubLockHandler(
         primaryKey: String,
         executeAndSave: () -> Mono<Any>,
         readFromCache: () -> Mono<Any>,
-    ): Mono<Any> =
+    ): Mono<Any> = Mono.defer {
+        val readySignal = cacheService
+            .subscribeCacheReady(primaryKey, SUBSCRIBE_TIMEOUT)
+            .cache()
+        val disposable = readySignal.subscribe()
+
         cacheService
             .tryLock(primaryKey, LOCK_TTL)
-            .flatMap { acquired ->
-                if (acquired) {
-                    executeAndSave()
-                        .flatMap { value -> publishAndUnlock(primaryKey).thenReturn(value) }
-                        .onErrorResume { e -> unlock(primaryKey).then(Mono.error(e)) }
-                } else {
-                    cacheService
-                        .subscribeCacheReady(primaryKey, SUBSCRIBE_TIMEOUT)
-                        .flatMap { readFromCache() }
-                        .switchIfEmpty(Mono.defer { executeAndSave() })
-                        .onErrorResume { executeAndSave() }
-                }
+            .flatMap { token ->
+                disposable.dispose()
+                executeAndSave()
+                    .flatMap { value -> publishAndUnlock(primaryKey, token).thenReturn(value) }
+                    .onErrorResume { e -> unlock(primaryKey, token).then(Mono.error(e)) }
             }
+            .switchIfEmpty(Mono.defer {
+                readySignal
+                    .flatMap { readFromCache() }
+                    .switchIfEmpty(Mono.defer { executeAndSave() })
+                    .onErrorResume { executeAndSave() }
+            })
+    }
 
     override fun handleFluxCacheMiss(
         primaryKey: String,
         executeAndSave: () -> Flux<Any>,
         readFromCache: () -> Mono<Any>,
-    ): Flux<Any> =
+    ): Flux<Any> = Flux.defer {
+        val readySignal = cacheService
+            .subscribeCacheReady(primaryKey, SUBSCRIBE_TIMEOUT)
+            .cache()
+        val disposable = readySignal.subscribe()
+
         cacheService
             .tryLock(primaryKey, LOCK_TTL)
-            .flatMapMany { acquired ->
-                if (acquired) {
-                    executeAndSave()
-                        .collectList()
-                        .flatMap { items -> publishAndUnlock(primaryKey).thenReturn(items) }
-                        .onErrorResume { e -> unlock(primaryKey).then(Mono.error(e)) }
-                        .flatMapMany { Flux.fromIterable(it) }
-                } else {
-                    cacheService
-                        .subscribeCacheReady(primaryKey, SUBSCRIBE_TIMEOUT)
-                        .flatMap { readFromCache() }
-                        .flatMapMany { toFlux(it) }
-                        .switchIfEmpty(Flux.defer { executeAndSave() })
-                        .onErrorResume { executeAndSave() }
-                }
+            .flatMapMany { token ->
+                disposable.dispose()
+                executeAndSave()
+                    .collectList()
+                    .flatMap { items -> publishAndUnlock(primaryKey, token).thenReturn(items) }
+                    .onErrorResume { e -> unlock(primaryKey, token).then(Mono.error(e)) }
+                    .flatMapMany { Flux.fromIterable(it) }
             }
+            .switchIfEmpty(Flux.defer {
+                readySignal
+                    .flatMap { readFromCache() }
+                    .flatMapMany { toFlux(it) }
+                    .switchIfEmpty(Flux.defer { executeAndSave() })
+                    .onErrorResume { executeAndSave() }
+            })
+    }
 
     override fun refreshInBackground(
         primaryKey: String,
@@ -62,21 +72,20 @@ class PubSubLockHandler(
     ): Mono<Void> =
         cacheService
             .tryLock(primaryKey, LOCK_TTL)
-            .filter { it }
-            .flatMap {
+            .flatMap { token ->
                 executeAndSave()
-                    .flatMap { value -> publishAndUnlock(primaryKey).thenReturn(value) }
-                    .onErrorResume { e -> unlock(primaryKey).then(Mono.error(e)) }
+                    .flatMap { value -> publishAndUnlock(primaryKey, token).thenReturn(value) }
+                    .onErrorResume { e -> unlock(primaryKey, token).then(Mono.error(e)) }
             }
             .then()
 
-    private fun publishAndUnlock(primaryKey: String): Mono<Void> =
+    private fun publishAndUnlock(primaryKey: String, token: String): Mono<Void> =
         publishCacheReady(primaryKey)
-            .then(unlock(primaryKey))
+            .then(unlock(primaryKey, token))
 
-    private fun unlock(primaryKey: String): Mono<Void> =
+    private fun unlock(primaryKey: String, token: String): Mono<Void> =
         cacheService
-            .unlock(primaryKey)
+            .unlock(primaryKey, token)
             .onErrorResume { Mono.empty() }
             .then()
 

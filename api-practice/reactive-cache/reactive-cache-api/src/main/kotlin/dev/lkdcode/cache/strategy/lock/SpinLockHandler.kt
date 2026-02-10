@@ -18,15 +18,14 @@ class SpinLockHandler(
     ): Mono<Any> =
         cacheService
             .tryLock(primaryKey, LOCK_TTL)
-            .flatMap { acquired ->
-                if (acquired) {
-                    executeAndSave()
-                        .flatMap { value -> unlock(primaryKey).thenReturn(value) }
-                        .onErrorResume { e -> unlock(primaryKey).then(Mono.error(e)) }
-                } else {
-                    spinRetryMono(primaryKey, executeAndSave, readFromCache)
-                }
+            .flatMap { token ->
+                executeAndSave()
+                    .flatMap { value -> unlock(primaryKey, token).thenReturn(value) }
+                    .onErrorResume { e -> unlock(primaryKey, token).then(Mono.error(e)) }
             }
+            .switchIfEmpty(Mono.defer {
+                spinRetryMono(primaryKey, executeAndSave, readFromCache)
+            })
 
     private fun spinRetryMono(
         primaryKey: String,
@@ -54,17 +53,16 @@ class SpinLockHandler(
     ): Flux<Any> =
         cacheService
             .tryLock(primaryKey, LOCK_TTL)
-            .flatMapMany { acquired ->
-                if (acquired) {
-                    executeAndSave()
-                        .collectList()
-                        .flatMap { list -> unlock(primaryKey).thenReturn(list) }
-                        .onErrorResume { e -> unlock(primaryKey).then(Mono.error(e)) }
-                        .flatMapMany { Flux.fromIterable(it) }
-                } else {
-                    spinRetryFlux(primaryKey, executeAndSave, readFromCache)
-                }
+            .flatMapMany { token ->
+                executeAndSave()
+                    .collectList()
+                    .flatMap { list -> unlock(primaryKey, token).thenReturn(list) }
+                    .onErrorResume { e -> unlock(primaryKey, token).then(Mono.error(e)) }
+                    .flatMapMany { Flux.fromIterable(it) }
             }
+            .switchIfEmpty(Flux.defer {
+                spinRetryFlux(primaryKey, executeAndSave, readFromCache)
+            })
 
     private fun spinRetryFlux(
         primaryKey: String,
@@ -92,17 +90,16 @@ class SpinLockHandler(
     ): Mono<Void> =
         cacheService
             .tryLock(primaryKey, LOCK_TTL)
-            .filter { it }
-            .flatMap {
+            .flatMap { token ->
                 executeAndSave()
-                    .flatMap { unlock(primaryKey).thenReturn(it) }
-                    .onErrorResume { e -> unlock(primaryKey).then(Mono.error(e)) }
+                    .flatMap { unlock(primaryKey, token).thenReturn(it) }
+                    .onErrorResume { e -> unlock(primaryKey, token).then(Mono.error(e)) }
             }
             .then()
 
-    private fun unlock(primaryKey: String): Mono<Void> =
+    private fun unlock(primaryKey: String, token: String): Mono<Void> =
         cacheService
-            .unlock(primaryKey)
+            .unlock(primaryKey, token)
             .onErrorResume { Mono.empty() }
             .then()
 
