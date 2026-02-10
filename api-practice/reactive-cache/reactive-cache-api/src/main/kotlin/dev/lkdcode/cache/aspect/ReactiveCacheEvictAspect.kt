@@ -7,7 +7,6 @@ import dev.lkdcode.cache.service.CacheService
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -19,7 +18,6 @@ class ReactiveCacheEvictAspect(
     private val conditionHandler: ReactiveCacheConditionHandler,
     private val reactiveCachePropertyHandler: ReactiveCachePropertyHandler,
 ) {
-    private val log = LoggerFactory.getLogger(ReactiveCacheEvictAspect::class.java)
 
     @Around("@annotation(reactiveCacheEvict)")
     fun handleCacheEvict(joinPoint: ProceedingJoinPoint, reactiveCacheEvict: ReactiveCacheEvict): Any {
@@ -28,17 +26,19 @@ class ReactiveCacheEvictAspect(
             return joinPoint.proceed()
         }
 
-        val (cacheKeyOrPrefix, isAllEntries) = reactiveCachePropertyHandler.cacheProperty(joinPoint, reactiveCacheEvict)
+        val (cacheKeysOrPrefixes, isAllEntries) = reactiveCachePropertyHandler.cacheProperty(
+            joinPoint,
+            reactiveCacheEvict
+        )
 
         val evictOperation = if (isAllEntries) {
-            cacheService
-                .deleteByPrefix(cacheKeyOrPrefix)
-                .onErrorResume { Mono.just(0L) }
+            Flux.fromIterable(cacheKeysOrPrefixes)
+                .flatMap { prefix -> cacheService.deleteByPrefix(prefix).onErrorResume { Mono.just(0L) } }
                 .then()
         } else {
-            cacheService
-                .delete(cacheKeyOrPrefix)
-                .onErrorResume { Mono.empty() }
+            Flux.fromIterable(cacheKeysOrPrefixes)
+                .flatMap { key -> cacheService.delete(key).onErrorResume { Mono.empty() } }
+                .then()
         }
 
         return when (val result = joinPoint.proceed()) {

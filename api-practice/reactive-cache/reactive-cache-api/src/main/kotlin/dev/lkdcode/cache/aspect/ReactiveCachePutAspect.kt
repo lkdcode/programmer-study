@@ -1,75 +1,72 @@
 package dev.lkdcode.cache.aspect
 
 import dev.lkdcode.cache.annotation.ReactiveCachePut
+import dev.lkdcode.cache.handler.CacheProperty
 import dev.lkdcode.cache.handler.ReactiveCacheConditionHandler
 import dev.lkdcode.cache.handler.ReactiveCachePropertyHandler
-import dev.lkdcode.cache.service.CacheService
+import dev.lkdcode.cache.strategy.RefreshStrategyResolver
+import dev.lkdcode.cache.strategy.refresh.CacheRefreshHandler
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import java.time.Duration
 
 @Aspect
 @Component
 class ReactiveCachePutAspect(
-    private val cacheService: CacheService,
     private val conditionHandler: ReactiveCacheConditionHandler,
     private val reactiveCachePropertyHandler: ReactiveCachePropertyHandler,
+    private val refreshStrategyResolver: RefreshStrategyResolver,
 ) {
-    private val log = LoggerFactory.getLogger(ReactiveCachePutAspect::class.java)
 
     @Around("@annotation(reactiveCachePut)")
     fun handleCachePut(joinPoint: ProceedingJoinPoint, reactiveCachePut: ReactiveCachePut): Any {
         if (conditionHandler.shouldNotCache(joinPoint, reactiveCachePut.condition)) return joinPoint.proceed()
-        val (cacheKey, ttl, unless) = reactiveCachePropertyHandler.cacheProperty(joinPoint, reactiveCachePut)
+        val prop = reactiveCachePropertyHandler.cacheProperty(joinPoint, reactiveCachePut)
+        val refreshHandler = refreshStrategyResolver.resolve(prop.refreshStrategy)
 
         return when (val result = joinPoint.proceed()) {
-            is Mono<*> -> handleMonoCachePut(result, cacheKey, ttl, unless, joinPoint)
-            is Flux<*> -> handleFluxCachePut(result, cacheKey, ttl, unless, joinPoint)
+            is Mono<*> -> handleMonoCachePut(result, prop, refreshHandler, joinPoint)
+            is Flux<*> -> handleFluxCachePut(result, prop, refreshHandler, joinPoint)
             else -> result
         }
     }
 
     private fun handleMonoCachePut(
         result: Mono<*>,
-        cacheKey: String,
-        ttl: Duration,
-        unless: String,
-        joinPoint: ProceedingJoinPoint
-    ): Mono<*> {
-        return result.flatMap { value ->
-            if (conditionHandler.shouldCacheResult(value, unless, joinPoint)) {
-                cacheService.save(cacheKey, value as Any, ttl)
-                    .onErrorResume { Mono.empty() }
-                    .thenReturn(value)
+        prop: CacheProperty,
+        refreshHandler: CacheRefreshHandler,
+        joinPoint: ProceedingJoinPoint,
+    ): Mono<*> =
+        result.flatMap { value ->
+            if (conditionHandler.shouldCacheResult(value, prop.unless, joinPoint)) {
+                saveToAllKeys(prop, refreshHandler, value as Any).thenReturn(value)
             } else {
                 Mono.just(value)
             }
         }
-    }
 
     private fun handleFluxCachePut(
         result: Flux<*>,
-        cacheKey: String,
-        ttl: Duration,
-        unless: String,
-        joinPoint: ProceedingJoinPoint
-    ): Flux<*> {
-        return result
+        prop: CacheProperty,
+        refreshHandler: CacheRefreshHandler,
+        joinPoint: ProceedingJoinPoint,
+    ): Flux<*> =
+        result
             .collectList()
             .flatMap { list ->
-                if (conditionHandler.shouldCacheResult(list, unless, joinPoint)) {
-                    cacheService.save(cacheKey, list as Any, ttl)
-                        .onErrorResume { Mono.empty() }
-                        .thenReturn(list)
+                if (conditionHandler.shouldCacheResult(list, prop.unless, joinPoint)) {
+                    saveToAllKeys(prop, refreshHandler, list as Any).thenReturn(list)
                 } else {
                     Mono.just(list)
                 }
             }
             .flatMapMany { Flux.fromIterable(it) }
-    }
+
+    private fun saveToAllKeys(prop: CacheProperty, refreshHandler: CacheRefreshHandler, value: Any): Mono<Void> =
+        Flux.fromIterable(prop.cacheKeys)
+            .flatMap { key -> refreshHandler.save(key, value, prop.ttl) }
+            .then()
 }
