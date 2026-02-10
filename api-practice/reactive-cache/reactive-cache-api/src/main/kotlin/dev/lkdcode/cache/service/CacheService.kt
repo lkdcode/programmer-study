@@ -10,8 +10,8 @@ interface CacheService {
     fun delete(key: String): Mono<Void>
     fun deleteByPrefix(prefix: String): Mono<Long>
 
-    fun tryLock(key: String, ttl: Duration = Duration.ofSeconds(10L)): Mono<Boolean>
-    fun unlock(key: String): Mono<Void>
+    fun tryLock(key: String, ttl: Duration = Duration.ofSeconds(10L)): Mono<String>
+    fun unlock(key: String, lockToken: String): Mono<Boolean>
 
     fun publishCacheReady(key: String): Mono<Long>
     fun subscribeCacheReady(key: String, timeout: Duration = Duration.ofSeconds(5L)): Mono<String>

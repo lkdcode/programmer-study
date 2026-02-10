@@ -4,11 +4,13 @@ import dev.lkdcode.cache.model.CacheModel
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory
 import org.springframework.data.redis.core.ReactiveRedisOperations
 import org.springframework.data.redis.core.ScanOptions
+import org.springframework.data.redis.core.script.RedisScript
 import org.springframework.data.redis.listener.ChannelTopic
 import org.springframework.data.redis.listener.ReactiveRedisMessageListenerContainer
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import java.time.Duration
+import java.util.UUID
 
 @Component
 class ReactiveRedisCacheService(
@@ -34,22 +36,36 @@ class ReactiveRedisCacheService(
     }
 
     override fun delete(key: String): Mono<Void> =
-        redisOps.opsForValue().delete(key).then()
+        Mono.`when`(
+            redisOps.opsForValue().delete(key),
+            redisOps.opsForValue().delete(softTtlKey(key)),
+        )
 
     override fun deleteByPrefix(prefix: String): Mono<Long> {
-        val pattern = "$prefix*"
-        val scanOptions = ScanOptions.scanOptions().match(pattern).count(1_000).build()
-        val keys = redisOps.scan(scanOptions)
+        val rawScan = ScanOptions.scanOptions().match("$prefix*").count(1_000).build()
+        val softTtlScan = ScanOptions.scanOptions().match("$SOFT_TTL_PREFIX:$prefix*").count(1_000).build()
 
-        return redisOps.unlink(keys)
+        return Mono.zip(
+            redisOps.unlink(redisOps.scan(rawScan)).defaultIfEmpty(0L),
+            redisOps.unlink(redisOps.scan(softTtlScan)).defaultIfEmpty(0L),
+        ).map { it.t1 + it.t2 }
     }
 
-    override fun tryLock(key: String, ttl: Duration): Mono<Boolean> =
-        redisOps.opsForValue().setIfAbsent(lockKey(key), LOCK_VALUE, ttl)
-            .map { it ?: false }
+    override fun tryLock(key: String, ttl: Duration): Mono<String> {
+        val token = UUID.randomUUID().toString()
+        return redisOps.opsForValue()
+            .setIfAbsent(lockKey(key), token, ttl)
+            .flatMap { acquired ->
+                if (acquired == true) Mono.just(token)
+                else Mono.empty()
+            }
+    }
 
-    override fun unlock(key: String): Mono<Void> =
-        redisOps.opsForValue().delete(lockKey(key)).then()
+    override fun unlock(key: String, lockToken: String): Mono<Boolean> =
+        redisOps.execute(UNLOCK_SCRIPT, listOf(lockKey(key)), listOf(lockToken))
+            .next()
+            .map { it > 0 }
+            .defaultIfEmpty(false)
 
     override fun publishCacheReady(key: String): Mono<Long> =
         redisOps.convertAndSend(cacheReadyChannel(key), CACHE_READY_MESSAGE)
@@ -65,14 +81,19 @@ class ReactiveRedisCacheService(
             .doFinally { container.destroyLater().subscribe() }
     }
 
-    private fun lockKey(key: String): String = "$LOCK_VALUE:$key"
+    private fun lockKey(key: String): String = "$LOCK_PREFIX:$key"
     private fun cacheReadyChannel(key: String): String = "$CHANNEL_PREFIX:$key"
     private fun softTtlKey(key: String): String = "$SOFT_TTL_PREFIX:$key"
 
     companion object {
-        private const val LOCK_VALUE = "LOCKED"
+        private const val LOCK_PREFIX = "LOCKED"
         private const val CHANNEL_PREFIX = "CACHE:READY"
         private const val CACHE_READY_MESSAGE = "READY"
         private const val SOFT_TTL_PREFIX = "SOFT_TTL"
+
+        private val UNLOCK_SCRIPT = RedisScript.of<Long>(
+            "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end",
+            Long::class.java
+        )
     }
 }
