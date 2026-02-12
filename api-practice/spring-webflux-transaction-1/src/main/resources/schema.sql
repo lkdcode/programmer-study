@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS kiwi (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+INSERT INTO public.kiwi("name")
+VALUES
+('APPLE'),
+('BANANA'),
+('KIWI'),
+('MANGO')
+;
