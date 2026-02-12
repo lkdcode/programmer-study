@@ -1,0 +1,7 @@
+dependencies {
+    implementation(JooqLibs.JOOQ)
+    implementation(JooqLibs.JOOQ_KOTLIN)
+    implementation(JooqLibs.JOOQ_KOTLIN_COROUTINES)
+
+    jooqCodegen(JooqLibs.JOOQ_META_EXTENSIONS)
+}

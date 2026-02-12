@@ -1,0 +1,8 @@
+dependencies {
+    runtimeOnly(DatabaseLibs.POSTGRESQL_CONNECTOR)
+    runtimeOnly(DatabaseLibs.R2DBC_POSTGRESQL)
+
+    testImplementation(DatabaseLibs.SPRING_BOOT_TESTCONTAINERS)
+    testImplementation(DatabaseLibs.TESTCONTAINERS_POSTGRESQL)
+    testImplementation(DatabaseLibs.TESTCONTAINERS_R2DBC)
+}

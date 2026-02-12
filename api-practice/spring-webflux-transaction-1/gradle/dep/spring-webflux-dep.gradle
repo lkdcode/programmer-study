@@ -1,0 +1,7 @@
+dependencies {
+    implementation(SpringWebflux.WEB_FLUX)
+    implementation(SpringWebflux.R2DBC)
+
+    testImplementation(SpringWebflux.TEST)
+    testImplementation(SpringWebflux.REACTOR_TEST)
+}

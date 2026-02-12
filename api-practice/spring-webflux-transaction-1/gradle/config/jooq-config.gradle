@@ -1,0 +1,51 @@
+jooq {
+    configuration {
+        generator {
+            name = 'org.jooq.codegen.KotlinGenerator'
+
+            database {
+                name = 'org.jooq.meta.extensions.ddl.DDLDatabase'
+
+                properties {
+                    property {
+                        key = 'scripts'
+                        value = 'src/main/resources/schema.sql'
+                    }
+                    property {
+                        key = 'sort'
+                        value = 'semantic'
+                    }
+                    property {
+                        key = 'defaultNameCase'
+                        value = 'lower'
+                    }
+                }
+            }
+
+            generate {
+                javaTimeTypes = true
+                deprecated = false
+                fluentSetters = true
+                records = true
+                daos = false
+
+                kotlinNotNullPojoAttributes = true
+                kotlinNotNullRecordAttributes = true
+                kotlinNotNullInterfaceAttributes = true
+            }
+
+            target {
+                packageName = JooqLibs.TARGET_PACKAGE_NAME
+                directory = layout.buildDirectory.dir(JooqLibs.DEFAULT_DIRECTORY).get().asFile.path
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir layout.buildDirectory.dir(JooqLibs.DEFAULT_DIRECTORY).get().asFile.path
+        }
+    }
+}

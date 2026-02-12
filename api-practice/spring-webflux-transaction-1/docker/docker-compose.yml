@@ -1,0 +1,19 @@
+version: "3.9"
+
+name: dev-lkdcode-transaction
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: lkdcode-tx-postgreSQL
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: lkdcode
+      POSTGRES_PASSWORD: lkdcode
+      POSTGRES_DB: lkdcode-tx
+    ports:
+      - "15432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
