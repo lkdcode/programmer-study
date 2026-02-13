@@ -15,6 +15,8 @@ spring:
 logging:
   level:
     io.r2dbc.postgresql: DEBUG
+    io.r2dbc.postgresql.QUERY: DEBUG
+    io.r2dbc.postgresql.client: DEBUG
     io.r2dbc.pool: DEBUG
     org.mongodb.driver.connection: DEBUG
     org.springframework.r2dbc: DEBUG

@@ -5,8 +5,6 @@ CREATE TABLE IF NOT EXISTS kiwi (
 
 INSERT INTO public.kiwi("name")
 VALUES
-('APPLE'),
 ('BANANA'),
-('KIWI'),
-('MANGO')
+('KIWI')
 ;
