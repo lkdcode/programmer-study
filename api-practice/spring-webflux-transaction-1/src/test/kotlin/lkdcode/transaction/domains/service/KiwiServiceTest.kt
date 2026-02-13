@@ -1,4 +1,4 @@
-package lkdcode.transaction.domains.api
+package lkdcode.transaction.domains.service
 
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.extensions.spring.SpringExtension
@@ -9,10 +9,6 @@ import lkdcode.transaction.config.SpyConnectionFactoryConfig
 import lkdcode.transaction.config.TestContainersConfig
 import lkdcode.transaction.domains.model.KiwiR2dbcEntity
 import lkdcode.transaction.domains.repository.KiwiR2dbcRepository
-import lkdcode.transaction.domains.service.KiwiNoBridgeService
-import lkdcode.transaction.domains.service.KiwiNoContextNoSubscriberService
-import lkdcode.transaction.domains.service.KiwiNoSubscriberService
-import lkdcode.transaction.domains.service.KiwiService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
