@@ -10,22 +10,22 @@ import org.springframework.context.annotation.Import
 
 @SpringBootTest
 @Import(TestContainersConfig::class)
-class JooqDslNoContextNoSubscriberTest : PidVerificationSpec() {
+class JooqDslNoSPITest : PidVerificationSpec() {
 
     @Autowired
-    @Qualifier("jooqDslNoContextNoSubscriber")
-    lateinit var jooqDslNoContextNoSubscriber: DSLContext
+    @Qualifier("jooqDslNoSPI")
+    lateinit var jooqDslNoSPI: DSLContext
 
     init {
-        Given("ContextAware + Subscriber 없는 DSLContext — TransactionAwareProxy 만 있음") {
-            Then("R2DBC 와 다른 PID → Context 전파 불가로 별도 커넥션을 획득한다") {
+        Given("Proxy 만 있고 SPI 없는 DSLContext") {
+            Then("R2DBC 와 다른 PID → Reactor Context 전파 실패로 별도 커넥션을 획득한다") {
                 val tuple = transactionalOperator
-                    .transactional(r2dbcPid().zipWith(jooqPid(jooqDslNoContextNoSubscriber)))
+                    .transactional(r2dbcPid().zipWith(jooqPid(jooqDslNoSPI)))
                     .block()!!
 
                 val r2dbcPid = tuple.t1
                 val jooqPid = tuple.t2
-                println("▶ [NoCtx+NoSub] R2DBC PID=$r2dbcPid, jOOQ PID=$jooqPid")
+                println("▶ [NoSPI] R2DBC PID=$r2dbcPid, jOOQ PID=$jooqPid")
 
                 r2dbcPid shouldNotBe jooqPid
             }

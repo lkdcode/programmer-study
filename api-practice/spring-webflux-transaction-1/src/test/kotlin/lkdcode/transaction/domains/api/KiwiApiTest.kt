@@ -8,8 +8,7 @@ import lkdcode.transaction.config.TestContainersConfig
 import lkdcode.transaction.domains.model.KiwiR2dbcEntity
 import lkdcode.transaction.domains.repository.KiwiR2dbcRepository
 import lkdcode.transaction.domains.service.KiwiNoBridgeService
-import lkdcode.transaction.domains.service.KiwiNoContextNoSubscriberService
-import lkdcode.transaction.domains.service.KiwiNoSubscriberService
+import lkdcode.transaction.domains.service.KiwiNoSPIService
 import lkdcode.transaction.domains.service.KiwiService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -32,10 +31,7 @@ class KiwiApiTest : BehaviorSpec() {
     lateinit var kiwiNoBridgeService: KiwiNoBridgeService
 
     @Autowired
-    lateinit var kiwiNoSubscriberService: KiwiNoSubscriberService
-
-    @Autowired
-    lateinit var kiwiNoContextNoSubscriberService: KiwiNoContextNoSubscriberService
+    lateinit var kiwiNoSPIService: KiwiNoSPIService
 
     private fun seedData() {
         kiwiR2dbcRepository.deleteAll()
@@ -52,7 +48,7 @@ class KiwiApiTest : BehaviorSpec() {
 
         Given("apple 2건, banana 1건이 저장된 상태에서") {
 
-            When("KiwiService — Proxy + ContextAware + Subscriber 모두 갖춘 DSLContext") {
+            When("KiwiService — Proxy + SPI 모두 갖춘 DSLContext") {
                 Then("R2DBC 트랜잭션에 참여하여 미커밋 DELETE 가 반영된 결과를 조회한다") {
                     val result = kiwiService.deleteByNameThenFindAll("apple").block()!!
 
@@ -61,7 +57,7 @@ class KiwiApiTest : BehaviorSpec() {
                 }
             }
 
-            When("KiwiNoBridgeService — 브릿지 없는 DSLContext") {
+            When("KiwiNoBridgeService — Proxy, SPI 모두 없는 DSLContext") {
                 Then("R2DBC 트랜잭션에 참여하지 못해 DELETE 이전 데이터를 조회한다") {
                     val result = kiwiNoBridgeService.deleteByNameThenFindAll("apple").block()!!
 
@@ -70,18 +66,9 @@ class KiwiApiTest : BehaviorSpec() {
                 }
             }
 
-            When("KiwiNoSubscriberService — SubscriberProvider 없는 DSLContext") {
+            When("KiwiNoSPIService — Proxy 만 있고 SPI 없는 DSLContext") {
                 Then("Reactor Context 전파 실패로 R2DBC 트랜잭션에 참여하지 못한다") {
-                    val result = kiwiNoSubscriberService.deleteByNameThenFindAll("apple").block()!!
-
-                    result shouldHaveSize 3
-                    result.count { it.name == "apple" } shouldBe 2
-                }
-            }
-
-            When("KiwiNoContextNoSubscriberService — ContextAware·Subscriber 없는 DSLContext") {
-                Then("R2DBC 트랜잭션에 참여하지 못한다") {
-                    val result = kiwiNoContextNoSubscriberService.deleteByNameThenFindAll("apple").block()!!
+                    val result = kiwiNoSPIService.deleteByNameThenFindAll("apple").block()!!
 
                     result shouldHaveSize 3
                     result.count { it.name == "apple" } shouldBe 2

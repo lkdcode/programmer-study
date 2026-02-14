@@ -33,10 +33,7 @@ class KiwiServiceTest : BehaviorSpec() {
     lateinit var kiwiNoBridgeService: KiwiNoBridgeService
 
     @Autowired
-    lateinit var kiwiNoSubscriberService: KiwiNoSubscriberService
-
-    @Autowired
-    lateinit var kiwiNoContextNoSubscriberService: KiwiNoContextNoSubscriberService
+    lateinit var kiwiNoSPIService: KiwiNoSPIService
 
     private val spy: ConnectionFactorySpy
         get() = connectionFactory as ConnectionFactorySpy
@@ -59,38 +56,29 @@ class KiwiServiceTest : BehaviorSpec() {
 
         Given("Service 실행 중 ConnectionFactory.create() 호출 횟수로 커넥션 공유 여부를 확인하면") {
 
-            When("KiwiService — Bridge 가 있는 DSLContext") {
+            When("KiwiService — Proxy + SPI 모두 갖춘 DSLContext") {
                 Then("create() 1회: 트랜잭션 커넥션을 공유하므로 새 커넥션을 획득하지 않는다") {
                     kiwiService.deleteByNameThenFindAll("apple").block()
 
-                    println("▶ [Bridge O] acquireCount = ${spy.acquireCount()}")
+                    println("▶ [Proxy+SPI] acquireCount = ${spy.acquireCount()}")
                     spy.acquireCount() shouldBe 1
                 }
             }
 
-            When("KiwiNoBridgeService — Bridge 가 없는 DSLContext") {
+            When("KiwiNoBridgeService — Proxy, SPI 모두 없는 DSLContext") {
                 Then("create() 2회: jOOQ 가 별도 커넥션을 새로 획득한다") {
                     kiwiNoBridgeService.deleteByNameThenFindAll("apple").block()
 
-                    println("▶ [Bridge X] acquireCount = ${spy.acquireCount()}")
+                    println("▶ [NoBridge] acquireCount = ${spy.acquireCount()}")
                     spy.acquireCount() shouldBe 2
                 }
             }
 
-            When("KiwiNoSubscriberService — Subscriber 없는 DSLContext") {
+            When("KiwiNoSPIService — Proxy 만 있고 SPI 없는 DSLContext") {
                 Then("create() 2회: Reactor Context 전파 실패로 별도 커넥션을 획득한다") {
-                    kiwiNoSubscriberService.deleteByNameThenFindAll("apple").block()
+                    kiwiNoSPIService.deleteByNameThenFindAll("apple").block()
 
-                    println("▶ [NoSubscriber] acquireCount = ${spy.acquireCount()}")
-                    spy.acquireCount() shouldBe 2
-                }
-            }
-
-            When("KiwiNoContextNoSubscriberService — ContextAware·Subscriber 없는 DSLContext") {
-                Then("create() 2회: 별도 커넥션을 획득한다") {
-                    kiwiNoContextNoSubscriberService.deleteByNameThenFindAll("apple").block()
-
-                    println("▶ [NoCtx+NoSub] acquireCount = ${spy.acquireCount()}")
+                    println("▶ [NoSPI] acquireCount = ${spy.acquireCount()}")
                     spy.acquireCount() shouldBe 2
                 }
             }

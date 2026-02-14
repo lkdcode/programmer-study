@@ -15,7 +15,7 @@ class JooqDslTest : PidVerificationSpec() {
     lateinit var jooqDsl: DSLContext
 
     init {
-        Given("Bridge 완전체(TransactionAwareProxy + ContextAware + Subscriber) DSLContext") {
+        Given("Proxy + SPI 모두 갖춘 DSLContext") {
             Then("R2DBC 와 같은 PID → 같은 커넥션을 공유한다") {
                 val tuple = transactionalOperator
                     .transactional(r2dbcPid().zipWith(jooqPid(jooqDsl)))
@@ -23,7 +23,7 @@ class JooqDslTest : PidVerificationSpec() {
 
                 val r2dbcPid = tuple.t1
                 val jooqPid = tuple.t2
-                println("▶ [Bridge O] R2DBC PID=$r2dbcPid, jOOQ PID=$jooqPid")
+                println("▶ [Proxy+SPI] R2DBC PID=$r2dbcPid, jOOQ PID=$jooqPid")
 
                 r2dbcPid shouldBe jooqPid
             }

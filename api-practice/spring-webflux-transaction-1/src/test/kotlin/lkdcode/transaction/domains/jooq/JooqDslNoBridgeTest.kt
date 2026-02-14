@@ -17,7 +17,7 @@ class JooqDslNoBridgeTest : PidVerificationSpec() {
     lateinit var jooqDslNoBridge: DSLContext
 
     init {
-        Given("Bridge 없는 DSLContext — TransactionAwareProxy, ContextAware, Subscriber 모두 없음") {
+        Given("Proxy, SPI 모두 없는 DSLContext") {
             Then("R2DBC 와 다른 PID → 별도 커넥션을 획득한다") {
                 val tuple = transactionalOperator
                     .transactional(r2dbcPid().zipWith(jooqPid(jooqDslNoBridge)))
