@@ -26,9 +26,5 @@ class KiwiJooqNoBridgeRepository(@Qualifier("jooqDslNoBridge") dsl: DSLContext) 
     KiwiJooqRepository(dsl)
 
 @Repository
-class KiwiJooqNoSubscriberRepository(@Qualifier("jooqDslNoSubscriber") dsl: DSLContext) :
-    KiwiJooqRepository(dsl)
-
-@Repository
-class KiwiJooqNoContextNoSubscriberRepository(@Qualifier("jooqDslNoContextNoSubscriber") dsl: DSLContext) :
+class KiwiJooqNoSPIRepository(@Qualifier("jooqDslNoSPI") dsl: DSLContext) :
     KiwiJooqRepository(dsl)

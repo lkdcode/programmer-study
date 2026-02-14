@@ -1,4 +1,4 @@
-package lkdcode.transaction.config
+package lkdcode.transaction.config.jooq
 
 import org.jooq.DSLContext
 import org.jooq.SQLDialect
@@ -10,16 +10,13 @@ import org.jooq.tools.LoggerListener
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.r2dbc.connection.R2dbcTransactionManager
-import org.springframework.r2dbc.connection.TransactionAwareConnectionFactoryProxy
 
 @Configuration
-class JooqNoSubscriberConfig {
+class JooqNoBridgeConfig {
 
     @Bean
-    fun jooqDslNoSubscriber(tm: R2dbcTransactionManager): DSLContext {
+    fun jooqDslNoBridge(tm: R2dbcTransactionManager): DSLContext {
         val originalFactory = tm.connectionFactory!!
-        val transactionAwareProxy = TransactionAwareConnectionFactoryProxy(originalFactory)
-        val jooqWrapperFactory = JooqContextAwareConnectionFactory(transactionAwareProxy)
 
         val settings = Settings()
             .withRenderFormatted(true)
@@ -27,7 +24,7 @@ class JooqNoSubscriberConfig {
 
         return DSL.using(
             DefaultConfiguration()
-                .set(jooqWrapperFactory)
+                .set(originalFactory)
                 .set(SQLDialect.POSTGRES)
                 .set(settings)
                 .set(DefaultExecuteListenerProvider(LoggerListener()))
