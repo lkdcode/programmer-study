@@ -1,0 +1,4 @@
+dependencies {
+    implementation(KafkaLibs.KAFKA)
+    implementation(KafkaLibs.REACTOR_KAFKA)
+}
