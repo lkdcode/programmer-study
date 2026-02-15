@@ -1,10 +1,10 @@
 version: "3.9"
 
-name: hiveworks-infrastructure
+name: lkdcode-kafka
 services:
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui
+    container_name: lkdcode-kafka-ui
     ports:
       - "18085:8080"
     environment:
@@ -15,7 +15,7 @@ services:
 
   kafka:
     image: apache/kafka-native:4.1.0   # 또는 apache/kafka:4.1.0
-    container_name: hiveworks-kafka
+    container_name: lkdcode-kafka
     ports:
       - "19092:9092"
     environment:
