@@ -5,5 +5,7 @@ import dev.lkdcode.kafka.domains.domain.model.TomatoVo
 import reactor.core.publisher.Mono
 
 interface SendTomatoUsecase {
-    fun send(tomato: TomatoVo): Mono<TomatoDto>
+    fun sendReliable(tomato: TomatoVo): Mono<TomatoDto>
+    fun sendHighThroughput(tomato: TomatoVo): Mono<TomatoDto>
+    fun sendFireAndForget(tomato: TomatoVo): Mono<TomatoDto>
 }
