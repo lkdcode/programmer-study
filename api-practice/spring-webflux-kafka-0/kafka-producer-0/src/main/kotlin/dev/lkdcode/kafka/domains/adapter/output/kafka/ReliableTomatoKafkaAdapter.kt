@@ -19,7 +19,7 @@ class ReliableTomatoKafkaAdapter(
         reliableKafkaProducer
             .send(
                 KafkaTopic.TOMATO,
-                tomato.color.name,
+                tomato.name,
                 objectMapper.writeValueAsString(tomato),
             )
             .map { result ->

@@ -3,7 +3,7 @@ server:
 
 spring:
   kafka:
-    bootstrap-servers: 127.0.0.1:19092,127.0.0.1:19094,127.0.0.1:19095
+    bootstrap-servers: 127.0.0.1:29092,127.0.0.1:29094,127.0.0.1:29095
     producer:
       acks: all
       retries: 3
