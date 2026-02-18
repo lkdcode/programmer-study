@@ -1,0 +1,17 @@
+[
+  {
+    "name": "kafka-1",
+    "listen": "0.0.0.0:29092",
+    "upstream": "kafka-1:9092"
+  },
+  {
+    "name": "kafka-2",
+    "listen": "0.0.0.0:29094",
+    "upstream": "kafka-2:9092"
+  },
+  {
+    "name": "kafka-3",
+    "listen": "0.0.0.0:29095",
+    "upstream": "kafka-3:9092"
+  }
+]
