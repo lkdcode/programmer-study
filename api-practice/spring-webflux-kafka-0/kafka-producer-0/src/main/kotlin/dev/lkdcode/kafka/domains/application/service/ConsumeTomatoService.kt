@@ -7,7 +7,8 @@ import reactor.core.publisher.Mono
 import java.time.Duration
 
 @Service
-class ConsumeTomatoService : ConsumeTomatoUsecase {
+class ConsumeTomatoService(
+) : ConsumeTomatoUsecase {
 
     private val log = LoggerFactory.getLogger(this::class.java)
 
@@ -25,4 +26,8 @@ class ConsumeTomatoService : ConsumeTomatoUsecase {
     override fun consumeFail(value: String): Mono<Void> =
         Mono.delay(Duration.ofSeconds(5))
             .then(Mono.error(RuntimeException("consume failed: $value")))
+
+    override fun consumeFail(values: List<String>): Mono<Void> =
+        Mono.delay(Duration.ofSeconds(5))
+            .then(Mono.error(RuntimeException("consume failed: $values")))
 }

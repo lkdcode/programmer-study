@@ -20,7 +20,7 @@ class TomatoReplayListener(
         containerFactory = KafkaConsumerFactory.REPLAY,
     )
     fun listen(record: ConsumerRecord<String, String>, ack: Acknowledgment) {
-        consumeTomatoUsecase.consumeSuccess(record.value()).block()
+        consumeTomatoUsecase.consumeFail(record.value()).block()
         ack.acknowledge()
     }
 }

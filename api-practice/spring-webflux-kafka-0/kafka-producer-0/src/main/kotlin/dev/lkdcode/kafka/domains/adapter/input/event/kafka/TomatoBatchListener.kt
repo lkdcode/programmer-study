@@ -20,7 +20,7 @@ class TomatoBatchListener(
         containerFactory = KafkaConsumerFactory.BATCH,
     )
     fun listen(records: List<ConsumerRecord<String, String>>, ack: Acknowledgment) {
-        consumeTomatoUsecase.consumeSuccessBatch(records.map { it.value() }).block()
+        consumeTomatoUsecase.consumeFail(records.map { it.value() }).block()
         ack.acknowledge()
     }
 }
