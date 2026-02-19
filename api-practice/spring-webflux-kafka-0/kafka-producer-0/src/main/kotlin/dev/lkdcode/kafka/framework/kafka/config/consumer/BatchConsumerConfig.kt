@@ -34,12 +34,12 @@ class BatchConsumerConfig(
             TopicPartition(KafkaTopic.TOMATO_BATCH_DLQ, record.partition())
         }
 
-        val factory = ConcurrentKafkaListenerContainerFactory<String, String>()
-        factory.consumerFactory = DefaultKafkaConsumerFactory(props)
-        factory.isBatchListener = true
-        factory.containerProperties.ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE
-        factory.setCommonErrorHandler(DefaultErrorHandler(recoverer, FixedBackOff(3_000L, 3)))
-
-        return factory
+        return ConcurrentKafkaListenerContainerFactory<String, String>().apply {
+            consumerFactory = DefaultKafkaConsumerFactory(props)
+            isBatchListener = true
+            setConcurrency(3)
+            containerProperties.ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE
+            setCommonErrorHandler(DefaultErrorHandler(recoverer, FixedBackOff(3_000L, 3)))
+        }
     }
 }

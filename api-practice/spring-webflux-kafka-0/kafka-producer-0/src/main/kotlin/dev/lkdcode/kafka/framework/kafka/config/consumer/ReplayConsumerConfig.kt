@@ -35,12 +35,12 @@ class ReplayConsumerConfig(
             TopicPartition(KafkaTopic.TOMATO_REPLAY_DLQ, record.partition())
         }
 
-        val factory = ConcurrentKafkaListenerContainerFactory<String, String>()
-        factory.consumerFactory = DefaultKafkaConsumerFactory(props)
-        factory.containerProperties.ackMode = ContainerProperties.AckMode.MANUAL
-        factory.setCommonErrorHandler(DefaultErrorHandler(recoverer, FixedBackOff(3_000L, 3)))
-        factory.setRecordMessageConverter(StringJsonMessageConverter(objectMapper))
-
-        return factory
+        return ConcurrentKafkaListenerContainerFactory<String, String>().apply {
+            consumerFactory = DefaultKafkaConsumerFactory(props)
+            containerProperties.ackMode = ContainerProperties.AckMode.MANUAL
+            setConcurrency(1)
+            setCommonErrorHandler(DefaultErrorHandler(recoverer, FixedBackOff(3_000L, 3)))
+            setRecordMessageConverter(StringJsonMessageConverter(objectMapper))
+        }
     }
 }
