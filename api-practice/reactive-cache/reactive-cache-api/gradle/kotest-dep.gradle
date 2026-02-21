@@ -1,0 +1,7 @@
+dependencies {
+    testImplementation(KotestLibs.RUNNER_JUNIT5)
+    testImplementation(KotestLibs.ASSERTIONS_CORE)
+    testImplementation(KotestLibs.MOCKK)
+    testImplementation(KotestLibs.EXTENSIONS_SPRING)
+    testImplementation(KotestLibs.TESTCONTAINERS)
+}

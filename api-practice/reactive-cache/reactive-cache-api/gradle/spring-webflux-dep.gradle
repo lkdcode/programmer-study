@@ -6,4 +6,7 @@ dependencies {
     implementation(SpringWebFluxLibs.REACTIVE_STREAMS)
     implementation(SpringWebFluxLibs.REACTOR_CORE)
     implementation(SpringWebFluxLibs.NETTY_WITH_MAC_OS_AARCH)
+
+    testImplementation(SpringWebFluxLibs.TEST)
+    testImplementation(SpringWebFluxLibs.REACTOR_TEST)
 }

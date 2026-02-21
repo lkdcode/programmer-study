@@ -9,6 +9,7 @@ plugins {
 apply {
     from(SpringWebFluxLibs.PATH)
     from(KotlinLibs.PATH)
+    from(KotestLibs.PATH)
 }
 
 dependencies {
@@ -17,3 +18,7 @@ dependencies {
 
 tasks.bootJar { enabled = false }
 tasks.jar { enabled = true }
+
+tasks.test {
+    useJUnitPlatform()
+}
