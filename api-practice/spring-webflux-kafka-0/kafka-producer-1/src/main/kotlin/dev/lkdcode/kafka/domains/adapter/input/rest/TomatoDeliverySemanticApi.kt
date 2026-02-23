@@ -4,6 +4,7 @@ import dev.lkdcode.kafka.domains.application.dto.TomatoDto
 import dev.lkdcode.kafka.domains.application.dto.TomatoDtoList
 import dev.lkdcode.kafka.domains.application.usecase.SendTomatoAtLeastOnceUsecase
 import dev.lkdcode.kafka.domains.application.usecase.SendTomatoAtMostOnceUsecase
+import dev.lkdcode.kafka.domains.application.usecase.SendTomatoIdempotentUsecase
 import dev.lkdcode.kafka.domains.application.usecase.SendTomatoTransactionalUsecase
 import dev.lkdcode.kafka.domains.domain.model.TomatoColor
 import dev.lkdcode.kafka.domains.domain.model.TomatoVo
@@ -18,9 +19,10 @@ class TomatoDeliverySemanticApi(
     private val sendTomatoTransactionalUsecase: SendTomatoTransactionalUsecase,
     private val sendTomatoAtLeastOnceUsecase: SendTomatoAtLeastOnceUsecase,
     private val sendTomatoAtMostOnceUsecase: SendTomatoAtMostOnceUsecase,
+    private val sendTomatoIdempotentUsecase: SendTomatoIdempotentUsecase,
 ) {
 
-    @PostMapping("/tomato/exactly-once")
+    @PostMapping("/tomato/transactional")
     fun sendExactlyOnce(@RequestParam count: Int): Mono<TomatoDtoList> =
         sendTomatoTransactionalUsecase
             .send(buildTomatoList("exactly-once", count))
@@ -34,6 +36,11 @@ class TomatoDeliverySemanticApi(
     fun sendAtMostOnce(@RequestParam count: Int): Flux<TomatoDto> =
         Flux.fromIterable(buildTomatoList("at-most-once", count))
             .flatMap { sendTomatoAtMostOnceUsecase.send(it) }
+
+    @PostMapping("/tomato/idempotent")
+    fun sendIdempotent(@RequestParam count: Int): Flux<TomatoDto> =
+        Flux.fromIterable(buildTomatoList("idempotent", count))
+            .flatMap { sendTomatoIdempotentUsecase.send(it) }
 
     private fun buildTomatoList(prefix: String, count: Int): List<TomatoVo> {
         val colors = TomatoColor.entries
