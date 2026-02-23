@@ -14,11 +14,13 @@ class TransactionalTomatoKafkaAdapter(
     private val exactlyOnceKafkaProducer: TransactionalKafkaProducer,
 ) : TransactionalTomatoProducerPort {
 
-    override fun sendInTransaction(tomatoList: List<TomatoVo>): Mono<TomatoDtoList> {
-        val records = tomatoList.map { tomato -> tomato.name to tomato }
+    override fun sendInTransaction(tomatoList: List<TomatoVo>): Mono<TomatoDtoList> =
+        exactlyOnceKafkaProducer
+            .sendInTransaction(
+                records = tomatoList,
+                topic = KafkaTopic.TOMATO,
+                keySelector = { it.name }
 
-        return exactlyOnceKafkaProducer
-            .sendInTransaction(records, KafkaTopic.TOMATO)
+            )
             .map { it.convert() }
-    }
 }

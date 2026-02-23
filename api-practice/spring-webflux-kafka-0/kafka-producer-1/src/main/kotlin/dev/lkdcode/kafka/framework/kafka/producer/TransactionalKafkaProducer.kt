@@ -15,20 +15,24 @@ class TransactionalKafkaProducer(
     private val objectMapper: ObjectMapper,
 ) {
 
-    fun sendInTransaction(records: List<Pair<String, Any>>, topic: String): Mono<List<SenderResult<Void>>> {
+    fun <T> sendInTransaction(
+        records: List<T>,
+        topic: String,
+        keySelector: (T) -> String
+    ): Mono<List<SenderResult<Void>>> {
         val senderRecords = Flux
             .fromIterable(records)
-            .map { it.toSenderRecord(topic) }
+            .map { payload ->
+                val key = keySelector(payload)
+
+                SenderRecord.create<String, String, Void>(
+                    ProducerRecord(topic, key, objectMapper.writeValueAsString(payload)), null
+                )
+            }
 
         return exactlyOnceKafkaSender
             .sendTransactionally(Mono.just(senderRecords))
             .flatMap { it }
             .collectList()
     }
-
-    private fun Pair<String, Any>.toSenderRecord(topic: String): SenderRecord<String, String, Void> =
-        SenderRecord.create(
-            ProducerRecord<String, String>(topic, this.first, objectMapper.writeValueAsString(this.second)),
-            null,
-        )
 }
