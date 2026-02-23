@@ -1,5 +1,6 @@
 package dev.lkdcode.kafka.framework.kafka.producer
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.kafka.core.reactive.ReactiveKafkaProducerTemplate
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
@@ -8,8 +9,9 @@ import reactor.kafka.sender.SenderResult
 @Component
 class ReliableKafkaProducer(
     private val reliableProducerTemplate: ReactiveKafkaProducerTemplate<String, String>,
+    private val objectMapper: ObjectMapper,
 ) {
 
-    fun send(topic: String, key: String, value: String): Mono<SenderResult<Void>> =
-        reliableProducerTemplate.send(topic, key, value)
+    fun send(topic: String, key: String, value: Any): Mono<SenderResult<Void>> =
+        reliableProducerTemplate.send(topic, key, objectMapper.writeValueAsString(value))
 }
