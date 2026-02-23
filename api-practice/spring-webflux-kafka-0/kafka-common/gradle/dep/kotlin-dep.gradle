@@ -1,0 +1,20 @@
+dependencies {
+    implementation(KotlinLibs.JACKSON_MODULE_KOTLIN)
+    implementation(KotlinLibs.KOTLIN_REFLECT)
+    implementation(KotlinLibs.COROUTINES)
+    implementation(KotlinLibs.COROUTINES_REACTOR)
+
+    testImplementation(KotlinLibs.KOTEST_RUNNER)
+    testImplementation(KotlinLibs.KOTEST_ASSERTIONS)
+    testImplementation(KotlinLibs.KOTEST_SPRING)
+}
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll(KotlinLibs.JSR305_STRICT_MODE)
+    }
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
