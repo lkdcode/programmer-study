@@ -12,3 +12,7 @@ apply {
     from(KotlinLibs.PATH)
     from(KafkaLibs.PATH)
 }
+
+dependencies {
+    implementation(project(":kafka-common"))
+}
