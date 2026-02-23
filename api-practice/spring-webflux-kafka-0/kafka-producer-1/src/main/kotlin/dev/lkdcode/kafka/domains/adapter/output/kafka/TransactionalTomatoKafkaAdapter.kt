@@ -1,0 +1,24 @@
+package dev.lkdcode.kafka.domains.adapter.output.kafka
+
+import dev.lkdcode.kafka.domains.adapter.output.kafka.mapper.convert
+import dev.lkdcode.kafka.domains.application.dto.TomatoDtoList
+import dev.lkdcode.kafka.domains.application.port.output.TransactionalTomatoProducerPort
+import dev.lkdcode.kafka.domains.domain.model.TomatoVo
+import dev.lkdcode.kafka.framework.kafka.producer.ExactlyOnceKafkaProducer
+import dev.lkdcode.kafka.framework.kafka.topic.KafkaTopic
+import org.springframework.stereotype.Component
+import reactor.core.publisher.Mono
+
+@Component
+class TransactionalTomatoKafkaAdapter(
+    private val exactlyOnceKafkaProducer: ExactlyOnceKafkaProducer,
+) : TransactionalTomatoProducerPort {
+
+    override fun sendInTransaction(tomatoList: List<TomatoVo>): Mono<TomatoDtoList> {
+        val records = tomatoList.map { tomato -> tomato.name to tomato }
+
+        return exactlyOnceKafkaProducer
+            .sendInTransaction(records, KafkaTopic.TOMATO)
+            .map { it.convert() }
+    }
+}

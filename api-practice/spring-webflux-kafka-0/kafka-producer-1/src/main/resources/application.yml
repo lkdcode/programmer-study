@@ -1,0 +1,13 @@
+server:
+  port: 18082
+
+spring:
+  kafka:
+    bootstrap-servers: 127.0.0.1:29092,127.0.0.1:29094,127.0.0.1:29095
+    producer:
+      acks: all
+      retries: 3
+
+logging:
+  level:
+    org.springframework.kafka: INFO
