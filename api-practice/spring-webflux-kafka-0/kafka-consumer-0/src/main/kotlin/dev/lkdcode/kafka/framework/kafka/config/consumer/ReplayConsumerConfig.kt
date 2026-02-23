@@ -17,28 +17,28 @@ import org.springframework.kafka.support.converter.StringJsonMessageConverter
 import org.springframework.util.backoff.FixedBackOff
 
 @Configuration
-class RealtimeConsumerConfig(
+class ReplayConsumerConfig(
     private val kafkaConsumerProps: KafkaConsumerProps,
     private val objectMapper: ObjectMapper,
     private val dlqKafkaTemplate: KafkaTemplate<String, String>,
 ) {
 
     @Bean
-    fun realtimeKafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, String> {
+    fun replayKafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, String> {
         val props = kafkaConsumerProps.base() + mapOf(
-            ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "latest",
-            ConsumerConfig.MAX_POLL_RECORDS_CONFIG to 100,
-            ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG to 30_000,
+            ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
+            ConsumerConfig.MAX_POLL_RECORDS_CONFIG to 500,
+            ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG to 60_000,
         )
 
         val recoverer = DeadLetterPublishingRecoverer(dlqKafkaTemplate) { record, _ ->
-            TopicPartition(KafkaTopic.TOMATO_REALTIME_DLQ, record.partition())
+            TopicPartition(KafkaTopic.TOMATO_REPLAY_DLQ, record.partition())
         }
 
         return ConcurrentKafkaListenerContainerFactory<String, String>().apply {
             consumerFactory = DefaultKafkaConsumerFactory(props)
             containerProperties.ackMode = ContainerProperties.AckMode.MANUAL
-            setConcurrency(3)
+            setConcurrency(1)
             setCommonErrorHandler(DefaultErrorHandler(recoverer, FixedBackOff(3_000L, 3)))
             setRecordMessageConverter(StringJsonMessageConverter(objectMapper))
         }

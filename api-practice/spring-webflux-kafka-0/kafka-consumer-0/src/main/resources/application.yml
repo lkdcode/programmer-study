@@ -1,0 +1,10 @@
+server:
+  port: 18081
+
+spring:
+  kafka:
+    bootstrap-servers: 127.0.0.1:29092,127.0.0.1:29094,127.0.0.1:29095
+
+logging:
+  level:
+    org.springframework.kafka: INFO
