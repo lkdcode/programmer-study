@@ -1,0 +1,11 @@
+server:
+  port: 18087
+
+kafka:
+  acl:
+    bootstrap-servers: 127.0.0.1:39092
+
+logging:
+  level:
+    org.springframework.kafka: INFO
+    org.apache.kafka: WARN
