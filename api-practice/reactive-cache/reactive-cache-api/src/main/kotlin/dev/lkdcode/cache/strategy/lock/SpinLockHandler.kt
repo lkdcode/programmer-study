@@ -24,27 +24,18 @@ class SpinLockHandler(
                     .onErrorResume { e -> unlock(primaryKey, token).then(Mono.error(e)) }
             }
             .switchIfEmpty(Mono.defer {
-                spinRetryMono(primaryKey, executeAndSave, readFromCache)
+                spinRetryMono(executeAndSave, readFromCache)
             })
 
     private fun spinRetryMono(
-        primaryKey: String,
         executeAndSave: () -> Mono<Any>,
         readFromCache: () -> Mono<Any>,
-        retryCount: Int = 0,
     ): Mono<Any> =
-        Mono
-            .delay(RETRY_DELAY)
-            .flatMap { readFromCache() }
-            .switchIfEmpty(
-                Mono.defer {
-                    if (retryCount < MAX_RETRY) {
-                        spinRetryMono(primaryKey, executeAndSave, readFromCache, retryCount + 1)
-                    } else {
-                        executeAndSave()
-                    }
-                }
-            )
+        Flux.interval(RETRY_DELAY)
+            .take(MAX_RETRY.toLong())
+            .concatMap { readFromCache() }
+            .next()
+            .switchIfEmpty(Mono.defer { executeAndSave() })
 
     override fun handleFluxCacheMiss(
         primaryKey: String,
@@ -61,28 +52,19 @@ class SpinLockHandler(
                     .flatMapMany { Flux.fromIterable(it) }
             }
             .switchIfEmpty(Flux.defer {
-                spinRetryFlux(primaryKey, executeAndSave, readFromCache)
+                spinRetryFlux(executeAndSave, readFromCache)
             })
 
     private fun spinRetryFlux(
-        primaryKey: String,
         executeAndSave: () -> Flux<Any>,
         readFromCache: () -> Mono<Any>,
-        retryCount: Int = 0,
     ): Flux<Any> =
-        Mono
-            .delay(RETRY_DELAY)
-            .flatMap { readFromCache() }
+        Flux.interval(RETRY_DELAY)
+            .take(MAX_RETRY.toLong())
+            .concatMap { readFromCache() }
+            .next()
             .flatMapMany { toFlux(it) }
-            .switchIfEmpty(
-                Flux.defer {
-                    if (retryCount < MAX_RETRY) {
-                        spinRetryFlux(primaryKey, executeAndSave, readFromCache, retryCount + 1)
-                    } else {
-                        executeAndSave()
-                    }
-                }
-            )
+            .switchIfEmpty(Flux.defer { executeAndSave() })
 
     override fun refreshInBackground(
         primaryKey: String,
@@ -112,6 +94,6 @@ class SpinLockHandler(
     companion object {
         private val LOCK_TTL = Duration.ofSeconds(10L)
         private val RETRY_DELAY = Duration.ofMillis(50L)
-        private const val MAX_RETRY = 20
+        private val MAX_RETRY = (LOCK_TTL.toMillis() / RETRY_DELAY.toMillis()).toInt()
     }
 }

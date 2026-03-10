@@ -83,7 +83,7 @@ class SpinLockHandlerTest : BehaviorSpec({
                         )
                     }
                     .expectSubscription()
-                    .thenAwait(Duration.ofSeconds(2))
+                    .thenAwait(Duration.ofSeconds(11))
                     .expectNext("fallback")
                     .verifyComplete()
 

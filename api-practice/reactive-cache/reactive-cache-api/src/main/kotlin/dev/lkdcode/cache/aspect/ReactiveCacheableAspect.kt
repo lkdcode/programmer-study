@@ -4,7 +4,9 @@ import dev.lkdcode.cache.annotation.ReactiveCacheable
 import dev.lkdcode.cache.handler.CacheProperty
 import dev.lkdcode.cache.handler.ReactiveCacheConditionHandler
 import dev.lkdcode.cache.handler.ReactiveCachePropertyHandler
+import dev.lkdcode.cache.strategy.LockStrategy
 import dev.lkdcode.cache.strategy.LockStrategyResolver
+import dev.lkdcode.cache.strategy.RefreshStrategy
 import dev.lkdcode.cache.strategy.RefreshStrategyResolver
 import dev.lkdcode.cache.strategy.lock.CacheLockHandler
 import dev.lkdcode.cache.strategy.refresh.CacheRefreshHandler
@@ -12,6 +14,7 @@ import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.reflect.MethodSignature
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -25,11 +28,22 @@ class ReactiveCacheableAspect(
     private val refreshStrategyResolver: RefreshStrategyResolver,
 ) {
 
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     @Around("@annotation(reactiveCacheable)")
     fun handleCacheable(joinPoint: ProceedingJoinPoint, reactiveCacheable: ReactiveCacheable): Any {
         if (conditionHandler.shouldNotCache(joinPoint, reactiveCacheable.condition)) return joinPoint.proceed()
         val prop = propertyHandler.cacheProperty(joinPoint, reactiveCacheable)
         val primaryKey = prop.cacheKeys.first()
+
+        if (prop.refreshStrategy == RefreshStrategy.SOFT_TTL && prop.lockStrategy == LockStrategy.NONE) {
+            logger.warn(
+                "[ReactiveCacheable] SOFT_TTL 갱신 전략과 NONE 락 전략이 함께 사용되고 있습니다. " +
+                        "높은 동시성 환경에서 백그라운드 리프레시 폭주(refresh storm)가 발생할 수 있습니다. " +
+                        "SPIN_LOCK 또는 PUB_SUB 사용을 권장합니다. key={}",
+                primaryKey
+            )
+        }
 
         val lockHandler = lockStrategyResolver.resolve(prop.lockStrategy)
         val refreshHandler = refreshStrategyResolver.resolve(prop.refreshStrategy)
@@ -37,8 +51,22 @@ class ReactiveCacheableAspect(
         val returnType = (joinPoint.signature as MethodSignature).returnType
 
         return when {
-            Mono::class.java.isAssignableFrom(returnType) -> handleMono(primaryKey, prop, lockHandler, refreshHandler, joinPoint)
-            Flux::class.java.isAssignableFrom(returnType) -> handleFlux(primaryKey, prop, lockHandler, refreshHandler, joinPoint)
+            Mono::class.java.isAssignableFrom(returnType) -> handleMono(
+                primaryKey,
+                prop,
+                lockHandler,
+                refreshHandler,
+                joinPoint
+            )
+
+            Flux::class.java.isAssignableFrom(returnType) -> handleFlux(
+                primaryKey,
+                prop,
+                lockHandler,
+                refreshHandler,
+                joinPoint
+            )
+
             else -> joinPoint.proceed()
         }
     }
@@ -126,6 +154,7 @@ class ReactiveCacheableAspect(
                 executeAndSaveFlux(prop, refreshHandler, joinPoint)
                     .collectList()
                     .map { it as Any }
+
             else -> Mono.just(joinPoint.proceed() as Any)
         }
     }

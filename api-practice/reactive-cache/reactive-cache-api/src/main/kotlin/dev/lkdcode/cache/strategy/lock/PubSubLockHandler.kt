@@ -33,7 +33,7 @@ class PubSubLockHandler(
                 readySignal
                     .flatMap { readFromCache() }
                     .switchIfEmpty(Mono.defer { executeAndSave() })
-                    .onErrorResume { executeAndSave() }
+                    .onErrorResume { readFromCache().switchIfEmpty(Mono.defer { executeAndSave() }) }
             })
     }
 
@@ -62,7 +62,11 @@ class PubSubLockHandler(
                     .flatMap { readFromCache() }
                     .flatMapMany { toFlux(it) }
                     .switchIfEmpty(Flux.defer { executeAndSave() })
-                    .onErrorResume { executeAndSave() }
+                    .onErrorResume {
+                        readFromCache()
+                            .flatMapMany { toFlux(it) }
+                            .switchIfEmpty(Flux.defer { executeAndSave() })
+                    }
             })
     }
 

@@ -10,13 +10,15 @@ import org.springframework.data.redis.listener.ReactiveRedisMessageListenerConta
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import java.time.Duration
-import java.util.UUID
+import java.util.*
 
 @Component
 class ReactiveRedisCacheService(
     private val redisOps: ReactiveRedisOperations<String, Any>,
     private val connectionFactory: ReactiveRedisConnectionFactory
 ) : CacheService {
+
+    private val sharedContainer = ReactiveRedisMessageListenerContainer(connectionFactory)
 
     override fun getValue(key: String): Mono<Any> =
         redisOps.opsForValue().get(key)
@@ -71,14 +73,11 @@ class ReactiveRedisCacheService(
         redisOps.convertAndSend(cacheReadyChannel(key), CACHE_READY_MESSAGE)
 
     override fun subscribeCacheReady(key: String, timeout: Duration): Mono<String> {
-        val container = ReactiveRedisMessageListenerContainer(connectionFactory)
         val topic = ChannelTopic.of(cacheReadyChannel(key))
-
-        return container.receive(topic)
+        return sharedContainer.receive(topic)
             .next()
             .map { it.message.toString() }
             .timeout(timeout)
-            .doFinally { container.destroyLater().subscribe() }
     }
 
     private fun lockKey(key: String): String = "$LOCK_PREFIX:$key"

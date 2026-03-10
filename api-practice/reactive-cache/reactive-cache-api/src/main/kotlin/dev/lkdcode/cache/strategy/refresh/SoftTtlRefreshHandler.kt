@@ -1,6 +1,7 @@
 package dev.lkdcode.cache.strategy.refresh
 
 import dev.lkdcode.cache.service.CacheService
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -11,6 +12,8 @@ import java.time.Duration
 class SoftTtlRefreshHandler(
     private val cacheService: CacheService,
 ) : CacheRefreshHandler {
+
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun readMono(
         primaryKey: String,
@@ -66,7 +69,10 @@ class SoftTtlRefreshHandler(
     private fun triggerBackgroundRefresh(onStale: () -> Mono<Void>) {
         onStale()
             .subscribeOn(Schedulers.boundedElastic())
-            .onErrorResume { Mono.empty() }
+            .onErrorResume { e ->
+                logger.warn("[SoftTtlRefresh] 백그라운드 리프레시에 실패, 만료된 데이터 반환", e)
+                Mono.empty()
+            }
             .subscribe()
     }
 }
