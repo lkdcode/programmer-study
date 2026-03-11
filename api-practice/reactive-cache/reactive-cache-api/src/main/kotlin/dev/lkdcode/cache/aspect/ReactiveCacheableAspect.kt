@@ -67,7 +67,15 @@ class ReactiveCacheableAspect(
                 joinPoint
             )
 
-            else -> joinPoint.proceed()
+            else -> {
+                logger.warn(
+                    "[ReactiveCacheable] Mono 또는 Flux가 아닌 반환 타입에는 적용되지 않습니다. " +
+                    "메서드: {}, 반환 타입: {}",
+                    joinPoint.signature.toShortString(),
+                    returnType.simpleName
+                )
+                joinPoint.proceed()
+            }
         }
     }
 

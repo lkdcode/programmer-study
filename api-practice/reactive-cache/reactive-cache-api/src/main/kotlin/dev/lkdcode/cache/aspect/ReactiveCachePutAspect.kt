@@ -9,6 +9,7 @@ import dev.lkdcode.cache.strategy.refresh.CacheRefreshHandler
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -21,6 +22,8 @@ class ReactiveCachePutAspect(
     private val refreshStrategyResolver: RefreshStrategyResolver,
 ) {
 
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     @Around("@annotation(reactiveCachePut)")
     fun handleCachePut(joinPoint: ProceedingJoinPoint, reactiveCachePut: ReactiveCachePut): Any {
         if (conditionHandler.shouldNotCache(joinPoint, reactiveCachePut.condition)) return joinPoint.proceed()
@@ -30,7 +33,15 @@ class ReactiveCachePutAspect(
         return when (val result = joinPoint.proceed()) {
             is Mono<*> -> handleMonoCachePut(result, prop, refreshHandler, joinPoint)
             is Flux<*> -> handleFluxCachePut(result, prop, refreshHandler, joinPoint)
-            else -> result
+            else -> {
+                logger.warn(
+                    "[ReactiveCachePut] Mono 또는 Flux가 아닌 반환 타입에는 적용되지 않습니다. " +
+                    "메서드: {}, 반환 타입: {}",
+                    joinPoint.signature.toShortString(),
+                    result?.javaClass?.simpleName
+                )
+                result
+            }
         }
     }
 

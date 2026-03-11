@@ -19,12 +19,14 @@ class PubSubLockHandler(
         val readySignal = cacheService
             .subscribeCacheReady(primaryKey, SUBSCRIBE_TIMEOUT)
             .cache()
-        val disposable = readySignal.subscribe()
+        // tryLock 전에 구독을 먼저 시작해 Redis SUBSCRIBE 명령을 보낸다.
+        // winner가 READY를 publish하기 전에 loser의 구독이 반드시 완료되어야 신호를 놓치지 않는다.
+        // Disposable을 dispose()할 필요가 없다 — .next()로 1개 수신 후 자동 완료된다.
+        readySignal.subscribe()
 
         cacheService
             .tryLock(primaryKey, LOCK_TTL)
             .flatMap { token ->
-                disposable.dispose()
                 executeAndSave()
                     .flatMap { value -> publishAndUnlock(primaryKey, token).thenReturn(value) }
                     .onErrorResume { e -> unlock(primaryKey, token).then(Mono.error(e)) }
@@ -45,12 +47,11 @@ class PubSubLockHandler(
         val readySignal = cacheService
             .subscribeCacheReady(primaryKey, SUBSCRIBE_TIMEOUT)
             .cache()
-        val disposable = readySignal.subscribe()
+        readySignal.subscribe()
 
         cacheService
             .tryLock(primaryKey, LOCK_TTL)
             .flatMapMany { token ->
-                disposable.dispose()
                 executeAndSave()
                     .collectList()
                     .flatMap { items -> publishAndUnlock(primaryKey, token).thenReturn(items) }

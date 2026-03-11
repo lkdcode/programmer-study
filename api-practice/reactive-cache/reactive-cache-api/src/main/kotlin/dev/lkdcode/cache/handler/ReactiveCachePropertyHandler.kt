@@ -104,8 +104,13 @@ class ReactiveCachePropertyHandler(
     }
 
     private fun resolvePrefixes(joinPoint: ProceedingJoinPoint, cacheNames: Array<String>): List<String> {
-        if (cacheNames.isEmpty()) return listOf(resolvePrefix(joinPoint))
-
+        if (cacheNames.isEmpty()) {
+            throw IllegalStateException(
+                "[ReactiveCacheEvict] allEntries = true 사용 시 cacheNames를 반드시 지정해야 합니다. " +
+                "evict 메서드의 클래스/메서드명은 cacheable 키 prefix와 일치하지 않습니다. " +
+                "메서드: ${joinPoint.signature.name}"
+            )
+        }
         return cacheNames.map { "$it::" }
     }
 

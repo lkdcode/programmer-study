@@ -19,6 +19,10 @@ class SimpleReactiveKeyGenerator(
         val className = target.javaClass.simpleName
         val methodName = method.name
         val keyValue = reactiveCacheArgsParser.keyParse(key, args, paramNames)
+        requireNotNull(keyValue) {
+            "[SimpleReactiveKeyGenerator] 캐시 키가 null입니다. SpEL 표현식을 확인하세요. " +
+            "메서드: $className::$methodName, key 표현식: $key"
+        }
 
         return "$className::$methodName::$keyValue"
     }

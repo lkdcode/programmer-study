@@ -16,6 +16,12 @@ class ObjectMapperConfig {
 
     @Bean
     fun redisTemplateObjectMapper(): ObjectMapper {
+        // TODO: allowIfBaseType(Any::class.java)는 사실상 모든 클래스를 역직렬화 허용한다.
+        //  Redis가 침해된 환경에서 @class 필드 조작을 통한 역직렬화 공격이 가능하다.
+        //  저장 타입이 확정되면 아래처럼 패키지 단위로 제한해야 한다:
+        //  .allowIfSubType("dev.lkdcode.")
+        //  .allowIfSubType("java.util.")
+        //  .allowIfSubType("java.lang.")
         val typeValidator = BasicPolymorphicTypeValidator
             .builder()
             .allowIfBaseType(Any::class.java)

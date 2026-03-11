@@ -1,6 +1,7 @@
 package dev.lkdcode.cache.strategy.refresh
 
 import dev.lkdcode.cache.service.CacheService
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -10,6 +11,8 @@ import java.time.Duration
 class NoneRefreshHandler(
     private val cacheService: CacheService,
 ) : CacheRefreshHandler {
+
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun readMono(
         primaryKey: String,
@@ -49,6 +52,9 @@ class NoneRefreshHandler(
     override fun save(key: String, value: Any, ttl: Duration): Mono<Void> =
         cacheService
             .save(key, value, ttl)
-            .onErrorResume { Mono.empty() }
+            .onErrorResume { e ->
+                logger.warn("[NoneRefreshHandler] 캐시 저장에 실패했습니다. key={}", key, e)
+                Mono.empty()
+            }
             .then()
 }
