@@ -1,5 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# Override root-level lib/ ignore (Python gitignore) — Next.js src/lib is source code
+!src/lib/
+
 # dependencies
 /node_modules
 /.pnp
