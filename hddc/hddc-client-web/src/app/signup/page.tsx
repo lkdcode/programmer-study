@@ -13,7 +13,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { PhoneMockup, BrowserMockup } from "@/components/device-mockup";
-import { EnvelopeSimple, ArrowCounterClockwise } from "@phosphor-icons/react";
+import {
+  EnvelopeSimple,
+  ArrowCounterClockwise,
+  CaretLeft,
+  CaretRight,
+} from "@phosphor-icons/react";
 import {
   validateEmail,
   validateNickname,
@@ -41,6 +46,7 @@ export default function SignupPage() {
   const colorPresets = ["teal", "orange", "blue", "violet", "yellow", "red"] as const;
   const [presetIndex, setPresetIndex] = useState(0);
   const [mockupDark, setMockupDark] = useState(true);
+  const [autoKey, setAutoKey] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -48,7 +54,19 @@ export default function SignupPage() {
       setMockupDark((prev) => !prev);
     }, 3000);
     return () => clearInterval(timer);
-  }, [colorPresets.length]);
+  }, [colorPresets.length, autoKey]);
+
+  function goNext() {
+    setPresetIndex((prev) => (prev + 1) % colorPresets.length);
+    setMockupDark((prev) => !prev);
+    setAutoKey((prev) => prev + 1);
+  }
+
+  function goPrev() {
+    setPresetIndex((prev) => (prev - 1 + colorPresets.length) % colorPresets.length);
+    setMockupDark((prev) => !prev);
+    setAutoKey((prev) => prev + 1);
+  }
 
   // Cooldown timer
   useEffect(() => {
@@ -109,20 +127,33 @@ export default function SignupPage() {
         {/* ─── Left: Branding Panel ─── */}
 
         {/* Desktop: branding with mockups */}
-        <div
-          data-theme={colorPresets[presetIndex]}
-          className={`${mockupDark ? "dark" : ""} hidden lg:flex lg:w-1/2 flex-col items-center justify-center gap-8 rounded-l-2xl bg-gradient-to-br from-[#1a1a2e] to-[#16213e] p-12 text-white transition-colors duration-700`}
-        >
+        <div className="dark hidden lg:flex lg:w-1/2 flex-col items-center justify-center gap-6 rounded-l-2xl bg-gradient-to-br from-[#1a1a2e] to-[#16213e] p-12 text-white">
           <span className="text-2xl font-bold tracking-tight">핫딜닷쿨</span>
-          <div className="flex items-end gap-4 sm:gap-6">
+          <div
+            data-theme={colorPresets[presetIndex]}
+            className={`${mockupDark ? "dark" : ""} flex items-end gap-4 sm:gap-6 transition-colors duration-700`}
+          >
             <PhoneMockup className="w-[140px] transition-colors duration-700" />
             <BrowserMockup className="w-[185px] transition-colors duration-700" />
           </div>
-          <p className="text-center text-sm leading-relaxed opacity-70">
-            하나의 링크,
-            <br />
-            <span className="text-primary">두 개의 완벽한 뷰</span>
-          </p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={goPrev}
+              className="cursor-pointer flex size-7 items-center justify-center rounded-full bg-white/10 text-white/70 transition-colors hover:bg-white/20 hover:text-white"
+            >
+              <CaretLeft className="size-4" />
+            </button>
+            <p className="text-center text-sm leading-relaxed opacity-70">
+              하나의 링크,{" "}
+              <span className="text-primary transition-colors duration-700">두 개의 완벽한 뷰</span>
+            </p>
+            <button
+              onClick={goNext}
+              className="cursor-pointer flex size-7 items-center justify-center rounded-full bg-white/10 text-white/70 transition-colors hover:bg-white/20 hover:text-white"
+            >
+              <CaretRight className="size-4" />
+            </button>
+          </div>
         </div>
 
         {/* Mobile: compact banner */}
@@ -195,12 +226,8 @@ export default function SignupPage() {
                   aria-invalid={touched.password && !!errors.password}
                   maxLength={72}
                 />
-                {touched.password && errors.password ? (
+                {touched.password && errors.password && (
                   <p className="absolute -bottom-4 text-xs text-destructive">{errors.password}</p>
-                ) : (
-                  <p className="absolute -bottom-4 text-xs text-muted-foreground">
-                    8자 이상, 영문/숫자/특수문자 포함
-                  </p>
                 )}
               </div>
 
