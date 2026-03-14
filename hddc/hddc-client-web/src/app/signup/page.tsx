@@ -132,7 +132,7 @@ export default function SignupPage() {
               </div>
 
               {/* Email */}
-              <div className="flex flex-col gap-1.5">
+              <div className="relative flex flex-col gap-1.5">
                 <Label htmlFor="email">이메일</Label>
                 <Input
                   id="email"
@@ -145,12 +145,12 @@ export default function SignupPage() {
                   maxLength={254}
                 />
                 {touched.email && errors.email && (
-                  <p className="text-sm text-destructive">{errors.email}</p>
+                  <p className="absolute -bottom-4 text-xs text-destructive">{errors.email}</p>
                 )}
               </div>
 
               {/* Nickname */}
-              <div className="flex flex-col gap-1.5">
+              <div className="relative flex flex-col gap-1.5">
                 <Label htmlFor="nickname">닉네임</Label>
                 <Input
                   id="nickname"
@@ -163,12 +163,12 @@ export default function SignupPage() {
                   maxLength={20}
                 />
                 {touched.nickname && errors.nickname && (
-                  <p className="text-sm text-destructive">{errors.nickname}</p>
+                  <p className="absolute -bottom-4 text-xs text-destructive">{errors.nickname}</p>
                 )}
               </div>
 
               {/* Password */}
-              <div className="flex flex-col gap-1.5">
+              <div className="relative flex flex-col gap-1.5">
                 <Label htmlFor="password">비밀번호</Label>
                 <Input
                   id="password"
@@ -181,16 +181,16 @@ export default function SignupPage() {
                   maxLength={72}
                 />
                 {touched.password && errors.password ? (
-                  <p className="text-sm text-destructive">{errors.password}</p>
+                  <p className="absolute -bottom-4 text-xs text-destructive">{errors.password}</p>
                 ) : (
-                  <p className="text-xs text-muted-foreground">
+                  <p className="absolute -bottom-4 text-xs text-muted-foreground">
                     8자 이상, 영문/숫자/특수문자 포함
                   </p>
                 )}
               </div>
 
               {/* Password Confirm */}
-              <div className="flex flex-col gap-1.5">
+              <div className="relative flex flex-col gap-1.5">
                 <Label htmlFor="passwordConfirm">비밀번호 확인</Label>
                 <Input
                   id="passwordConfirm"
@@ -205,14 +205,14 @@ export default function SignupPage() {
                   maxLength={72}
                 />
                 {touched.passwordConfirm && errors.passwordConfirm && (
-                  <p className="text-sm text-destructive">
+                  <p className="absolute -bottom-4 text-xs text-destructive">
                     {errors.passwordConfirm}
                   </p>
                 )}
               </div>
 
               {/* Terms */}
-              <div className="flex flex-col gap-1.5">
+              <div className="relative flex flex-col gap-1.5">
                 <div className="flex items-start gap-2">
                   <Checkbox
                     id="terms"
@@ -243,7 +243,7 @@ export default function SignupPage() {
                   </label>
                 </div>
                 {errors.agreed && (
-                  <p className="text-sm text-destructive">{errors.agreed}</p>
+                  <p className="absolute -bottom-4 text-xs text-destructive">{errors.agreed}</p>
                 )}
               </div>
 
