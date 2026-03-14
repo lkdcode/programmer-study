@@ -9,22 +9,28 @@ import {
 import { Button } from "@/components/ui/button";
 import { Palette } from "@phosphor-icons/react";
 
-const THEME_COLORS: Record<ColorTheme, string> = {
+const PRESET_THEMES = COLOR_THEMES.filter((t) => t !== "custom");
+
+const THEME_COLORS: Record<Exclude<ColorTheme, "custom">, string> = {
+  default: "oklch(0.205 0 0)",
   teal: "oklch(0.6 0.118 184.704)",
   orange: "oklch(0.646 0.222 41.116)",
   blue: "oklch(0.588 0.158 241.966)",
   violet: "oklch(0.541 0.281 293.009)",
   yellow: "oklch(0.852 0.199 91.936)",
   red: "oklch(0.577 0.245 27.325)",
+  white: "oklch(0.985 0 0)",
 };
 
-const THEME_LABELS: Record<ColorTheme, string> = {
+const THEME_LABELS: Record<Exclude<ColorTheme, "custom">, string> = {
+  default: "Default",
   teal: "틸",
   orange: "오렌지",
   blue: "블루",
   violet: "바이올렛",
   yellow: "옐로",
   red: "레드",
+  white: "화이트",
 };
 
 export function ColorThemePicker() {
@@ -56,7 +62,7 @@ export function ColorThemePicker() {
       {open && (
         <div className="absolute right-0 top-full mt-2 rounded-lg border border-border bg-popover p-2.5 shadow-md">
           <div className="flex gap-2">
-            {COLOR_THEMES.map((theme) => (
+            {PRESET_THEMES.map((theme) => (
               <button
                 key={theme}
                 onClick={() => {
@@ -67,9 +73,9 @@ export function ColorThemePicker() {
                   colorTheme === theme
                     ? "ring-2 ring-foreground ring-offset-2 ring-offset-background"
                     : ""
-                }`}
-                style={{ backgroundColor: THEME_COLORS[theme] }}
-                aria-label={THEME_LABELS[theme]}
+                }${theme === "default" || theme === "white" ? " border border-border" : ""}`}
+                style={{ backgroundColor: THEME_COLORS[theme as Exclude<ColorTheme, "custom">] }}
+                aria-label={THEME_LABELS[theme as Exclude<ColorTheme, "custom">]}
               />
             ))}
           </div>

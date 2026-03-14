@@ -2,24 +2,42 @@
 
 import { useState } from "react";
 import { DeviceMobile, Desktop } from "@phosphor-icons/react";
-import { PhoneMockup, BrowserMockup } from "@/components/device-mockup";
+import { PhonePreviewFrame, BrowserPreviewFrame } from "./dashboard-preview-frame";
 import { ProfilePreviewContent } from "./profile-preview-content";
 import type { ProfileData } from "@/lib/profile-types";
 
-interface Props {
-  profileData: ProfileData;
+function luminanceContrast(hex: string): string {
+  const h = hex.replace("#", "");
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.5 ? "#000000" : "#ffffff";
 }
 
-export function ProfilePreview({ profileData }: Props) {
+interface Props {
+  profileData: ProfileData;
+  reorderLinks?: (activeId: string, overId: string) => void;
+}
+
+export function ProfilePreview({ profileData, reorderLinks }: Props) {
   const [view, setView] = useState<"mobile" | "web">("mobile");
 
   const themeAttr = profileData.colorTheme;
   const darkClass = profileData.darkMode ? "dark" : "";
 
+  // Custom theme: override CSS variables inline
+  const customStyle = themeAttr === "custom" && profileData.customPrimaryColor
+    ? {
+        "--primary": profileData.customPrimaryColor,
+        "--primary-foreground": luminanceContrast(profileData.customPrimaryColor),
+        "--ring": profileData.customPrimaryColor,
+      } as React.CSSProperties
+    : undefined;
+
   return (
-    <div className="flex flex-col items-center gap-4 p-6">
+    <div className="flex h-full flex-col items-center gap-4 overflow-hidden p-3">
       {/* Toggle */}
-      <div className="flex items-center gap-3">
+      <div className="flex shrink-0 items-center gap-3">
         <span className="text-xs font-semibold text-muted-foreground">미리보기</span>
         <div className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/50 p-1">
           <button
@@ -48,17 +66,27 @@ export function ProfilePreview({ profileData }: Props) {
       </div>
 
       {/* Mockup with scoped theme */}
-      <div data-theme={themeAttr} className={darkClass}>
-        {view === "mobile" ? (
-          <PhoneMockup className="w-[200px]">
-            <ProfilePreviewContent profileData={profileData} variant="mobile" />
-          </PhoneMockup>
-        ) : (
-          <BrowserMockup className="w-[320px]">
-            <ProfilePreviewContent profileData={profileData} variant="web" />
-          </BrowserMockup>
-        )}
-      </div>
+      {view === "mobile" ? (
+        <div
+          data-theme={themeAttr}
+          className={`flex min-h-0 flex-1 items-start justify-center overflow-hidden ${darkClass}`}
+          style={customStyle}
+        >
+          <PhonePreviewFrame className="w-[345px] shrink-0" slug={profileData.slug} backgroundColor={profileData.backgroundColor}>
+            <ProfilePreviewContent profileData={profileData} variant="mobile" onReorderLinks={reorderLinks} />
+          </PhonePreviewFrame>
+        </div>
+      ) : (
+        <div
+          data-theme={themeAttr}
+          className={`min-h-0 flex-1 overflow-hidden ${darkClass}`}
+          style={customStyle}
+        >
+          <BrowserPreviewFrame className="h-full w-full" slug={profileData.slug} backgroundColor={profileData.backgroundColor}>
+            <ProfilePreviewContent profileData={profileData} variant="web" onReorderLinks={reorderLinks} />
+          </BrowserPreviewFrame>
+        </div>
+      )}
     </div>
   );
 }

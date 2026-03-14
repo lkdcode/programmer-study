@@ -6,6 +6,7 @@ import {
   type ProfileLink,
   type SocialLink,
   type SocialPlatform,
+  type LinkLayout,
   DEFAULT_PROFILE,
 } from "@/lib/profile-types";
 
@@ -41,17 +42,17 @@ export function useProfileData() {
 
   useEffect(() => {
     if (!initialized.current) return;
-    setSaveStatus("saving");
     clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
+      setSaveStatus("saving");
       saveToStorage(profileData);
-      setSaveStatus("saved");
+      setTimeout(() => setSaveStatus("saved"), 300);
     }, DEBOUNCE_MS);
     return () => clearTimeout(timerRef.current);
   }, [profileData]);
 
   const updateProfile = useCallback(
-    (fields: Partial<Pick<ProfileData, "avatarUrl" | "nickname" | "bio">>) => {
+    (fields: Partial<Pick<ProfileData, "avatarUrl" | "backgroundUrl" | "slug" | "nickname" | "bio">>) => {
       setProfileData((prev) => ({ ...prev, ...fields }));
     },
     [],
@@ -64,6 +65,7 @@ export function useProfileData() {
         id: crypto.randomUUID(),
         title: "",
         url: "",
+        imageUrl: "",
         order: prev.links.length,
       };
       return { ...prev, links: [...prev.links, newLink] };
@@ -71,7 +73,7 @@ export function useProfileData() {
   }, []);
 
   const updateLink = useCallback(
-    (id: string, fields: Partial<Pick<ProfileLink, "title" | "url">>) => {
+    (id: string, fields: Partial<Pick<ProfileLink, "title" | "url" | "imageUrl">>) => {
       setProfileData((prev) => ({
         ...prev,
         links: prev.links.map((l) => (l.id === id ? { ...l, ...fields } : l)),
@@ -142,6 +144,30 @@ export function useProfileData() {
     setProfileData((prev) => ({ ...prev, darkMode: dark }));
   }, []);
 
+  const setLinkLayout = useCallback((layout: LinkLayout) => {
+    setProfileData((prev) => ({ ...prev, linkLayout: layout }));
+  }, []);
+
+  const setBackgroundColor = useCallback((color: string | null) => {
+    setProfileData((prev) => ({ ...prev, backgroundColor: color }));
+  }, []);
+
+  const setCustomColors = useCallback((primary: string, secondary: string) => {
+    setProfileData((prev) => ({ ...prev, customPrimaryColor: primary, customSecondaryColor: secondary }));
+  }, []);
+
+  const reorderLinks = useCallback((activeId: string, overId: string) => {
+    setProfileData((prev) => {
+      const oldIndex = prev.links.findIndex((l) => l.id === activeId);
+      const newIndex = prev.links.findIndex((l) => l.id === overId);
+      if (oldIndex === -1 || newIndex === -1) return prev;
+      const newLinks = [...prev.links];
+      const [removed] = newLinks.splice(oldIndex, 1);
+      newLinks.splice(newIndex, 0, removed);
+      return { ...prev, links: newLinks.map((l, i) => ({ ...l, order: i })) };
+    });
+  }, []);
+
   const saveNow = useCallback(() => {
     clearTimeout(timerRef.current);
     setSaveStatus("saving");
@@ -162,6 +188,10 @@ export function useProfileData() {
     removeSocial,
     setColorTheme,
     setDarkMode,
+    setLinkLayout,
+    setBackgroundColor,
+    setCustomColors,
+    reorderLinks,
     saveNow,
   };
 }

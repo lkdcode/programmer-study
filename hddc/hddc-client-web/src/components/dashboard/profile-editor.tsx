@@ -20,10 +20,12 @@ export function ProfileEditor(props: ProfileActions) {
 
       <LinkListEditor
         links={props.profileData.links}
+        linkLayout={props.profileData.linkLayout}
         addLink={props.addLink}
         updateLink={props.updateLink}
         removeLink={props.removeLink}
-        moveLink={props.moveLink}
+        reorderLinks={props.reorderLinks}
+        setLinkLayout={props.setLinkLayout}
       />
 
       <hr className="border-border" />
@@ -40,8 +42,13 @@ export function ProfileEditor(props: ProfileActions) {
       <ThemeEditor
         colorTheme={props.profileData.colorTheme}
         darkMode={props.profileData.darkMode}
+        backgroundColor={props.profileData.backgroundColor}
+        customPrimaryColor={props.profileData.customPrimaryColor}
+        customSecondaryColor={props.profileData.customSecondaryColor}
         setColorTheme={props.setColorTheme}
         setDarkMode={props.setDarkMode}
+        setBackgroundColor={props.setBackgroundColor}
+        setCustomColors={props.setCustomColors}
       />
     </div>
   );

@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useTheme } from "next-themes";
+import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ColorThemePicker } from "@/components/color-theme-picker";
+import { SiteHeader } from "@/components/site-header";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { PhoneMockup, BrowserMockup } from "@/components/device-mockup";
 import {
-  Sun,
-  Moon,
   LinkSimple,
   DeviceMobile,
   Desktop,
@@ -21,41 +21,14 @@ import {
 } from "@phosphor-icons/react";
 
 export default function Home() {
-  const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
   const [activeView, setActiveView] = useState<"mobile" | "web">("mobile");
-
-  useEffect(() => setMounted(true), []);
 
   return (
     <div className="relative flex min-h-svh flex-col">
-      {/* Nav */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
-        <nav className="mx-auto flex h-14 items-center justify-between px-4 max-w-5xl">
-          <span className="text-lg font-bold tracking-tight">핫딜닷쿨</span>
-          <div className="flex items-center gap-1">
-            <ColorThemePicker />
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() =>
-                setTheme(resolvedTheme === "dark" ? "light" : "dark")
-              }
-              aria-label="다크 모드 전환"
-            >
-              {mounted ? (
-                resolvedTheme === "dark" ? (
-                  <Sun className="size-4" />
-                ) : (
-                  <Moon className="size-4" />
-                )
-              ) : (
-                <span className="size-4" />
-              )}
-            </Button>
-          </div>
-        </nav>
-      </header>
+      <SiteHeader>
+        <ColorThemePicker />
+        <ThemeToggle />
+      </SiteHeader>
 
       <main className="flex flex-1 flex-col">
         {/* ─── Section 1: Hero ─── */}
@@ -76,13 +49,20 @@ export default function Home() {
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Button className="h-10 px-6 text-sm font-semibold">
-                  무료로 시작하기
-                  <ArrowRight className="ml-1 size-4" />
+                <Button asChild className="h-10 px-6 text-sm font-semibold">
+                  <Link href="/auth/signup">
+                    무료로 시작하기
+                    <ArrowRight className="ml-1 size-4" />
+                  </Link>
                 </Button>
                 <Button
                   variant="outline"
                   className="h-10 px-6 text-sm font-semibold"
+                  onClick={() =>
+                    document
+                      .getElementById("how-it-works")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
                 >
                   미리보기
                 </Button>
@@ -141,7 +121,7 @@ export default function Home() {
         </section>
 
         {/* ─── Section 2: How It Works ─── */}
-        <section className="border-t border-border bg-muted/30 px-4 py-20 sm:py-24">
+        <section id="how-it-works" className="border-t border-border bg-muted/30 px-4 py-20 sm:py-24">
           <div className="mx-auto max-w-5xl">
             <div className="mb-12 text-center">
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
@@ -315,9 +295,11 @@ export default function Home() {
             <p className="mt-4 text-muted-foreground">
               30초면 충분합니다. 무료로 시작하세요.
             </p>
-            <Button className="mt-8 h-11 px-8 text-sm font-semibold">
-              무료로 시작하기
-              <ArrowRight className="ml-1 size-4" />
+            <Button asChild className="mt-8 h-11 px-8 text-sm font-semibold">
+              <Link href="/auth/signup">
+                무료로 시작하기
+                <ArrowRight className="ml-1 size-4" />
+              </Link>
             </Button>
           </div>
         </section>

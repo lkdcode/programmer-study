@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +27,7 @@ import {
 type Step = "form" | "verify";
 
 export default function SignupPage() {
+  const router = useRouter();
   const [step, setStep] = useState<Step>("form");
   const [email, setEmail] = useState("");
   const [nickname, setNickname] = useState("");
@@ -85,7 +87,9 @@ export default function SignupPage() {
     const hasErrors = Object.values(newErrors).some((e) => e !== null);
     if (hasErrors) return;
 
-    setStep("verify");
+    // MVP: set auth flag and redirect to dashboard
+    localStorage.setItem("hddc-auth", "true");
+    router.push("/dashboard/edit");
   }
 
   function handleResend() {
@@ -128,7 +132,7 @@ export default function SignupPage() {
         </Button>
 
         <Link
-          href="/login"
+          href="/auth/login"
           className="text-sm font-semibold underline text-foreground"
         >
           로그인으로 돌아가기
@@ -267,7 +271,7 @@ export default function SignupPage() {
         {/* Login Link */}
         <p className="text-center text-sm text-muted-foreground">
           이미 계정이 있으신가요?{" "}
-          <Link href="/login" className="font-semibold underline text-foreground">
+          <Link href="/auth/login" className="font-semibold underline text-foreground">
             로그인
           </Link>
         </p>

@@ -2,19 +2,20 @@ export const SOCIAL_PLATFORMS = [
   "instagram",
   "youtube",
   "x",
-  "github",
   "tiktok",
   "linkedin",
-  "email",
   "website",
 ] as const;
 
 export type SocialPlatform = (typeof SOCIAL_PLATFORMS)[number];
 
+export type LinkLayout = "list" | "grid-2" | "grid-3";
+
 export interface ProfileLink {
   id: string;
   title: string;
   url: string;
+  imageUrl: string;
   order: number;
 }
 
@@ -26,21 +27,33 @@ export interface SocialLink {
 
 export interface ProfileData {
   avatarUrl: string | null;
+  backgroundUrl: string | null;
+  backgroundColor: string | null;
+  slug: string;
   nickname: string;
   bio: string;
   links: ProfileLink[];
   socials: SocialLink[];
-  colorTheme: "teal" | "orange" | "blue" | "violet" | "yellow" | "red";
+  linkLayout: LinkLayout;
+  colorTheme: "teal" | "orange" | "blue" | "violet" | "yellow" | "red" | "white" | "default" | "custom";
+  customPrimaryColor: string | null;
+  customSecondaryColor: string | null;
   darkMode: boolean;
 }
 
 export const DEFAULT_PROFILE: ProfileData = {
   avatarUrl: null,
+  backgroundUrl: null,
+  backgroundColor: null,
+  slug: "",
   nickname: "",
   bio: "",
   links: [],
   socials: [],
-  colorTheme: "teal",
+  linkLayout: "list",
+  colorTheme: "default",
+  customPrimaryColor: null,
+  customSecondaryColor: null,
   darkMode: false,
 };
 
@@ -48,9 +61,7 @@ export const SOCIAL_PLATFORM_LABELS: Record<SocialPlatform, string> = {
   instagram: "Instagram",
   youtube: "YouTube",
   x: "X (Twitter)",
-  github: "GitHub",
   tiktok: "TikTok",
   linkedin: "LinkedIn",
-  email: "이메일",
   website: "웹사이트",
 };

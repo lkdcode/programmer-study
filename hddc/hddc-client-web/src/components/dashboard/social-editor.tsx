@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Trash } from "@phosphor-icons/react";
+import { useSectionFocus } from "@/contexts/edit-focus-context";
 import { type SocialPlatform, type SocialLink, SOCIAL_PLATFORMS, SOCIAL_PLATFORM_LABELS } from "@/lib/profile-types";
 
 interface Props {
@@ -16,9 +17,10 @@ interface Props {
 export function SocialEditor({ socials, addSocial, updateSocial, removeSocial }: Props) {
   const usedPlatforms = new Set(socials.map((s) => s.platform));
   const availablePlatforms = SOCIAL_PLATFORMS.filter((p) => !usedPlatforms.has(p));
+  const sectionFocus = useSectionFocus("socials");
 
   return (
-    <section className="flex flex-col gap-3">
+    <section className="flex flex-col gap-3" {...sectionFocus}>
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold">소셜 아이콘</h3>
         <span className="text-[10px] text-muted-foreground">{socials.length}/8</span>

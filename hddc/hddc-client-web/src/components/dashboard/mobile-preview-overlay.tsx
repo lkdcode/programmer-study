@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { X, Eye } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
-import { ProfilePreview } from "./profile-preview";
+import { ProfilePreviewContent } from "./profile-preview-content";
 import type { ProfileData } from "@/lib/profile-types";
 
 interface Props {
@@ -33,8 +33,8 @@ export function MobilePreviewButton({ profileData }: Props) {
               <X className="size-4" />
             </Button>
           </div>
-          <div className="flex flex-1 items-center justify-center overflow-auto">
-            <ProfilePreview profileData={profileData} />
+          <div className="flex-1 overflow-auto p-5">
+            <ProfilePreviewContent profileData={profileData} variant="mobile" />
           </div>
         </div>
       )}

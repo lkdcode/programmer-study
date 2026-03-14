@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { SiteHeader } from "@/components/site-header";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { Button } from "@/components/ui/button";
+import { SignOut } from "@phosphor-icons/react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -17,6 +20,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, [router]);
 
+  function handleLogout() {
+    localStorage.removeItem("hddc-auth");
+    router.push("/auth/login");
+  }
+
   if (!authed) {
     return (
       <div className="flex min-h-svh items-center justify-center">
@@ -26,14 +34,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="flex min-h-svh flex-col">
-      <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
-        <nav className="mx-auto flex h-14 items-center justify-between px-4 max-w-6xl">
-          <Link href="/" className="text-lg font-bold tracking-tight">
-            핫딜닷쿨
-          </Link>
-        </nav>
-      </header>
+    <div className="flex min-h-svh flex-col bg-muted/30">
+      <SiteHeader
+        maxWidth="max-w-6xl"
+        nav={<span className="text-sm font-medium text-foreground">편집</span>}
+      >
+        <ThemeToggle />
+        <Button variant="ghost" size="icon" onClick={handleLogout} aria-label="로그아웃">
+          <SignOut className="size-4" />
+        </Button>
+      </SiteHeader>
       <main className="flex flex-1 flex-col">{children}</main>
     </div>
   );

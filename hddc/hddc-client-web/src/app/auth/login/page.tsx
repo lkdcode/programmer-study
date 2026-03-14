@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { validateEmail } from "@/lib/validators";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -46,7 +48,9 @@ export default function LoginPage() {
     const hasErrors = Object.values(newErrors).some((e) => e !== null);
     if (hasErrors) return;
 
-    // TODO: API call
+    // MVP: set auth flag and redirect to dashboard
+    localStorage.setItem("hddc-auth", "true");
+    router.push("/dashboard/edit");
   }
 
   return (
@@ -101,7 +105,7 @@ export default function LoginPage() {
       {/* Signup Link */}
       <p className="text-center text-sm text-muted-foreground">
         계정이 없으신가요?{" "}
-        <Link href="/signup" className="font-semibold underline text-foreground">
+        <Link href="/auth/signup" className="font-semibold underline text-foreground">
           회원가입
         </Link>
       </p>
