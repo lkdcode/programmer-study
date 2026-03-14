@@ -88,11 +88,11 @@ export default function SignupPage() {
       {/* ─── Left: Branding Panel ─── */}
 
       {/* Desktop: full branding with mockups */}
-      <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center gap-8 bg-gradient-to-br from-[#1a1a2e] to-[#16213e] p-12 text-white">
+      <div className="dark hidden lg:flex lg:w-1/2 flex-col items-center justify-center gap-8 bg-gradient-to-br from-[#1a1a2e] to-[#16213e] p-12 text-white">
         <span className="text-2xl font-bold tracking-tight">핫딜닷쿨</span>
-        <div className="flex items-end gap-4">
-          <PhoneMockup className="w-[120px] opacity-90" />
-          <BrowserMockup className="w-[200px] opacity-90" />
+        <div className="flex items-end gap-4 sm:gap-6">
+          <PhoneMockup className="w-[140px] sm:w-[200px]" />
+          <BrowserMockup className="w-[185px] sm:w-[280px]" />
         </div>
         <p className="text-center text-sm leading-relaxed opacity-70">
           하나의 링크,
