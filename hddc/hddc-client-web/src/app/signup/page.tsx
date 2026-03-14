@@ -127,8 +127,8 @@ export default function SignupPage() {
         {/* ─── Left: Branding Panel ─── */}
 
         {/* Desktop: branding with mockups */}
-        <div className="dark hidden lg:flex lg:w-1/2 flex-col items-center justify-center gap-6 rounded-l-2xl bg-gradient-to-br from-[#1a1a2e] to-[#16213e] p-12 text-white">
-          <span className="text-2xl font-bold tracking-tight">핫딜닷쿨</span>
+        <div className={`${mockupDark ? "" : "dark"} hidden lg:flex lg:w-1/2 flex-col items-center justify-evenly rounded-l-2xl bg-background px-12 transition-colors duration-700`}>
+          <span className="text-2xl font-bold tracking-tight text-foreground transition-colors duration-700">핫딜닷쿨</span>
           <div
             data-theme={colorPresets[presetIndex]}
             className={`${mockupDark ? "dark" : ""} flex items-end gap-4 sm:gap-6 transition-colors duration-700`}
@@ -139,17 +139,17 @@ export default function SignupPage() {
           <div className="flex items-center gap-3">
             <button
               onClick={goPrev}
-              className="cursor-pointer flex size-7 items-center justify-center rounded-full bg-white/10 text-white/70 transition-colors hover:bg-white/20 hover:text-white"
+              className="cursor-pointer flex size-7 items-center justify-center rounded-full bg-foreground/5 text-muted-foreground transition-colors duration-700 hover:bg-foreground/10 hover:text-foreground"
             >
               <CaretLeft className="size-4" />
             </button>
-            <p className="text-center text-sm leading-relaxed opacity-70">
+            <p className="text-center text-sm leading-relaxed text-muted-foreground transition-colors duration-700">
               하나의 링크,{" "}
               <span className="text-primary transition-colors duration-700">두 개의 완벽한 뷰</span>
             </p>
             <button
               onClick={goNext}
-              className="cursor-pointer flex size-7 items-center justify-center rounded-full bg-white/10 text-white/70 transition-colors hover:bg-white/20 hover:text-white"
+              className="cursor-pointer flex size-7 items-center justify-center rounded-full bg-foreground/5 text-muted-foreground transition-colors duration-700 hover:bg-foreground/10 hover:text-foreground"
             >
               <CaretRight className="size-4" />
             </button>
@@ -157,10 +157,10 @@ export default function SignupPage() {
         </div>
 
         {/* Mobile: compact banner */}
-        <div className="dark flex items-center justify-center gap-2 rounded-t-2xl bg-gradient-to-r from-[#1a1a2e] to-[#16213e] px-4 py-5 text-white lg:hidden">
+        <div className="flex items-center justify-center gap-2 rounded-t-2xl bg-muted/50 px-4 py-5 lg:hidden">
           <span className="text-lg font-bold">핫딜닷쿨</span>
-          <span className="text-xs opacity-60">·</span>
-          <span className="text-xs opacity-70">
+          <span className="text-xs text-muted-foreground">·</span>
+          <span className="text-xs text-muted-foreground">
             하나의 링크, <span className="text-primary">두 개의 완벽한 뷰</span>
           </span>
         </div>
