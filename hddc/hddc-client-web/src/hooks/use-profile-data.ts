@@ -146,7 +146,7 @@ export function useProfileData() {
     clearTimeout(timerRef.current);
     setSaveStatus("saving");
     saveToStorage(profileData);
-    setSaveStatus("saved");
+    setTimeout(() => setSaveStatus("saved"), 300);
   }, [profileData]);
 
   return {

@@ -13,7 +13,7 @@ interface Props {
 export function ProfilePreview({ profileData }: Props) {
   const [view, setView] = useState<"mobile" | "web">("mobile");
 
-  const themeAttr = profileData.colorTheme === "teal" ? undefined : profileData.colorTheme;
+  const themeAttr = profileData.colorTheme;
   const darkClass = profileData.darkMode ? "dark" : "";
 
   return (
