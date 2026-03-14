@@ -38,6 +38,16 @@ export default function SignupPage() {
   const [termsOpen, setTermsOpen] = useState(false);
   const [privacyOpen, setPrivacyOpen] = useState(false);
 
+  const colorPresets = ["teal", "orange", "blue", "violet", "yellow", "red"] as const;
+  const [presetIndex, setPresetIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPresetIndex((prev) => (prev + 1) % colorPresets.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [colorPresets.length]);
+
   // Cooldown timer
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -97,11 +107,14 @@ export default function SignupPage() {
         {/* ─── Left: Branding Panel ─── */}
 
         {/* Desktop: branding with mockups */}
-        <div className="dark hidden lg:flex lg:w-1/2 flex-col items-center justify-center gap-8 rounded-l-2xl bg-gradient-to-br from-[#1a1a2e] to-[#16213e] p-12 text-white">
+        <div
+          data-theme={colorPresets[presetIndex]}
+          className="dark hidden lg:flex lg:w-1/2 flex-col items-center justify-center gap-8 rounded-l-2xl bg-gradient-to-br from-[#1a1a2e] to-[#16213e] p-12 text-white transition-colors duration-700"
+        >
           <span className="text-2xl font-bold tracking-tight">핫딜닷쿨</span>
           <div className="flex items-end gap-4 sm:gap-6">
-            <PhoneMockup className="w-[140px]" />
-            <BrowserMockup className="w-[185px]" />
+            <PhoneMockup className="w-[140px] transition-colors duration-700" />
+            <BrowserMockup className="w-[185px] transition-colors duration-700" />
           </div>
           <p className="text-center text-sm leading-relaxed opacity-70">
             하나의 링크,
@@ -123,7 +136,7 @@ export default function SignupPage() {
         <div className="flex flex-1 items-center justify-center p-8 sm:p-12 lg:w-1/2">
           <div className="w-full max-w-sm">
           {step === "form" ? (
-            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-7">
               <div>
                 <h1 className="text-2xl font-bold tracking-tight">회원가입</h1>
                 <p className="mt-1 text-sm text-muted-foreground">
