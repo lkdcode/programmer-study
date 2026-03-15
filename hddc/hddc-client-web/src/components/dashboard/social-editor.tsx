@@ -17,8 +17,10 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash, DotsSixVertical } from "@phosphor-icons/react";
+import { Trash } from "@phosphor-icons/react";
+import { DragHandle } from "@/components/ui/drag-handle";
 import { useSectionFocus } from "@/contexts/edit-focus-context";
+import { SectionHeader } from "@/components/ui/section-header";
 import {
   type SocialPlatform,
   type SocialLink,
@@ -47,12 +49,7 @@ function SortableSocialItem({ social, children }: { social: SocialLink; children
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} className="flex items-center gap-2">
-      <div
-        {...listeners}
-        className="flex shrink-0 cursor-grab items-center touch-none text-muted-foreground/50 transition-colors hover:text-muted-foreground active:cursor-grabbing"
-      >
-        <DotsSixVertical className="size-4" weight="bold" />
-      </div>
+      <DragHandle size="sm" {...listeners} />
       {children}
     </div>
   );
@@ -152,10 +149,7 @@ export function SocialEditor({ socials, addSocial, updateSocial, removeSocial, r
 
   return (
     <section className="flex flex-col gap-3" {...sectionFocus}>
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold">소셜 아이콘</h3>
-        <span className="text-[10px] text-muted-foreground">{socials.length}/8</span>
-      </div>
+      <SectionHeader title="소셜 아이콘" badge={`${socials.length}/8`} />
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={socials.map((s) => s.id)} strategy={verticalListSortingStrategy}>
           {socials.map((social) => (

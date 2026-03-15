@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { RemoveButton } from "@/components/ui/remove-button";
 import { ColorPickerPopover } from "@/components/ui/color-picker-popover";
 import { ToggleGroup, type ToggleGroupOption } from "@/components/ui/toggle-group";
+import { SectionHeader } from "@/components/ui/section-header";
 
 /* ─── Color utilities ─── */
 
@@ -135,7 +136,7 @@ export function ThemeEditor({
 
   return (
     <section className="flex flex-col gap-4" {...sectionFocus}>
-      <h3 className="text-sm font-semibold">테마</h3>
+      <SectionHeader title="테마" />
 
       {/* Color presets */}
       <div>

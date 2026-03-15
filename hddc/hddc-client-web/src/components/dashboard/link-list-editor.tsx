@@ -17,9 +17,11 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash, Plus, ImageSquare, DotsSixVertical } from "@phosphor-icons/react";
+import { Trash, Plus, ImageSquare } from "@phosphor-icons/react";
 import { List, GridFour, SquaresFour } from "@phosphor-icons/react";
 import { ToggleGroup, type ToggleGroupOption } from "@/components/ui/toggle-group";
+import { SectionHeader } from "@/components/ui/section-header";
+import { DragHandle } from "@/components/ui/drag-handle";
 import { Switch } from "@/components/ui/switch";
 import { ImageCropModal } from "./image-crop-modal";
 import { useSectionFocus, useEditFocus } from "@/contexts/edit-focus-context";
@@ -65,12 +67,7 @@ function SortableEditorCard({
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} className="flex items-center gap-2 rounded-lg border border-border bg-card p-3">
-      <div
-        {...listeners}
-        className="flex shrink-0 cursor-grab items-center touch-none text-muted-foreground/50 transition-colors hover:text-muted-foreground active:cursor-grabbing"
-      >
-        <DotsSixVertical className="size-5" weight="bold" />
-      </div>
+      <DragHandle {...listeners} />
       {children}
     </div>
   );
@@ -122,10 +119,7 @@ export function LinkListEditor({ links, linkLayout, linkStyle, linkAnimation, ad
 
   return (
     <section className="flex flex-col gap-3" {...sectionFocus}>
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold">링크</h3>
-        <span className="text-[10px] text-muted-foreground">{links.length}/20</span>
-      </div>
+      <SectionHeader title="링크" badge={`${links.length}/20`} />
 
       {/* Layout selector */}
       <div className="flex items-center gap-1">

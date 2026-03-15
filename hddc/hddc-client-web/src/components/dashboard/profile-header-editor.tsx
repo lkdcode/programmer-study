@@ -5,6 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { UserCircle, Camera, Image as ImageIcon } from "@phosphor-icons/react";
 import { RemoveButton } from "@/components/ui/remove-button";
+import { SectionHeader } from "@/components/ui/section-header";
+import { InputWithCounter } from "@/components/ui/input-with-counter";
 import { ImageCropModal } from "./image-crop-modal";
 import { validateSlug } from "@/lib/validators";
 import { useSectionFocus } from "@/contexts/edit-focus-context";
@@ -28,7 +30,7 @@ export function ProfileHeaderEditor({ profileData, updateProfile, headerLayout, 
 
   return (
     <section className="flex flex-col gap-4">
-      <h3 className="text-sm font-semibold">프로필</h3>
+      <SectionHeader title="프로필" />
 
       {/* Header layout selector — visual mini previews */}
       <div>
@@ -240,17 +242,14 @@ export function ProfileHeaderEditor({ profileData, updateProfile, headerLayout, 
       {/* Nickname */}
       <div {...nicknameFocus}>
         <Label htmlFor="nickname" className="text-xs text-muted-foreground">닉네임</Label>
-        <Input
+        <InputWithCounter
           id="nickname"
           placeholder="닉네임을 입력해주세요."
           value={profileData.nickname}
-          onChange={(e) => updateProfile({ nickname: e.target.value.slice(0, 20) })}
-          className="mt-1 h-8 text-sm"
+          onChange={(val) => updateProfile({ nickname: val })}
           maxLength={20}
+          className="mt-1 h-8"
         />
-        <p className="mt-1 text-right text-[10px] text-muted-foreground">
-          {profileData.nickname.length}/20
-        </p>
       </div>
 
       {/* Bio — textarea, max 80 chars, max 3 lines */}
