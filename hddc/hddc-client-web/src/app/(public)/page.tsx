@@ -3,9 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ColorThemePicker } from "@/components/color-theme-picker";
-import { SiteHeader } from "@/components/site-header";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { PhoneMockup, BrowserMockup } from "@/components/device-mockup";
 import {
   LinkSimple,
@@ -25,11 +22,6 @@ export default function Home() {
 
   return (
     <div className="relative flex min-h-svh flex-col">
-      <SiteHeader>
-        <ColorThemePicker />
-        <ThemeToggle />
-      </SiteHeader>
-
       <main className="flex flex-1 flex-col">
         {/* ─── Section 1: Hero ─── */}
         <section className="relative overflow-hidden px-4 py-20 sm:py-28 lg:py-32">
