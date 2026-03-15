@@ -30,7 +30,7 @@ const BOTTOM_ITEMS: SidebarItem[] = [
 
 function SidebarIcon({ item }: { item: SidebarItem }) {
   const pathname = usePathname();
-  const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+  const isActive = pathname === item.href;
   const [showTooltip, setShowTooltip] = useState(false);
   const Icon = item.icon;
 
