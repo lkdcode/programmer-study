@@ -1,7 +1,7 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Question, X, ChatCircle, BookOpen, Lightbulb, Megaphone } from "@phosphor-icons/react";
-import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const MENU_ITEMS = [
@@ -12,6 +12,11 @@ const MENU_ITEMS = [
 ];
 
 export function Fab() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) return null;
+
   return (
     <div className="fixed bottom-6 right-6 z-[60]">
       <Popover>
