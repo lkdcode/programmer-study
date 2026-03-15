@@ -351,33 +351,30 @@ interface Props {
   onReorderLinks?: (activeId: string, overId: string) => void;
 }
 
+const SAMPLE_LINKS: ProfileLink[] = [
+  { id: "s1", title: "나의 링크 1", url: "", imageUrl: "", description: "", order: 0, enabled: true },
+  { id: "s2", title: "나의 링크 2", url: "", imageUrl: "", description: "", order: 1, enabled: true },
+  { id: "s3", title: "나의 링크 3", url: "", imageUrl: "", description: "", order: 2, enabled: true },
+];
+
 export function ProfilePreviewContent({ profileData, variant, onReorderLinks }: Props) {
-  const hasContent = profileData.nickname || profileData.bio || profileData.links.length > 0 || profileData.socials.length > 0;
-
-  // 빈 상태 → 샘플 데이터로 실제 레이아웃을 그대로 렌더링
-  const isSample = !hasContent;
-  const data = isSample
-    ? {
-        ...profileData,
-        nickname: "닉네임",
-        bio: "프로필을 편집해서 꾸며보세요",
-        links: [
-          { id: "s1", title: "나의 링크 1", url: "", imageUrl: "", description: "", order: 0, enabled: true },
-          { id: "s2", title: "나의 링크 2", url: "", imageUrl: "", description: "", order: 1, enabled: true },
-          { id: "s3", title: "나의 링크 3", url: "", imageUrl: "", description: "", order: 2, enabled: true },
-        ],
-      } as ProfileData
-    : profileData;
-
-  const { avatarUrl, backgroundUrl, backgroundColor, nickname, bio, links, socials, linkLayout, linkStyle, linkAnimation, headerLayout, colorTheme, customSecondaryColor } = data;
+  const { avatarUrl, backgroundUrl, backgroundColor, nickname, bio, links, socials, linkLayout, linkStyle, linkAnimation, headerLayout, colorTheme, customSecondaryColor } = profileData;
   const isDefault = colorTheme === "default" || colorTheme === "white";
   const tint = colorTheme === "custom" && customSecondaryColor ? customSecondaryColor : undefined;
   const { activeSection, activeLinkId } = useEditFocus();
   const bgStyle = backgroundColor ? { backgroundColor } : undefined;
 
+  // 섹션별 플레이스홀더 여부
+  const isPlaceholderNickname = !nickname;
+  const isPlaceholderBio = !bio;
+  const isPlaceholderLinks = links.length === 0;
+  const displayNickname = nickname || "닉네임";
+  const displayBio = bio || "프로필을 편집해서 꾸며보세요";
+  const displayLinks = links.length > 0 ? links : SAMPLE_LINKS;
+
   if (variant === "mobile") {
     return (
-      <div className={cn("flex min-h-full w-full flex-col items-center gap-4 px-4", isSample && "opacity-60")} style={bgStyle}>
+      <div className="flex min-h-full w-full flex-col items-center gap-4 px-4" style={bgStyle}>
         {/* Background — shown for center, left, banner-only */}
         {headerLayout !== "avatar-only" && (
           <HighlightWrapper
@@ -404,73 +401,67 @@ export function ProfilePreviewContent({ profileData, variant, onReorderLinks }: 
         {/* Profile header — layout variants */}
         {headerLayout === "left" ? (
           <div className="flex w-full items-start gap-3 pb-2">
-            <HighlightWrapper section="avatar" activeSection={activeSection} className="shrink-0 rounded-full">
+            <HighlightWrapper section="avatar" activeSection={activeSection} className={cn("shrink-0 rounded-full", !avatarUrl && "opacity-50")}>
               <Avatar src={avatarUrl} isDefault={isDefault} />
             </HighlightWrapper>
             <div className="min-w-0 flex-1 pt-[45px]">
               <HighlightWrapper section="nickname" activeSection={activeSection}>
-                <p className="text-base font-semibold">{nickname || "이름 없음"}</p>
+                <p className={cn("text-base font-semibold", isPlaceholderNickname && "text-muted-foreground/50")}>{displayNickname}</p>
               </HighlightWrapper>
-              {bio && (
-                <HighlightWrapper section="bio" activeSection={activeSection}>
-                  <p className="whitespace-pre-line text-sm text-muted-foreground">{bio}</p>
-                </HighlightWrapper>
-              )}
+              <HighlightWrapper section="bio" activeSection={activeSection}>
+                <p className={cn("whitespace-pre-line text-sm text-muted-foreground", isPlaceholderBio && "text-muted-foreground/40")}>{displayBio}</p>
+              </HighlightWrapper>
             </div>
           </div>
         ) : headerLayout === "avatar-only" ? (
           <div className="flex flex-col items-center gap-2 pb-2 pt-4">
-            <HighlightWrapper section="avatar" activeSection={activeSection} className="rounded-full">
+            <HighlightWrapper section="avatar" activeSection={activeSection} className={cn("rounded-full", !avatarUrl && "opacity-50")}>
               <Avatar src={avatarUrl} isDefault={isDefault} />
             </HighlightWrapper>
             <HighlightWrapper section="nickname" activeSection={activeSection} className="px-3">
-              <p className="text-base font-semibold">{nickname || "이름 없음"}</p>
+              <p className={cn("text-base font-semibold", isPlaceholderNickname && "text-muted-foreground/50")}>{displayNickname}</p>
             </HighlightWrapper>
-            {bio && (
-              <HighlightWrapper section="bio" activeSection={activeSection} className="px-3">
-                <p className="whitespace-pre-line text-center text-sm text-muted-foreground">{bio}</p>
-              </HighlightWrapper>
-            )}
+            <HighlightWrapper section="bio" activeSection={activeSection} className="px-3">
+              <p className={cn("whitespace-pre-line text-center text-sm text-muted-foreground", isPlaceholderBio && "text-muted-foreground/40")}>{displayBio}</p>
+            </HighlightWrapper>
           </div>
         ) : headerLayout === "banner-only" ? (
           <div className="flex flex-col items-center gap-2 pb-2">
             <HighlightWrapper section="nickname" activeSection={activeSection} className="px-3">
-              <p className="text-base font-semibold">{nickname || "이름 없음"}</p>
+              <p className={cn("text-base font-semibold", isPlaceholderNickname && "text-muted-foreground/50")}>{displayNickname}</p>
             </HighlightWrapper>
-            {bio && (
-              <HighlightWrapper section="bio" activeSection={activeSection} className="px-3">
-                <p className="whitespace-pre-line text-center text-sm text-muted-foreground">{bio}</p>
-              </HighlightWrapper>
-            )}
+            <HighlightWrapper section="bio" activeSection={activeSection} className="px-3">
+              <p className={cn("whitespace-pre-line text-center text-sm text-muted-foreground", isPlaceholderBio && "text-muted-foreground/40")}>{displayBio}</p>
+            </HighlightWrapper>
           </div>
         ) : (
           <div className="flex flex-col items-center gap-2 pb-2">
-            <HighlightWrapper section="avatar" activeSection={activeSection} className="rounded-full">
+            <HighlightWrapper section="avatar" activeSection={activeSection} className={cn("rounded-full", !avatarUrl && "opacity-50")}>
               <Avatar src={avatarUrl} isDefault={isDefault} />
             </HighlightWrapper>
             <HighlightWrapper section="nickname" activeSection={activeSection} className="px-3">
-              <p className="text-base font-semibold">{nickname || "이름 없음"}</p>
+              <p className={cn("text-base font-semibold", isPlaceholderNickname && "text-muted-foreground/50")}>{displayNickname}</p>
             </HighlightWrapper>
-            {bio && (
-              <HighlightWrapper section="bio" activeSection={activeSection} className="px-3">
-                <p className="whitespace-pre-line text-center text-sm text-muted-foreground">{bio}</p>
-              </HighlightWrapper>
-            )}
+            <HighlightWrapper section="bio" activeSection={activeSection} className="px-3">
+              <p className={cn("whitespace-pre-line text-center text-sm text-muted-foreground", isPlaceholderBio && "text-muted-foreground/40")}>{displayBio}</p>
+            </HighlightWrapper>
           </div>
         )}
 
         {/* Links with DnD */}
-        <LinksSection
-          links={links}
-          linkLayout={linkLayout}
-          linkStyle={linkStyle}
-          linkAnimation={linkAnimation}
-          activeSection={activeSection}
-          activeLinkId={activeLinkId}
-          onReorderLinks={onReorderLinks}
-          isDefault={isDefault}
-          tint={tint}
-        />
+        <div className={cn(isPlaceholderLinks && "opacity-50")}>
+          <LinksSection
+            links={displayLinks}
+            linkLayout={linkLayout}
+            linkStyle={linkStyle}
+            linkAnimation={linkAnimation}
+            activeSection={activeSection}
+            activeLinkId={activeLinkId}
+            onReorderLinks={isPlaceholderLinks ? undefined : onReorderLinks}
+            isDefault={isDefault}
+            tint={tint}
+          />
+        </div>
 
         {/* Social icons */}
         {socials.length > 0 && (
@@ -493,30 +484,32 @@ export function ProfilePreviewContent({ profileData, variant, onReorderLinks }: 
 
   // Web variant — sidebar + content grid
   return (
-    <div className={cn("flex min-h-full flex-col gap-4", isSample && "opacity-60")} style={bgStyle}>
+    <div className="flex min-h-full flex-col gap-4" style={bgStyle}>
       {/* Background — always rendered */}
       <HighlightWrapper section="background" activeSection={activeSection} overlay className="rounded-none -mx-6 -mt-6">
         {backgroundUrl ? (
           <img src={backgroundUrl} alt="" className="h-36 w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
         ) : (
-          <div className="h-36 w-full bg-background" />
+          <div className="flex h-36 w-full items-center justify-center bg-muted/70">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" className="size-10 text-muted-foreground/20" fill="currentColor">
+              <path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V158.75l-26.07-26.06a16,16,0,0,0-22.63,0l-20,20-44-44a16,16,0,0,0-22.62,0L40,149.37V56ZM40,172l52-52,80,80H40Zm176,28H194.63l-36-36,20-20L216,181.38V200ZM144,100a12,12,0,1,1,12,12A12,12,0,0,1,144,100Z" />
+            </svg>
+          </div>
         )}
       </HighlightWrapper>
 
       <div className="grid grid-cols-[180px_1fr] gap-6">
         {/* Sidebar */}
         <div className="flex flex-col items-center gap-3 border-r border-border pr-6">
-          <HighlightWrapper section="avatar" activeSection={activeSection} className="rounded-full">
+          <HighlightWrapper section="avatar" activeSection={activeSection} className={cn("rounded-full", !avatarUrl && "opacity-50")}>
             <Avatar src={avatarUrl} isDefault={isDefault} />
           </HighlightWrapper>
           <HighlightWrapper section="nickname" activeSection={activeSection} className="px-3">
-            <p className="text-sm font-semibold">{nickname || "이름 없음"}</p>
+            <p className={cn("text-sm font-semibold", isPlaceholderNickname && "text-muted-foreground/50")}>{displayNickname}</p>
           </HighlightWrapper>
-          {bio && (
-            <HighlightWrapper section="bio" activeSection={activeSection} className="px-3">
-              <p className="whitespace-pre-line text-center text-xs text-muted-foreground">{bio}</p>
-            </HighlightWrapper>
-          )}
+          <HighlightWrapper section="bio" activeSection={activeSection} className="px-3">
+            <p className={cn("whitespace-pre-line text-center text-xs text-muted-foreground", isPlaceholderBio && "text-muted-foreground/40")}>{displayBio}</p>
+          </HighlightWrapper>
           {socials.length > 0 && (
             <HighlightWrapper section="socials" activeSection={activeSection}>
               <div className="flex flex-wrap justify-center gap-2 pt-2">
@@ -534,20 +527,16 @@ export function ProfilePreviewContent({ profileData, variant, onReorderLinks }: 
         </div>
 
         {/* Links area */}
-        <div>
-          {links.length > 0 ? (
-            <LinksSection
-              links={links}
-              linkLayout={linkLayout}
-              linkStyle={linkStyle}
-              linkAnimation={linkAnimation}
-              activeSection={activeSection}
-              activeLinkId={activeLinkId}
-              onReorderLinks={onReorderLinks}
-            />
-          ) : (
-            <p className="py-8 text-center text-sm text-muted-foreground">링크를 추가해보세요</p>
-          )}
+        <div className={cn(isPlaceholderLinks && "opacity-50")}>
+          <LinksSection
+            links={displayLinks}
+            linkLayout={linkLayout}
+            linkStyle={linkStyle}
+            linkAnimation={linkAnimation}
+            activeSection={activeSection}
+            activeLinkId={activeLinkId}
+            onReorderLinks={isPlaceholderLinks ? undefined : onReorderLinks}
+          />
         </div>
       </div>
     </div>
