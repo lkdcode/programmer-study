@@ -352,49 +352,32 @@ interface Props {
 }
 
 export function ProfilePreviewContent({ profileData, variant, onReorderLinks }: Props) {
-  const { avatarUrl, backgroundUrl, backgroundColor, nickname, bio, links, socials, linkLayout, linkStyle, linkAnimation, headerLayout, colorTheme, customSecondaryColor } = profileData;
+  const hasContent = profileData.nickname || profileData.bio || profileData.links.length > 0 || profileData.socials.length > 0;
+
+  // 빈 상태 → 샘플 데이터로 실제 레이아웃을 그대로 렌더링
+  const isSample = !hasContent;
+  const data = isSample
+    ? {
+        ...profileData,
+        nickname: "닉네임",
+        bio: "프로필을 편집해서 꾸며보세요",
+        links: [
+          { id: "s1", title: "나의 링크 1", url: "", imageUrl: "", description: "", order: 0, enabled: true },
+          { id: "s2", title: "나의 링크 2", url: "", imageUrl: "", description: "", order: 1, enabled: true },
+          { id: "s3", title: "나의 링크 3", url: "", imageUrl: "", description: "", order: 2, enabled: true },
+        ],
+      } as ProfileData
+    : profileData;
+
+  const { avatarUrl, backgroundUrl, backgroundColor, nickname, bio, links, socials, linkLayout, linkStyle, linkAnimation, headerLayout, colorTheme, customSecondaryColor } = data;
   const isDefault = colorTheme === "default" || colorTheme === "white";
   const tint = colorTheme === "custom" && customSecondaryColor ? customSecondaryColor : undefined;
-  const hasContent = nickname || bio || links.length > 0 || socials.length > 0;
   const { activeSection, activeLinkId } = useEditFocus();
   const bgStyle = backgroundColor ? { backgroundColor } : undefined;
 
-  // 빈 상태일 때 샘플 프로필 표시
-  if (!hasContent) {
-    return (
-      <div className="flex min-h-full w-full flex-col items-center gap-4 px-4">
-        <div className="-mx-4 mb-[-2.5rem] flex h-32 w-[calc(100%+2rem)] items-center justify-center bg-muted/50">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" className="size-10 text-muted-foreground/20" fill="currentColor">
-            <path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V158.75l-26.07-26.06a16,16,0,0,0-22.63,0l-20,20-44-44a16,16,0,0,0-22.62,0L40,149.37V56ZM40,172l52-52,80,80H40Zm176,28H194.63l-36-36,20-20L216,181.38V200ZM144,100a12,12,0,1,1,12,12A12,12,0,0,1,144,100Z" />
-          </svg>
-        </div>
-        <div className="flex flex-col items-center gap-2 pb-2">
-          <div className="flex size-20 items-center justify-center rounded-full bg-foreground text-base font-bold text-background ring-2 ring-background">
-            핫딜닷쿨
-          </div>
-          <p className="text-base font-semibold text-muted-foreground/60">닉네임</p>
-          <p className="text-sm text-muted-foreground/40">프로필을 편집해서 꾸며보세요</p>
-        </div>
-        <div className="flex w-full flex-col gap-2.5">
-          {["나의 링크 1", "나의 링크 2", "나의 링크 3"].map((title) => (
-            <div
-              key={title}
-              className="flex h-12 items-center gap-3 rounded-xl border border-border/50 px-3 text-sm font-medium text-muted-foreground/40"
-            >
-              <div className="flex size-9 items-center justify-center rounded-full bg-muted/50">
-                <span className="text-[6px] font-bold leading-none text-muted-foreground/40">핫딜닷쿨</span>
-              </div>
-              <span>{title}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   if (variant === "mobile") {
     return (
-      <div className="flex min-h-full w-full flex-col items-center gap-4 px-4" style={bgStyle}>
+      <div className={cn("flex min-h-full w-full flex-col items-center gap-4 px-4", isSample && "opacity-60")} style={bgStyle}>
         {/* Background — shown for center, left, banner-only */}
         {headerLayout !== "avatar-only" && (
           <HighlightWrapper
@@ -409,7 +392,11 @@ export function ProfilePreviewContent({ profileData, variant, onReorderLinks }: 
             {backgroundUrl ? (
               <img src={backgroundUrl} alt="" className="h-32 w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
             ) : (
-              <div className="h-32 w-full bg-background" />
+              <div className="flex h-32 w-full items-center justify-center bg-muted/70">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" className="size-10 text-muted-foreground/20" fill="currentColor">
+                  <path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V158.75l-26.07-26.06a16,16,0,0,0-22.63,0l-20,20-44-44a16,16,0,0,0-22.62,0L40,149.37V56ZM40,172l52-52,80,80H40Zm176,28H194.63l-36-36,20-20L216,181.38V200ZM144,100a12,12,0,1,1,12,12A12,12,0,0,1,144,100Z" />
+                </svg>
+              </div>
             )}
           </HighlightWrapper>
         )}
@@ -506,7 +493,7 @@ export function ProfilePreviewContent({ profileData, variant, onReorderLinks }: 
 
   // Web variant — sidebar + content grid
   return (
-    <div className="flex min-h-full flex-col gap-4" style={bgStyle}>
+    <div className={cn("flex min-h-full flex-col gap-4", isSample && "opacity-60")} style={bgStyle}>
       {/* Background — always rendered */}
       <HighlightWrapper section="background" activeSection={activeSection} overlay className="rounded-none -mx-6 -mt-6">
         {backgroundUrl ? (
