@@ -15,6 +15,7 @@ export function ThemeToggle() {
     <Button
       variant="ghost"
       size="icon"
+      className="cursor-pointer"
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
       aria-label="다크 모드 전환"
     >

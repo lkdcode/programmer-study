@@ -1,0 +1,50 @@
+<h2>FAB (Floating Action Button) 용도</h2>
+<p class="subtitle">우측 하단 동그라미 버튼이 어떤 역할을 하면 좋을까요?</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Quick Actions (빠른 작업)</h3>
+      <p>클릭하면 펼쳐지면서 "새 링크 추가", "프로필 편집", "미리보기" 같은 바로가기 제공</p>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Help / Support (도움말)</h3>
+      <p>클릭하면 도움말, FAQ, 피드백 보내기 등 지원 메뉴 표시</p>
+    </div>
+  </div>
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Theme / Settings (테마/설정)</h3>
+      <p>다크모드 토글, 테마 변경 등 빠른 설정 접근</p>
+    </div>
+  </div>
+  <div class="option" data-choice="d" onclick="toggleSelect(this)">
+    <div class="letter">D</div>
+    <div class="content">
+      <h3>다른 용도가 있어요</h3>
+      <p>터미널에서 직접 설명해주세요</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 2rem;">
+  <div class="label">FAB 예시 미리보기</div>
+  <div class="mockup">
+    <div class="mockup-header">우측 하단 FAB 위치</div>
+    <div class="mockup-body" style="position: relative; min-height: 200px; background: var(--bg-secondary);">
+      <div style="padding: 1rem; opacity: 0.4;">
+        <div class="mock-nav">HDDC | Dashboard | Settings</div>
+        <div class="mock-content" style="margin-top: 1rem;">페이지 콘텐츠 영역</div>
+      </div>
+      <!-- FAB -->
+      <div style="position: absolute; bottom: 1.5rem; right: 1.5rem; width: 56px; height: 56px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.25); cursor: pointer;">
+        <span style="color: white; font-size: 1.5rem; font-weight: bold;">+</span>
+      </div>
+    </div>
+  </div>
+</div>

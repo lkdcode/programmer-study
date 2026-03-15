@@ -1,0 +1,52 @@
+<h2>설계: 라우트 구조 변경</h2>
+<p class="subtitle">Next.js Route Groups를 활용한 레이아웃 분리</p>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">현재 구조 (Before)</div>
+    <div class="mockup-body" style="font-family: monospace; font-size: 0.8rem; line-height: 2;">
+      <div>src/app/</div>
+      <div>&nbsp;&nbsp;├─ layout.tsx <span style="opacity:0.5">← 루트 (테마)</span></div>
+      <div>&nbsp;&nbsp;├─ page.tsx <span style="opacity:0.5">← 홈</span></div>
+      <div>&nbsp;&nbsp;├─ auth/</div>
+      <div>&nbsp;&nbsp;│&nbsp;&nbsp;├─ layout.tsx</div>
+      <div>&nbsp;&nbsp;│&nbsp;&nbsp;├─ login/page.tsx</div>
+      <div>&nbsp;&nbsp;│&nbsp;&nbsp;└─ signup/page.tsx</div>
+      <div>&nbsp;&nbsp;├─ dashboard/</div>
+      <div>&nbsp;&nbsp;│&nbsp;&nbsp;├─ layout.tsx</div>
+      <div>&nbsp;&nbsp;│&nbsp;&nbsp;└─ edit/page.tsx</div>
+      <div>&nbsp;&nbsp;└─ [username]/page.tsx</div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">변경 후 (After)</div>
+    <div class="mockup-body" style="font-family: monospace; font-size: 0.8rem; line-height: 2;">
+      <div>src/app/</div>
+      <div>&nbsp;&nbsp;├─ layout.tsx <span style="opacity:0.5">← 루트 (테마만)</span></div>
+      <div style="color: var(--primary);">&nbsp;&nbsp;├─ (public)/</div>
+      <div style="color: var(--primary);">&nbsp;&nbsp;│&nbsp;&nbsp;├─ layout.tsx <span style="opacity:0.5">← 헤더 + FAB</span></div>
+      <div>&nbsp;&nbsp;│&nbsp;&nbsp;├─ page.tsx <span style="opacity:0.5">← 홈</span></div>
+      <div>&nbsp;&nbsp;│&nbsp;&nbsp;└─ auth/</div>
+      <div>&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─ layout.tsx <span style="opacity:0.5">← Auth 전용</span></div>
+      <div>&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─ login/page.tsx</div>
+      <div>&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ signup/page.tsx</div>
+      <div style="color: var(--primary);">&nbsp;&nbsp;├─ (app)/</div>
+      <div style="color: var(--primary);">&nbsp;&nbsp;│&nbsp;&nbsp;├─ layout.tsx <span style="opacity:0.5">← 헤더 + 사이드바 + FAB</span></div>
+      <div>&nbsp;&nbsp;│&nbsp;&nbsp;└─ dashboard/</div>
+      <div>&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─ layout.tsx <span style="opacity:0.5">← 인증 체크</span></div>
+      <div>&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ edit/page.tsx</div>
+      <div>&nbsp;&nbsp;└─ [username]/page.tsx <span style="opacity:0.5">← 레이아웃 없음</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 1.5rem;">
+  <div class="label">핵심 포인트</div>
+  <ul style="line-height: 2; font-size: 0.9rem;">
+    <li><strong>(public)</strong> — 홈, Auth 페이지들. 헤더 + FAB만</li>
+    <li><strong>(app)</strong> — 로그인 후 페이지들. 헤더 + 아이콘 사이드바 + FAB</li>
+    <li><strong>[username]</strong> — Route Group 밖. 글로벌 UI 없음</li>
+    <li>Route Group은 URL에 영향 없음 — <code>/auth/login</code> 그대로 유지</li>
+  </ul>
+</div>

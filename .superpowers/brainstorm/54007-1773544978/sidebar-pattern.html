@@ -1,0 +1,124 @@
+<h2>글로벌 사이드바 패턴</h2>
+<p class="subtitle">SiteHeader + Sidebar 조합 — 어떤 레이아웃이 맞나요?</p>
+
+<div class="cards">
+  <!-- Option A -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="padding: 0.5rem;">
+        <!-- Header + Sidebar layout -->
+        <div style="background: var(--primary); color: white; padding: 0.4rem 0.6rem; font-size: 0.7rem; border-radius: 4px 4px 0 0;">
+          HDDC &nbsp;&nbsp;&nbsp; 헤더 메뉴들 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 🌙 👤
+        </div>
+        <div style="display: flex; height: 120px;">
+          <div style="width: 50px; background: var(--bg-secondary); border-right: 1px solid var(--border); padding: 0.3rem; font-size: 0.5rem; line-height: 1.8;">
+            <div style="padding: 2px 4px; background: var(--primary); color: white; border-radius: 3px; margin-bottom: 2px;">📊</div>
+            <div style="padding: 2px 4px;">✏️</div>
+            <div style="padding: 2px 4px;">⚙️</div>
+            <div style="padding: 2px 4px;">📈</div>
+          </div>
+          <div style="flex:1; padding: 0.5rem; font-size: 0.6rem; color: var(--text-secondary);">
+            <div style="background: var(--bg-secondary); border-radius: 4px; padding: 0.5rem; margin-bottom: 0.3rem;">콘텐츠 영역</div>
+            <div style="background: var(--bg-secondary); border-radius: 4px; padding: 0.3rem;">...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. 아이콘 사이드바 (Collapsed)</h3>
+      <p>아이콘만 보이는 좁은 사이드바. 호버하면 라벨 표시. 콘텐츠 영역 최대화. <strong>Vercel, Linear 스타일</strong></p>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="padding: 0.5rem;">
+        <div style="background: var(--primary); color: white; padding: 0.4rem 0.6rem; font-size: 0.7rem; border-radius: 4px 4px 0 0;">
+          HDDC &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 🌙 👤
+        </div>
+        <div style="display: flex; height: 120px;">
+          <div style="width: 100px; background: var(--bg-secondary); border-right: 1px solid var(--border); padding: 0.4rem; font-size: 0.55rem; line-height: 2;">
+            <div style="padding: 2px 6px; background: var(--primary); color: white; border-radius: 3px; margin-bottom: 2px;">📊 대시보드</div>
+            <div style="padding: 2px 6px;">✏️ 프로필 편집</div>
+            <div style="padding: 2px 6px;">⚙️ 설정</div>
+            <div style="padding: 2px 6px;">📈 분석</div>
+          </div>
+          <div style="flex:1; padding: 0.5rem; font-size: 0.6rem; color: var(--text-secondary);">
+            <div style="background: var(--bg-secondary); border-radius: 4px; padding: 0.5rem;">콘텐츠 영역</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. 풀 사이드바 (Expanded)</h3>
+      <p>아이콘 + 텍스트 라벨이 항상 보이는 사이드바. 직관적. <strong>GitHub, Notion 스타일</strong></p>
+    </div>
+  </div>
+
+  <!-- Option C -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="padding: 0.5rem;">
+        <div style="background: var(--primary); color: white; padding: 0.4rem 0.6rem; font-size: 0.7rem; border-radius: 4px 4px 0 0;">
+          HDDC &nbsp; ☰ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 🌙 👤
+        </div>
+        <div style="display: flex; height: 120px;">
+          <div style="flex:1; padding: 0.5rem; font-size: 0.6rem; color: var(--text-secondary);">
+            <div style="background: var(--bg-secondary); border-radius: 4px; padding: 0.5rem; margin-bottom: 0.3rem;">콘텐츠 영역 (풀 너비)</div>
+            <div style="background: var(--bg-secondary); border-radius: 4px; padding: 0.3rem;">...</div>
+          </div>
+          <div style="position: absolute; left: 0.5rem; top: 2.8rem; width: 100px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.4rem; font-size: 0.55rem; line-height: 2; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+            <div style="padding: 2px 6px; background: var(--primary); color: white; border-radius: 3px;">📊 대시보드</div>
+            <div style="padding: 2px 6px;">✏️ 프로필 편집</div>
+            <div style="padding: 2px 6px;">⚙️ 설정</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. 토글 사이드바 (Drawer)</h3>
+      <p>평소엔 숨김, 햄버거 메뉴로 열림. 콘텐츠 풀 너비. <strong>모바일 친화적</strong></p>
+    </div>
+  </div>
+
+  <!-- Option D -->
+  <div class="card" data-choice="d" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="padding: 0.5rem;">
+        <div style="background: var(--primary); color: white; padding: 0.4rem 0.6rem; font-size: 0.7rem; border-radius: 4px 4px 0 0;">
+          HDDC &nbsp;&nbsp; 대시보드 &nbsp; 편집 &nbsp; 분석 &nbsp; 설정 &nbsp;&nbsp; 🌙 👤
+        </div>
+        <div style="height: 120px; padding: 0.5rem; font-size: 0.6rem; color: var(--text-secondary);">
+          <div style="background: var(--bg-secondary); border-radius: 4px; padding: 0.5rem; margin-bottom: 0.3rem;">콘텐츠 영역 (풀 너비)</div>
+          <div style="background: var(--bg-secondary); border-radius: 4px; padding: 0.3rem;">...</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>D. 사이드바 없음 — 헤더에 통합</h3>
+      <p>모든 네비게이션을 헤더에 넣음. 심플. <strong>Linktree 스타일</strong></p>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 1.5rem;">
+  <div class="pros-cons">
+    <div class="pros">
+      <h4>사이드바 있을 때</h4>
+      <ul>
+        <li>메뉴 확장에 유리</li>
+        <li>현재 위치 명확</li>
+        <li>대시보드 느낌</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h4>사이드바 없을 때</h4>
+      <ul>
+        <li>심플하고 가벼움</li>
+        <li>콘텐츠 영역 넓음</li>
+        <li>링크인바이오 서비스 특성에 적합</li>
+      </ul>
+    </div>
+  </div>
+</div>

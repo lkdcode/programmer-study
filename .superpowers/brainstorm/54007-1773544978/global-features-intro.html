@@ -1,0 +1,44 @@
+<h2>HDDC Global Features</h2>
+<p class="subtitle">글로벌 기능 범위를 먼저 정해봅시다</p>
+
+<div class="section">
+  <p>현재 HDDC는 <strong>링크인바이오</strong> 서비스입니다. 글로벌 기능들이 필요한 <strong>대상 페이지</strong>는 어디인가요?</p>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Dashboard 계열 (관리 페이지)</h3>
+      <p>/dashboard/edit, /dashboard/analytics 등 — 사이드바 + 헤더로 관리 도구 느낌</p>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>마케팅/랜딩 페이지</h3>
+      <p>/, /auth 등 — 방문자 경험 개선, CTA 버튼</p>
+    </div>
+  </div>
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>둘 다 — 전체 앱</h3>
+      <p>모든 페이지에 걸친 글로벌 네비게이션 시스템</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 2rem;">
+  <div class="label">참고: 현재 구조</div>
+  <div class="mockup">
+    <div class="mockup-header">현재 HDDC 라우트 구조</div>
+    <div class="mockup-body" style="font-family: monospace; font-size: 0.85rem; line-height: 1.8;">
+      <div>/ ─────────────── 홈 (랜딩페이지)</div>
+      <div>/auth/login ───── 로그인</div>
+      <div>/auth/signup ──── 회원가입</div>
+      <div>/dashboard/edit ─ 프로필 편집 ← <span style="color: var(--primary);">현재 개발중</span></div>
+      <div>/[username] ───── 공개 프로필</div>
+    </div>
+  </div>
+</div>

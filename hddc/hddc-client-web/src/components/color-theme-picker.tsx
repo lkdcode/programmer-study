@@ -7,6 +7,7 @@ import {
   type ColorTheme,
 } from "@/hooks/use-color-theme";
 import { Button } from "@/components/ui/button";
+import { ColorSwatch } from "@/components/ui/color-swatch";
 import { Palette } from "@phosphor-icons/react";
 
 const PRESET_THEMES = COLOR_THEMES.filter((t) => t !== "custom");
@@ -63,19 +64,16 @@ export function ColorThemePicker() {
         <div className="absolute right-0 top-full mt-2 rounded-lg border border-border bg-popover p-2.5 shadow-md">
           <div className="flex gap-2">
             {PRESET_THEMES.map((theme) => (
-              <button
+              <ColorSwatch
                 key={theme}
+                color={THEME_COLORS[theme as Exclude<ColorTheme, "custom">]}
+                selected={colorTheme === theme}
+                bordered={theme === "default" || theme === "white"}
                 onClick={() => {
                   setColorTheme(theme);
                   setOpen(false);
                 }}
-                className={`cursor-pointer size-7 rounded-full transition-transform hover:scale-110 ${
-                  colorTheme === theme
-                    ? "ring-2 ring-foreground ring-offset-2 ring-offset-background"
-                    : ""
-                }${theme === "default" || theme === "white" ? " border border-border" : ""}`}
-                style={{ backgroundColor: THEME_COLORS[theme as Exclude<ColorTheme, "custom">] }}
-                aria-label={THEME_LABELS[theme as Exclude<ColorTheme, "custom">]}
+                label={THEME_LABELS[theme as Exclude<ColorTheme, "custom">]}
               />
             ))}
           </div>
