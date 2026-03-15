@@ -44,10 +44,12 @@ function Button({
   variant = "default",
   size = "default",
   asChild = false,
+  active,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
+    active?: boolean
   }) {
   const Comp = asChild ? Slot.Root : "button"
 
@@ -56,7 +58,11 @@ function Button({
       data-slot="button"
       data-variant={variant}
       data-size={size}
-      className={cn(buttonVariants({ variant, size, className }))}
+      data-active={active ? "true" : undefined}
+      className={cn(
+        buttonVariants({ variant, size, className }),
+        active && "ring-2 ring-foreground ring-offset-2 ring-offset-background",
+      )}
       {...props}
     />
   )
