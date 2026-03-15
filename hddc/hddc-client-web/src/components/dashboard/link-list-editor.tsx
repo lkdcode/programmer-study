@@ -17,7 +17,9 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash, Plus, ImageSquare, List, GridFour, SquaresFour, DotsSixVertical } from "@phosphor-icons/react";
+import { Trash, Plus, ImageSquare, DotsSixVertical } from "@phosphor-icons/react";
+import { List, GridFour, SquaresFour } from "@phosphor-icons/react";
+import { ToggleGroup, type ToggleGroupOption } from "@/components/ui/toggle-group";
 import { Switch } from "@/components/ui/switch";
 import { ImageCropModal } from "./image-crop-modal";
 import { useSectionFocus, useEditFocus } from "@/contexts/edit-focus-context";
@@ -40,7 +42,7 @@ interface Props {
   setLinkAnimation: (anim: LinkAnimation) => void;
 }
 
-const LAYOUTS: { value: LinkLayout; label: string; icon: typeof List }[] = [
+const LAYOUTS: ToggleGroupOption<LinkLayout>[] = [
   { value: "list", label: "리스트", icon: List },
   { value: "grid-2", label: "2열", icon: GridFour },
   { value: "grid-3", label: "3열", icon: SquaresFour },
@@ -74,7 +76,7 @@ function SortableEditorCard({
   );
 }
 
-const LINK_ANIMATIONS: { value: LinkAnimation; label: string }[] = [
+const LINK_ANIMATIONS: ToggleGroupOption<LinkAnimation>[] = [
   { value: "none", label: "없음" },
   { value: "fade-in", label: "페이드" },
   { value: "slide-up", label: "슬라이드" },
@@ -82,7 +84,7 @@ const LINK_ANIMATIONS: { value: LinkAnimation; label: string }[] = [
   { value: "stagger", label: "순차" },
 ];
 
-const LINK_STYLES: { value: LinkStyle; label: string }[] = [
+const LINK_STYLES: ToggleGroupOption<LinkStyle>[] = [
   { value: "fill", label: "채움" },
   { value: "outline", label: "아웃라인" },
   { value: "shadow", label: "그림자" },
@@ -128,59 +130,19 @@ export function LinkListEditor({ links, linkLayout, linkStyle, linkAnimation, ad
       {/* Layout selector */}
       <div className="flex items-center gap-1">
         <span className="mr-1 text-[11px] text-muted-foreground">배치</span>
-        {LAYOUTS.map(({ value, label, icon: Icon }) => (
-          <button
-            key={value}
-            onClick={() => setLinkLayout(value)}
-            className={cn(
-              "inline-flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-[11px] font-medium transition-colors",
-              linkLayout === value
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted/60 text-muted-foreground hover:bg-muted",
-            )}
-          >
-            <Icon className="size-3.5" weight={linkLayout === value ? "fill" : "regular"} />
-            {label}
-          </button>
-        ))}
+        <ToggleGroup variant="square" value={linkLayout} onValueChange={setLinkLayout} options={LAYOUTS} />
       </div>
 
       {/* Style selector */}
       <div className="flex items-center gap-1">
         <span className="mr-1 text-[11px] text-muted-foreground">스타일</span>
-        {LINK_STYLES.map(({ value, label }) => (
-          <button
-            key={value}
-            onClick={() => setLinkStyle(value)}
-            className={cn(
-              "inline-flex cursor-pointer items-center rounded-md px-2 py-1 text-[11px] font-medium transition-colors",
-              linkStyle === value
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted/60 text-muted-foreground hover:bg-muted",
-            )}
-          >
-            {label}
-          </button>
-        ))}
+        <ToggleGroup variant="square" value={linkStyle} onValueChange={setLinkStyle} options={LINK_STYLES} />
       </div>
 
       {/* Animation selector */}
       <div className="flex items-center gap-1">
         <span className="mr-1 text-[11px] text-muted-foreground">애니메이션</span>
-        {LINK_ANIMATIONS.map(({ value, label }) => (
-          <button
-            key={value}
-            onClick={() => setLinkAnimation(value)}
-            className={cn(
-              "inline-flex cursor-pointer items-center rounded-md px-2 py-1 text-[11px] font-medium transition-colors",
-              linkAnimation === value
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted/60 text-muted-foreground hover:bg-muted",
-            )}
-          >
-            {label}
-          </button>
-        ))}
+        <ToggleGroup variant="square" value={linkAnimation} onValueChange={setLinkAnimation} options={LINK_ANIMATIONS} />
       </div>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { DeviceMobile, Desktop } from "@phosphor-icons/react";
+import { ToggleGroup } from "@/components/ui/toggle-group";
 import { PhonePreviewFrame, BrowserPreviewFrame } from "./dashboard-preview-frame";
 import { ProfilePreviewContent } from "./profile-preview-content";
 import type { ProfileData } from "@/lib/profile-types";
@@ -47,30 +48,16 @@ export function ProfilePreview({ profileData, reorderLinks }: Props) {
       {/* Toggle */}
       <div className="flex shrink-0 items-center gap-3">
         <span className="text-xs font-semibold text-muted-foreground">미리보기</span>
-        <div className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/50 p-1">
-          <button
-            onClick={() => setView("mobile")}
-            className={`cursor-pointer inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium transition-all ${
-              view === "mobile"
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <DeviceMobile className="size-3.5" />
-            Mobile
-          </button>
-          <button
-            onClick={() => setView("web")}
-            className={`cursor-pointer inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium transition-all ${
-              view === "web"
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <Desktop className="size-3.5" />
-            Web
-          </button>
-        </div>
+        <ToggleGroup
+          variant="pill"
+          size="sm"
+          value={view}
+          onValueChange={setView}
+          options={[
+            { value: "mobile" as const, label: "Mobile", icon: DeviceMobile },
+            { value: "web" as const, label: "Web", icon: Desktop },
+          ]}
+        />
       </div>
 
       {/* Mockup with scoped theme */}

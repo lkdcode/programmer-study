@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { UserCircle, Camera, Image as ImageIcon, X } from "@phosphor-icons/react";
+import { UserCircle, Camera, Image as ImageIcon } from "@phosphor-icons/react";
+import { RemoveButton } from "@/components/ui/remove-button";
 import { ImageCropModal } from "./image-crop-modal";
 import { validateSlug } from "@/lib/validators";
 import { useSectionFocus } from "@/contexts/edit-focus-context";
@@ -155,13 +156,10 @@ export function ProfileHeaderEditor({ profileData, updateProfile, headerLayout, 
         <div className="flex items-center justify-between">
           <Label className="text-xs text-muted-foreground">배경 사진</Label>
           {profileData.backgroundUrl && (
-            <button
+            <RemoveButton
+              label="배경 제거"
               onClick={(e) => { e.stopPropagation(); updateProfile({ backgroundUrl: null }); }}
-              className="inline-flex cursor-pointer items-center gap-0.5 text-[11px] text-destructive hover:opacity-70"
-            >
-              <X className="size-3" weight="bold" />
-              배경 제거
-            </button>
+            />
           )}
         </div>
         <div
@@ -192,13 +190,10 @@ export function ProfileHeaderEditor({ profileData, updateProfile, headerLayout, 
         <div className="flex items-center justify-between">
           <Label className="text-xs text-muted-foreground">프로필 사진</Label>
           {profileData.avatarUrl && (
-            <button
+            <RemoveButton
+              label="사진 제거"
               onClick={(e) => { e.stopPropagation(); updateProfile({ avatarUrl: null }); }}
-              className="inline-flex cursor-pointer items-center gap-0.5 text-[11px] text-destructive hover:opacity-70"
-            >
-              <X className="size-3" weight="bold" />
-              사진 제거
-            </button>
+            />
           )}
         </div>
         <div
