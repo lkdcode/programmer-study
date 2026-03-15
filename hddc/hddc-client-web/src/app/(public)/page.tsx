@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ToggleGroup } from "@/components/ui/toggle-group";
+import { FeatureCard } from "@/components/feature-card";
 import { PhoneMockup, BrowserMockup } from "@/components/device-mockup";
 import {
   LinkSimple,
@@ -64,30 +66,14 @@ export default function Home() {
             {/* Right: Device Mockups + Toggle */}
             <div className="flex flex-col items-center gap-6">
               {/* Toggle */}
-              <div className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/50 p-1">
-                <button
-                  onClick={() => setActiveView("mobile")}
-                  className={`cursor-pointer inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
-                    activeView === "mobile"
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <DeviceMobile className="size-4" />
-                  Mobile
-                </button>
-                <button
-                  onClick={() => setActiveView("web")}
-                  className={`cursor-pointer inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
-                    activeView === "web"
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <Desktop className="size-4" />
-                  Web
-                </button>
-              </div>
+              <ToggleGroup
+                value={activeView}
+                onValueChange={setActiveView}
+                options={[
+                  { value: "mobile", label: "Mobile", icon: DeviceMobile },
+                  { value: "web", label: "Web", icon: Desktop },
+                ]}
+              />
 
               {/* Devices */}
               <div className="relative flex items-end justify-center gap-4 sm:gap-6">
@@ -144,23 +130,19 @@ export default function Home() {
                   title: "공유 & 분석",
                   desc: "하나의 URL로 공유하고, 클릭과 유입을 분석하세요.",
                 },
-              ].map(({ step, icon: Icon, title, desc }, idx) => (
-                <div key={step} className="relative flex flex-col items-center text-center">
-                  {/* Connector line (hidden on mobile, between cards on sm+) */}
+              ].map(({ step, icon, title, desc }, idx) => (
+                <FeatureCard
+                  key={step}
+                  variant="step"
+                  icon={icon}
+                  title={title}
+                  description={desc}
+                  badge={`STEP ${step}`}
+                >
                   {idx < 2 && (
                     <div className="absolute right-0 top-10 hidden h-px w-8 translate-x-full bg-border sm:block" />
                   )}
-                  <div className="mb-4 flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                    <Icon className="size-6" weight="duotone" />
-                  </div>
-                  <span className="mb-1 text-xs font-bold text-primary">
-                    STEP {step}
-                  </span>
-                  <h3 className="mb-2 text-lg font-semibold">{title}</h3>
-                  <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
-                    {desc}
-                  </p>
-                </div>
+                </FeatureCard>
               ))}
             </div>
           </div>
@@ -195,19 +177,14 @@ export default function Home() {
                   title: "테마 커스터마이징",
                   desc: "6개 빌트인 프리셋과 다크모드로 나만의 스타일을 만드세요.",
                 },
-              ].map(({ icon: Icon, title, desc }) => (
-                <div
+              ].map(({ icon, title, desc }) => (
+                <FeatureCard
                   key={title}
-                  className="rounded-xl border border-border bg-card p-6 transition-shadow hover:shadow-md"
-                >
-                  <div className="mb-4 flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <Icon className="size-5" weight="duotone" />
-                  </div>
-                  <h3 className="mb-2 font-semibold">{title}</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {desc}
-                  </p>
-                </div>
+                  variant="feature"
+                  icon={icon}
+                  title={title}
+                  description={desc}
+                />
               ))}
             </div>
           </div>
