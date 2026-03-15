@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup } from "@/components/ui/toggle-group";
 import { FeatureCard } from "@/components/feature-card";
+import { SiteFooter } from "@/components/site-footer";
 import { PhoneMockup, BrowserMockup } from "@/components/device-mockup";
 import {
   LinkSimple,
@@ -274,10 +275,7 @@ export default function Home() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-6 text-center text-sm text-muted-foreground">
-        <p>&copy; 2026 핫딜닷쿨. All rights reserved.</p>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
