@@ -33,10 +33,35 @@ export default function ProfileEditPage() {
 
   return (
     <EditFocusProvider>
-      <div className="mx-auto flex h-full w-full max-w-6xl">
-        {/* Left: Editor (scrolls, hidden scrollbar) */}
-        <div className="flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:w-2/5 lg:flex-none">
-          <div className="mx-auto max-w-xl px-4 py-6 sm:px-6">
+      <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6">
+        <div className="flex gap-4">
+          {/* Sticky Sidebar — edit tools */}
+          <div className="hidden lg:block">
+            <div className="sticky top-[50vh] -translate-y-1/2 flex flex-col items-center gap-1 rounded-xl border border-border bg-card p-1.5 shadow-sm">
+              <SidebarButton
+                icon={<ArrowCounterClockwise className="size-4" />}
+                label="되돌리기"
+                onClick={profile.undoProfile}
+                disabled={!profile.canUndo}
+              />
+              <SidebarButton
+                icon={<ArrowClockwise className="size-4" />}
+                label="다시 실행"
+                onClick={profile.redoProfile}
+                disabled={!profile.canRedo}
+              />
+              <div className="my-1 h-px w-full bg-border" />
+              <SidebarButton
+                icon={<Trash className="size-4" />}
+                label="초기화"
+                onClick={() => setConfirmResetOpen(true)}
+                variant="destructive"
+              />
+            </div>
+          </div>
+
+          {/* Center: Editor Column */}
+          <div className="min-w-0 lg:w-2/5">
             <div className="mb-4 flex h-8 items-center gap-3">
               <h1 className="text-lg font-semibold">프로필 편집</h1>
             </div>
@@ -44,81 +69,56 @@ export default function ProfileEditPage() {
               <ProfileEditor {...profile} />
             </div>
           </div>
-        </div>
 
-        {/* Right: Preview (fixed, no scroll) */}
-        <div className="hidden lg:flex lg:flex-1 flex-col border-l border-border">
-          <div className="flex h-8 shrink-0 items-center justify-end gap-2 px-4 py-6">
-            <span className="text-xs text-muted-foreground">
-              {profile.saveStatus === "saving" && (
-                <span className="inline-flex items-center gap-1">
-                  <CircleNotch className="size-3 animate-spin" />
-                  저장 중...
+          {/* Right: Preview Column — sticky */}
+          <div className="hidden lg:block lg:flex-1">
+            <div className="sticky top-0">
+              <div className="mb-4 flex h-8 items-center justify-end gap-2">
+                <span className="text-xs text-muted-foreground">
+                  {profile.saveStatus === "saving" && (
+                    <span className="inline-flex items-center gap-1">
+                      <CircleNotch className="size-3 animate-spin" />
+                      저장 중...
+                    </span>
+                  )}
+                  {profile.saveStatus === "saved" && (
+                    <span className="inline-flex items-center gap-1 text-primary">
+                      <Check className="size-3" />
+                      임시 저장됨
+                    </span>
+                  )}
                 </span>
-              )}
-              {profile.saveStatus === "saved" && (
-                <span className="inline-flex items-center gap-1 text-primary">
-                  <Check className="size-3" />
-                  임시 저장됨
-                </span>
-              )}
-            </span>
-            <MobilePreviewButton profileData={profile.profileData} />
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 text-xs"
-              onClick={() => {
-                const url = `https://hotdeal.cool/${profile.profileData.slug || "yourname"}`;
-                navigator.clipboard.writeText(url);
-                toast.success("링크가 복사되었습니다", { description: url });
-              }}
-              disabled={!profile.profileData.slug}
-            >
-              <LinkIcon className="mr-1 size-3.5" />
-              공유
-            </Button>
-            <Button
-              size="sm"
-              onClick={profile.saveNow}
-              className="h-8 text-xs"
-            >
-              <FloppyDisk className="mr-1 size-3.5" />
-              저장
-            </Button>
-          </div>
-          <div className="flex-1 overflow-hidden px-4 pb-4">
-            <div className="h-full rounded-xl border border-border bg-card shadow-sm">
-              <ProfilePreview
-                profileData={profile.profileData}
-                reorderLinks={profile.reorderLinks}
-              />
+                <MobilePreviewButton profileData={profile.profileData} />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 text-xs"
+                  onClick={() => {
+                    const url = `https://hotdeal.cool/${profile.profileData.slug || "yourname"}`;
+                    navigator.clipboard.writeText(url);
+                    toast.success("링크가 복사되었습니다", { description: url });
+                  }}
+                  disabled={!profile.profileData.slug}
+                >
+                  <LinkIcon className="mr-1 size-3.5" />
+                  공유
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={profile.saveNow}
+                  className="h-8 text-xs"
+                >
+                  <FloppyDisk className="mr-1 size-3.5" />
+                  저장
+                </Button>
+              </div>
+              <div className="h-[calc(100vh-8rem)] rounded-xl border border-border bg-card shadow-sm">
+                <ProfilePreview
+                  profileData={profile.profileData}
+                  reorderLinks={profile.reorderLinks}
+                />
+              </div>
             </div>
-          </div>
-        </div>
-
-        {/* Floating edit tools */}
-        <div className="fixed bottom-6 left-20 z-50 hidden lg:block">
-          <div className="flex items-center gap-1 rounded-xl border border-border bg-card p-1.5 shadow-sm">
-            <SidebarButton
-              icon={<ArrowCounterClockwise className="size-4" />}
-              label="되돌리기"
-              onClick={profile.undoProfile}
-              disabled={!profile.canUndo}
-            />
-            <SidebarButton
-              icon={<ArrowClockwise className="size-4" />}
-              label="다시 실행"
-              onClick={profile.redoProfile}
-              disabled={!profile.canRedo}
-            />
-            <div className="mx-1 h-5 w-px bg-border" />
-            <SidebarButton
-              icon={<Trash className="size-4" />}
-              label="초기화"
-              onClick={() => setConfirmResetOpen(true)}
-              variant="destructive"
-            />
           </div>
         </div>
       </div>
