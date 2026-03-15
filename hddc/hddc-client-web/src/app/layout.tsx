@@ -5,6 +5,7 @@ import {
   ColorThemeProvider,
   ColorThemeScript,
 } from "@/components/color-theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
@@ -36,7 +37,10 @@ export default function RootLayout({
       </head>
       <body>
         <ThemeProvider>
-          <ColorThemeProvider>{children}</ColorThemeProvider>
+          <ColorThemeProvider>
+            {children}
+            <Toaster />
+          </ColorThemeProvider>
         </ThemeProvider>
       </body>
     </html>

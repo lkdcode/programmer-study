@@ -18,23 +18,31 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
 import { useEditFocus, type EditSection } from "@/contexts/edit-focus-context";
-import { type ProfileData, type ProfileLink, type LinkLayout } from "@/lib/profile-types";
+import { type ProfileData, type ProfileLink, type LinkLayout, type LinkStyle, type LinkAnimation } from "@/lib/profile-types";
 import {
   InstagramLogo,
   YoutubeLogo,
   XLogo,
   TiktokLogo,
-  LinkedinLogo,
+  ThreadsLogo,
+  Envelope,
   Globe,
   UserCircle,
 } from "@phosphor-icons/react";
+import { FacebookIcon } from "@/components/icons/facebook-icon";
+import { KakaoIcon } from "@/components/icons/kakao-icon";
+import { NaverIcon } from "@/components/icons/naver-icon";
 
 const SOCIAL_ICONS: Record<string, typeof InstagramLogo> = {
   instagram: InstagramLogo,
   youtube: YoutubeLogo,
   x: XLogo,
   tiktok: TiktokLogo,
-  linkedin: LinkedinLogo,
+  threads: ThreadsLogo,
+  facebook: FacebookIcon as unknown as typeof InstagramLogo,
+  kakaotalk: KakaoIcon as unknown as typeof InstagramLogo,
+  "naver-blog": NaverIcon as unknown as typeof InstagramLogo,
+  email: Envelope,
   website: Globe,
 };
 
@@ -76,7 +84,7 @@ function Avatar({ src, isDefault }: { src: string | null; isDefault?: boolean })
       <div className={cn(
         "flex size-20 items-center justify-center rounded-full text-base font-bold",
         isDefault
-          ? "border-2 border-foreground bg-background text-foreground"
+          ? "bg-foreground text-background"
           : "bg-primary text-primary-foreground",
       )}>
         핫딜닷쿨
@@ -93,6 +101,33 @@ function Avatar({ src, isDefault }: { src: string | null; isDefault?: boolean })
   );
 }
 
+/* ─── Link style utilities ─── */
+
+function getLinkStyleClasses(style: LinkStyle, isDefault: boolean): string {
+  switch (style) {
+    case "outline":
+      return isDefault
+        ? "border-2 border-foreground bg-transparent text-foreground"
+        : "border-2 border-primary bg-transparent hover:bg-primary/5";
+    case "shadow":
+      return cn("border-0 shadow-md hover:shadow-lg",
+        isDefault ? "bg-background text-foreground" : "bg-primary/8");
+    case "rounded":
+      return cn("!rounded-2xl", isDefault
+        ? "border-foreground bg-background text-foreground"
+        : "border-primary/15 bg-primary/8 hover:bg-primary/12");
+    case "pill":
+      return cn("!rounded-full", isDefault
+        ? "border-foreground bg-background text-foreground"
+        : "border-primary/15 bg-primary/8 hover:bg-primary/12");
+    case "fill":
+    default:
+      return isDefault
+        ? "border-foreground bg-background text-foreground hover:bg-muted/50"
+        : "border-primary/15 bg-primary/8 hover:bg-primary/12";
+  }
+}
+
 /* ─── Link items by layout ─── */
 
 function LinkImage({ src, size = "size-9", isDefault }: { src: string; size?: string; isDefault?: boolean }) {
@@ -100,10 +135,10 @@ function LinkImage({ src, size = "size-9", isDefault }: { src: string; size?: st
     <div className={cn("relative shrink-0", size)}>
       <div className={cn(
         "flex shrink-0 items-center justify-center rounded-full",
-        isDefault ? "border border-foreground bg-background" : "bg-primary",
+        isDefault ? "bg-foreground" : "bg-primary",
         size,
       )}>
-        <span className={cn("text-[6px] font-bold leading-none", isDefault ? "text-foreground" : "text-primary-foreground")}>핫딜닷쿨</span>
+        <span className={cn("text-[6px] font-bold leading-none", isDefault ? "text-background" : "text-primary-foreground")}>핫딜닷쿨</span>
       </div>
       <img
         src={src}
@@ -119,10 +154,10 @@ function DefaultLinkIcon({ size = "size-9", isDefault }: { size?: string; isDefa
   return (
     <div className={cn(
       "flex shrink-0 items-center justify-center rounded-full",
-      isDefault ? "border border-foreground bg-background" : "bg-primary",
+      isDefault ? "bg-foreground" : "bg-primary",
       size,
     )}>
-      <span className={cn("text-[6px] font-bold leading-none", isDefault ? "text-foreground" : "text-primary-foreground")}>핫딜닷쿨</span>
+      <span className={cn("text-[6px] font-bold leading-none", isDefault ? "text-background" : "text-primary-foreground")}>핫딜닷쿨</span>
     </div>
   );
 }
@@ -160,53 +195,55 @@ function SortableLinkItem({
 
 /* ─── Link renderers per layout ─── */
 
-function ListLinkItem({ link, isDefault, tint }: { link: ProfileLink; isDefault?: boolean; tint?: string }) {
+function ListLinkItem({ link, isDefault, tint, linkStyle = "fill" }: { link: ProfileLink; isDefault?: boolean; tint?: string; linkStyle?: LinkStyle }) {
   return (
     <div
       className={cn(
         "flex h-12 items-center gap-3 rounded-xl border px-3 text-sm font-medium transition-colors",
-        isDefault
-          ? "border-foreground bg-background text-foreground hover:bg-muted/50"
-          : tint ? "border-primary/15" : "border-primary/15 bg-primary/8 hover:bg-primary/12",
+        tint ? "border-primary/15" : getLinkStyleClasses(linkStyle, !!isDefault),
+        !link.enabled && "opacity-40",
       )}
       style={tint ? { backgroundColor: tint } : undefined}
     >
       {link.imageUrl ? <LinkImage src={link.imageUrl} isDefault={isDefault} /> : <DefaultLinkIcon isDefault={isDefault} />}
-      <span className="truncate">{link.title || "제목 없음"}</span>
+      <div className="min-w-0 flex-1">
+        <span className={cn("truncate block", !link.enabled && "line-through")}>{link.title || "제목 없음"}</span>
+        {link.description && (
+          <p className="truncate text-[10px] text-muted-foreground">{link.description}</p>
+        )}
+      </div>
     </div>
   );
 }
 
-function Grid2LinkItem({ link, isDefault, tint }: { link: ProfileLink; isDefault?: boolean; tint?: string }) {
+function Grid2LinkItem({ link, isDefault, tint, linkStyle = "fill" }: { link: ProfileLink; isDefault?: boolean; tint?: string; linkStyle?: LinkStyle }) {
   return (
     <div
       className={cn(
         "flex flex-col items-center gap-2 rounded-xl border p-3 transition-colors",
-        isDefault
-          ? "border-foreground bg-background text-foreground hover:bg-muted/50"
-          : tint ? "border-primary/15" : "border-primary/15 bg-primary/8 hover:bg-primary/12",
+        tint ? "border-primary/15" : getLinkStyleClasses(linkStyle, !!isDefault),
+        !link.enabled && "opacity-40",
       )}
       style={tint ? { backgroundColor: tint } : undefined}
     >
       {link.imageUrl ? <LinkImage src={link.imageUrl} size="size-12" isDefault={isDefault} /> : <DefaultLinkIcon size="size-12" isDefault={isDefault} />}
-      <span className="w-full truncate text-center text-xs font-medium">{link.title || "제목 없음"}</span>
+      <span className={cn("w-full truncate text-center text-xs font-medium", !link.enabled && "line-through")}>{link.title || "제목 없음"}</span>
     </div>
   );
 }
 
-function Grid3LinkItem({ link, isDefault, tint }: { link: ProfileLink; isDefault?: boolean; tint?: string }) {
+function Grid3LinkItem({ link, isDefault, tint, linkStyle = "fill" }: { link: ProfileLink; isDefault?: boolean; tint?: string; linkStyle?: LinkStyle }) {
   return (
     <div
       className={cn(
         "flex flex-col items-center gap-1.5 rounded-lg border p-2 transition-colors",
-        isDefault
-          ? "border-foreground bg-background text-foreground hover:bg-muted/50"
-          : tint ? "border-primary/15" : "border-primary/15 bg-primary/8 hover:bg-primary/12",
+        tint ? "border-primary/15" : getLinkStyleClasses(linkStyle, !!isDefault),
+        !link.enabled && "opacity-40",
       )}
       style={tint ? { backgroundColor: tint } : undefined}
     >
       {link.imageUrl ? <LinkImage src={link.imageUrl} size="size-10" isDefault={isDefault} /> : <DefaultLinkIcon size="size-10" isDefault={isDefault} />}
-      <span className="w-full truncate text-center text-[10px] font-medium">{link.title || "제목 없음"}</span>
+      <span className={cn("w-full truncate text-center text-[10px] font-medium", !link.enabled && "line-through")}>{link.title || "제목 없음"}</span>
     </div>
   );
 }
@@ -216,6 +253,8 @@ function Grid3LinkItem({ link, isDefault, tint }: { link: ProfileLink; isDefault
 function LinksSection({
   links,
   linkLayout,
+  linkStyle,
+  linkAnimation = "none",
   activeSection,
   activeLinkId,
   onReorderLinks,
@@ -224,6 +263,8 @@ function LinksSection({
 }: {
   links: ProfileLink[];
   linkLayout: LinkLayout;
+  linkStyle: LinkStyle;
+  linkAnimation?: LinkAnimation;
   activeSection: EditSection;
   activeLinkId: string | null;
   onReorderLinks?: (activeId: string, overId: string) => void;
@@ -261,23 +302,40 @@ function LinksSection({
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={links.map((l) => l.id)} strategy={strategy}>
           <div className={gridClass}>
-            {links.map((link) => (
-              <SortableLinkItem key={link.id} link={link}>
-                <div className={cn(
-                  "transition-all duration-300",
-                  linkLayout === "grid-3" ? "rounded-lg" : "rounded-xl",
-                  activeLinkId === link.id && "edit-highlight",
-                )}>
-                  {linkLayout === "grid-3" ? (
-                    <Grid3LinkItem link={link} isDefault={isDefault} tint={tint} />
-                  ) : linkLayout === "grid-2" ? (
-                    <Grid2LinkItem link={link} isDefault={isDefault} tint={tint} />
-                  ) : (
-                    <ListLinkItem link={link} isDefault={isDefault} tint={tint} />
-                  )}
-                </div>
-              </SortableLinkItem>
-            ))}
+            {links.map((link, index) => {
+              const animClass =
+                linkAnimation === "stagger"
+                  ? "link-anim-slide-up"
+                  : linkAnimation !== "none"
+                    ? `link-anim-${linkAnimation}`
+                    : "";
+              const animDelay =
+                linkAnimation === "stagger"
+                  ? { animationDelay: `${index * 0.08}s` }
+                  : undefined;
+
+              return (
+                <SortableLinkItem key={link.id} link={link}>
+                  <div
+                    className={cn(
+                      "transition-all duration-300",
+                      linkLayout === "grid-3" ? "rounded-lg" : "rounded-xl",
+                      activeLinkId === link.id && "edit-highlight",
+                      animClass,
+                    )}
+                    style={animDelay}
+                  >
+                    {linkLayout === "grid-3" ? (
+                      <Grid3LinkItem link={link} isDefault={isDefault} tint={tint} linkStyle={linkStyle} />
+                    ) : linkLayout === "grid-2" ? (
+                      <Grid2LinkItem link={link} isDefault={isDefault} tint={tint} linkStyle={linkStyle} />
+                    ) : (
+                      <ListLinkItem link={link} isDefault={isDefault} tint={tint} linkStyle={linkStyle} />
+                    )}
+                  </div>
+                </SortableLinkItem>
+              );
+            })}
           </div>
         </SortableContext>
       </DndContext>
@@ -294,18 +352,37 @@ interface Props {
 }
 
 export function ProfilePreviewContent({ profileData, variant, onReorderLinks }: Props) {
-  const { avatarUrl, backgroundUrl, backgroundColor, nickname, bio, links, socials, linkLayout, colorTheme, customSecondaryColor } = profileData;
+  const { avatarUrl, backgroundUrl, backgroundColor, nickname, bio, links, socials, linkLayout, linkStyle, linkAnimation, headerLayout, colorTheme, customSecondaryColor } = profileData;
   const isDefault = colorTheme === "default" || colorTheme === "white";
   const tint = colorTheme === "custom" && customSecondaryColor ? customSecondaryColor : undefined;
   const hasContent = nickname || bio || links.length > 0 || socials.length > 0;
   const { activeSection, activeLinkId } = useEditFocus();
   const bgStyle = backgroundColor ? { backgroundColor } : undefined;
 
+  // 빈 상태일 때 샘플 프로필 표시
   if (!hasContent) {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-        <UserCircle className="size-16 text-muted-foreground/40" weight="duotone" />
-        <p className="text-sm text-muted-foreground">프로필을 꾸며보세요</p>
+      <div className="flex min-h-full w-full flex-col items-center gap-4 px-4 py-8">
+        <div className="flex flex-col items-center gap-2 pb-2">
+          <div className="flex size-20 items-center justify-center rounded-full bg-foreground text-base font-bold text-background ring-2 ring-background">
+            핫딜닷쿨
+          </div>
+          <p className="text-base font-semibold text-muted-foreground/60">닉네임</p>
+          <p className="text-sm text-muted-foreground/40">프로필을 편집해서 꾸며보세요</p>
+        </div>
+        <div className="flex w-full flex-col gap-2.5">
+          {["나의 링크 1", "나의 링크 2", "나의 링크 3"].map((title) => (
+            <div
+              key={title}
+              className="flex h-12 items-center gap-3 rounded-xl border border-border/50 px-3 text-sm font-medium text-muted-foreground/40"
+            >
+              <div className="flex size-9 items-center justify-center rounded-full bg-muted/50">
+                <span className="text-[6px] font-bold leading-none text-muted-foreground/40">핫딜닷쿨</span>
+              </div>
+              <span>{title}</span>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -313,34 +390,89 @@ export function ProfilePreviewContent({ profileData, variant, onReorderLinks }: 
   if (variant === "mobile") {
     return (
       <div className="flex min-h-full w-full flex-col items-center gap-4 px-4" style={bgStyle}>
-        {/* Background — always rendered; edge-to-edge via negative margin */}
-        <HighlightWrapper section="background" activeSection={activeSection} overlay className="rounded-none -mx-4 mb-[-3.5rem] w-[calc(100%+2rem)]">
-          {backgroundUrl ? (
-            <img src={backgroundUrl} alt="" className="h-32 w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
-          ) : (
-            <div className="h-32 w-full bg-background" />
-          )}
-        </HighlightWrapper>
+        {/* Background — shown for center, left, banner-only */}
+        {headerLayout !== "avatar-only" && (
+          <HighlightWrapper
+            section="background"
+            activeSection={activeSection}
+            overlay
+            className={cn(
+              "rounded-none -mx-4 w-[calc(100%+2rem)]",
+              headerLayout === "banner-only" ? "mb-[-1rem]" : "mb-[calc(-2.5rem-1rem)]",
+            )}
+          >
+            {backgroundUrl ? (
+              <img src={backgroundUrl} alt="" className="h-32 w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+            ) : (
+              <div className="h-32 w-full bg-background" />
+            )}
+          </HighlightWrapper>
+        )}
 
-        {/* Profile header */}
-        <div className="flex flex-col items-center gap-2 pb-2">
-          <HighlightWrapper section="avatar" activeSection={activeSection} className="rounded-full">
-            <Avatar src={avatarUrl} isDefault={isDefault} />
-          </HighlightWrapper>
-          <HighlightWrapper section="nickname" activeSection={activeSection} className="px-3">
-            <p className="text-base font-semibold">{nickname || "이름 없음"}</p>
-          </HighlightWrapper>
-          {bio && (
-            <HighlightWrapper section="bio" activeSection={activeSection} className="px-3">
-              <p className="whitespace-pre-line text-center text-sm text-muted-foreground">{bio}</p>
+        {/* Profile header — layout variants */}
+        {headerLayout === "left" ? (
+          <div className="flex w-full items-start gap-3 pb-2">
+            <HighlightWrapper section="avatar" activeSection={activeSection} className="shrink-0 rounded-full">
+              <Avatar src={avatarUrl} isDefault={isDefault} />
             </HighlightWrapper>
-          )}
-        </div>
+            <div className="min-w-0 flex-1 pt-[45px]">
+              <HighlightWrapper section="nickname" activeSection={activeSection}>
+                <p className="text-base font-semibold">{nickname || "이름 없음"}</p>
+              </HighlightWrapper>
+              {bio && (
+                <HighlightWrapper section="bio" activeSection={activeSection}>
+                  <p className="whitespace-pre-line text-sm text-muted-foreground">{bio}</p>
+                </HighlightWrapper>
+              )}
+            </div>
+          </div>
+        ) : headerLayout === "avatar-only" ? (
+          <div className="flex flex-col items-center gap-2 pb-2 pt-4">
+            <HighlightWrapper section="avatar" activeSection={activeSection} className="rounded-full">
+              <Avatar src={avatarUrl} isDefault={isDefault} />
+            </HighlightWrapper>
+            <HighlightWrapper section="nickname" activeSection={activeSection} className="px-3">
+              <p className="text-base font-semibold">{nickname || "이름 없음"}</p>
+            </HighlightWrapper>
+            {bio && (
+              <HighlightWrapper section="bio" activeSection={activeSection} className="px-3">
+                <p className="whitespace-pre-line text-center text-sm text-muted-foreground">{bio}</p>
+              </HighlightWrapper>
+            )}
+          </div>
+        ) : headerLayout === "banner-only" ? (
+          <div className="flex flex-col items-center gap-2 pb-2">
+            <HighlightWrapper section="nickname" activeSection={activeSection} className="px-3">
+              <p className="text-base font-semibold">{nickname || "이름 없음"}</p>
+            </HighlightWrapper>
+            {bio && (
+              <HighlightWrapper section="bio" activeSection={activeSection} className="px-3">
+                <p className="whitespace-pre-line text-center text-sm text-muted-foreground">{bio}</p>
+              </HighlightWrapper>
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center gap-2 pb-2">
+            <HighlightWrapper section="avatar" activeSection={activeSection} className="rounded-full">
+              <Avatar src={avatarUrl} isDefault={isDefault} />
+            </HighlightWrapper>
+            <HighlightWrapper section="nickname" activeSection={activeSection} className="px-3">
+              <p className="text-base font-semibold">{nickname || "이름 없음"}</p>
+            </HighlightWrapper>
+            {bio && (
+              <HighlightWrapper section="bio" activeSection={activeSection} className="px-3">
+                <p className="whitespace-pre-line text-center text-sm text-muted-foreground">{bio}</p>
+              </HighlightWrapper>
+            )}
+          </div>
+        )}
 
         {/* Links with DnD */}
         <LinksSection
           links={links}
           linkLayout={linkLayout}
+          linkStyle={linkStyle}
+          linkAnimation={linkAnimation}
           activeSection={activeSection}
           activeLinkId={activeLinkId}
           onReorderLinks={onReorderLinks}
@@ -351,7 +483,7 @@ export function ProfilePreviewContent({ profileData, variant, onReorderLinks }: 
         {/* Social icons */}
         {socials.length > 0 && (
           <HighlightWrapper section="socials" activeSection={activeSection}>
-            <div className="flex gap-3 pt-2">
+            <div className="flex flex-wrap justify-center gap-3 pt-2">
               {socials.map((social) => {
                 const Icon = SOCIAL_ICONS[social.platform] ?? Globe;
                 return (
@@ -415,6 +547,8 @@ export function ProfilePreviewContent({ profileData, variant, onReorderLinks }: 
             <LinksSection
               links={links}
               linkLayout={linkLayout}
+              linkStyle={linkStyle}
+              linkAnimation={linkAnimation}
               activeSection={activeSection}
               activeLinkId={activeLinkId}
               onReorderLinks={onReorderLinks}

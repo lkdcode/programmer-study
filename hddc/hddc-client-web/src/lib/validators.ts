@@ -31,6 +31,23 @@ export function validateSlug(value: string): string | null {
   return null;
 }
 
+export function validateUrl(value: string): string | null {
+  if (!value) return null;
+  try {
+    const url = new URL(value.startsWith("http") ? value : `https://${value}`);
+    if (!["http:", "https:"].includes(url.protocol)) return "http 또는 https 주소만 가능합니다";
+    return null;
+  } catch {
+    return "올바른 URL 형식이 아닙니다";
+  }
+}
+
+export function normalizeUrl(value: string): string {
+  if (!value) return value;
+  if (/^https?:\/\//i.test(value)) return value;
+  return `https://${value}`;
+}
+
 export function validatePassword(value: string): string | null {
   if (!value) return "비밀번호를 입력해주세요";
   if (value.length < 8) return "비밀번호는 8자 이상이어야 합니다";

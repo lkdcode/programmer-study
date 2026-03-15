@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { HexColorPicker, HexColorInput } from "react-colorful";
 import { COLOR_THEMES, type ColorTheme } from "@/hooks/use-color-theme";
-import { Sun, Moon, Palette, X } from "@phosphor-icons/react";
+import { Sun, Moon, Palette, X, TextAa } from "@phosphor-icons/react";
+import { FONT_FAMILY_LABELS, FONT_FAMILY_CSS, type FontFamily } from "@/lib/profile-types";
 import { useSectionFocus } from "@/contexts/edit-focus-context";
 import { cn } from "@/lib/utils";
 import {
@@ -99,16 +100,18 @@ interface Props {
   backgroundColor: string | null;
   customPrimaryColor: string | null;
   customSecondaryColor: string | null;
+  fontFamily: FontFamily;
   setColorTheme: (theme: ColorTheme) => void;
   setDarkMode: (dark: boolean) => void;
   setBackgroundColor: (color: string | null) => void;
   setCustomColors: (primary: string, secondary: string) => void;
+  setFontFamily: (font: FontFamily) => void;
 }
 
 export function ThemeEditor({
   colorTheme, darkMode, backgroundColor,
-  customPrimaryColor, customSecondaryColor,
-  setColorTheme, setDarkMode, setBackgroundColor, setCustomColors,
+  customPrimaryColor, customSecondaryColor, fontFamily,
+  setColorTheme, setDarkMode, setBackgroundColor, setCustomColors, setFontFamily,
 }: Props) {
   const sectionFocus = useSectionFocus("theme");
   const [bgPickerOpen, setBgPickerOpen] = useState(false);
@@ -356,6 +359,33 @@ export function ThemeEditor({
           <button onClick={() => setDarkMode(true)} className={`cursor-pointer inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-all ${darkMode ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
             <Moon className="size-4" /> Dark
           </button>
+        </div>
+      </div>
+
+      {/* Font selector */}
+      <div>
+        <p className="mb-2 text-xs text-muted-foreground">폰트</p>
+        <div className="grid grid-cols-2 gap-1.5">
+          {(Object.keys(FONT_FAMILY_LABELS) as FontFamily[]).map((font) => (
+            <button
+              key={font}
+              onClick={() => setFontFamily(font)}
+              className={cn(
+                "cursor-pointer rounded-lg px-3 py-2 text-left transition-colors",
+                fontFamily === font
+                  ? "bg-muted ring-2 ring-foreground ring-offset-2 ring-offset-background"
+                  : "hover:bg-muted/50",
+              )}
+            >
+              <span className="text-xs font-medium">{FONT_FAMILY_LABELS[font]}</span>
+              <span
+                className="mt-0.5 block text-[10px] text-muted-foreground"
+                style={{ fontFamily: FONT_FAMILY_CSS[font] }}
+              >
+                가나다 ABC 123
+              </span>
+            </button>
+          ))}
         </div>
       </div>
     </section>

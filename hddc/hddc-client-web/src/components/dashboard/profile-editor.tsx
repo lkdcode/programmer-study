@@ -14,6 +14,8 @@ export function ProfileEditor(props: ProfileActions) {
       <ProfileHeaderEditor
         profileData={props.profileData}
         updateProfile={props.updateProfile}
+        headerLayout={props.profileData.headerLayout}
+        setHeaderLayout={props.setHeaderLayout}
       />
 
       <hr className="border-border" />
@@ -21,11 +23,16 @@ export function ProfileEditor(props: ProfileActions) {
       <LinkListEditor
         links={props.profileData.links}
         linkLayout={props.profileData.linkLayout}
+        linkStyle={props.profileData.linkStyle}
+        linkAnimation={props.profileData.linkAnimation}
         addLink={props.addLink}
         updateLink={props.updateLink}
         removeLink={props.removeLink}
+        toggleLink={props.toggleLink}
         reorderLinks={props.reorderLinks}
         setLinkLayout={props.setLinkLayout}
+        setLinkStyle={props.setLinkStyle}
+        setLinkAnimation={props.setLinkAnimation}
       />
 
       <hr className="border-border" />
@@ -35,6 +42,7 @@ export function ProfileEditor(props: ProfileActions) {
         addSocial={props.addSocial}
         updateSocial={props.updateSocial}
         removeSocial={props.removeSocial}
+        reorderSocials={props.reorderSocials}
       />
 
       <hr className="border-border" />
@@ -45,11 +53,14 @@ export function ProfileEditor(props: ProfileActions) {
         backgroundColor={props.profileData.backgroundColor}
         customPrimaryColor={props.profileData.customPrimaryColor}
         customSecondaryColor={props.profileData.customSecondaryColor}
+        fontFamily={props.profileData.fontFamily}
         setColorTheme={props.setColorTheme}
         setDarkMode={props.setDarkMode}
         setBackgroundColor={props.setBackgroundColor}
         setCustomColors={props.setCustomColors}
+        setFontFamily={props.setFontFamily}
       />
+
     </div>
   );
 }

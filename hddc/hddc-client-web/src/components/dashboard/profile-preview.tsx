@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DeviceMobile, Desktop } from "@phosphor-icons/react";
 import { PhonePreviewFrame, BrowserPreviewFrame } from "./dashboard-preview-frame";
 import { ProfilePreviewContent } from "./profile-preview-content";
 import type { ProfileData } from "@/lib/profile-types";
+import { FONT_FAMILY_CSS } from "@/lib/profile-types";
+import { loadFont } from "@/lib/font-loader";
 
 function luminanceContrast(hex: string): string {
   const h = hex.replace("#", "");
@@ -22,17 +24,23 @@ interface Props {
 export function ProfilePreview({ profileData, reorderLinks }: Props) {
   const [view, setView] = useState<"mobile" | "web">("mobile");
 
+  useEffect(() => {
+    loadFont(profileData.fontFamily);
+  }, [profileData.fontFamily]);
+
   const themeAttr = profileData.colorTheme;
   const darkClass = profileData.darkMode ? "dark" : "";
 
   // Custom theme: override CSS variables inline
+  const fontStyle = { fontFamily: FONT_FAMILY_CSS[profileData.fontFamily] };
   const customStyle = themeAttr === "custom" && profileData.customPrimaryColor
     ? {
         "--primary": profileData.customPrimaryColor,
         "--primary-foreground": luminanceContrast(profileData.customPrimaryColor),
         "--ring": profileData.customPrimaryColor,
+        ...fontStyle,
       } as React.CSSProperties
-    : undefined;
+    : fontStyle as React.CSSProperties;
 
   return (
     <div className="flex h-full flex-col items-center gap-4 overflow-hidden p-3">

@@ -7,14 +7,17 @@ import { UserCircle, Camera, Image as ImageIcon, X } from "@phosphor-icons/react
 import { ImageCropModal } from "./image-crop-modal";
 import { validateSlug } from "@/lib/validators";
 import { useSectionFocus } from "@/contexts/edit-focus-context";
-import type { ProfileData } from "@/lib/profile-types";
+import type { ProfileData, HeaderLayout } from "@/lib/profile-types";
+import { cn } from "@/lib/utils";
 
 interface Props {
   profileData: ProfileData;
   updateProfile: (fields: Partial<Pick<ProfileData, "avatarUrl" | "backgroundUrl" | "slug" | "nickname" | "bio">>) => void;
+  headerLayout: HeaderLayout;
+  setHeaderLayout: (layout: HeaderLayout) => void;
 }
 
-export function ProfileHeaderEditor({ profileData, updateProfile }: Props) {
+export function ProfileHeaderEditor({ profileData, updateProfile, headerLayout, setHeaderLayout }: Props) {
   const [cropOpen, setCropOpen] = useState<"avatar" | "background" | null>(null);
   const slugFocus = useSectionFocus("slug");
   const bgFocus = useSectionFocus("background");
@@ -25,6 +28,90 @@ export function ProfileHeaderEditor({ profileData, updateProfile }: Props) {
   return (
     <section className="flex flex-col gap-4">
       <h3 className="text-sm font-semibold">프로필</h3>
+
+      {/* Header layout selector — visual mini previews */}
+      <div>
+        <span className="mb-2 block text-[11px] text-muted-foreground">배치</span>
+        <div className="grid grid-cols-4 gap-2">
+          {/* 1. Center — 배경 + 아바타 중앙 */}
+          <button
+            onClick={() => setHeaderLayout("center")}
+            className={cn(
+              "group cursor-pointer overflow-hidden rounded-lg border-2 transition-all",
+              headerLayout === "center"
+                ? "border-foreground"
+                : "border-border hover:border-muted-foreground/50",
+            )}
+          >
+            <div className="-mx-[2px] -mt-[2px] flex h-8 w-[calc(100%+4px)] items-center justify-center rounded-t-md bg-muted-foreground/10">
+              <ImageIcon className="size-3 text-muted-foreground/25" />
+            </div>
+            <div className="flex flex-col items-center bg-background pb-2">
+              <div className="relative z-10 -mt-3 size-6 rounded-full border-2 border-background bg-muted" />
+              <div className="mt-1 h-1 w-8 rounded-full bg-muted-foreground/15" />
+              <div className="mt-0.5 h-1 w-5 rounded-full bg-muted-foreground/10" />
+            </div>
+          </button>
+
+          {/* 2. Left — 배경 + 아바타 좌측 */}
+          <button
+            onClick={() => setHeaderLayout("left")}
+            className={cn(
+              "group cursor-pointer overflow-hidden rounded-lg border-2 transition-all",
+              headerLayout === "left"
+                ? "border-foreground"
+                : "border-border hover:border-muted-foreground/50",
+            )}
+          >
+            <div className="-mx-[2px] -mt-[2px] flex h-8 w-[calc(100%+4px)] items-center justify-center rounded-t-md bg-muted-foreground/10">
+              <ImageIcon className="size-3 text-muted-foreground/25" />
+            </div>
+            <div className="flex items-start gap-1.5 bg-background px-2 pb-2">
+              <div className="relative z-10 -mt-3 size-6 shrink-0 rounded-full border-2 border-background bg-muted" />
+              <div className="flex flex-col gap-1 pt-1.5">
+                <div className="h-1 w-7 rounded-full bg-muted-foreground/15" />
+                <div className="h-1 w-5 rounded-full bg-muted-foreground/10" />
+              </div>
+            </div>
+          </button>
+
+          {/* 3. Avatar-only — 배경 없이 아바타 + 텍스트만 */}
+          <button
+            onClick={() => setHeaderLayout("avatar-only")}
+            className={cn(
+              "group cursor-pointer overflow-hidden rounded-lg border-2 transition-all",
+              headerLayout === "avatar-only"
+                ? "border-foreground"
+                : "border-border hover:border-muted-foreground/50",
+            )}
+          >
+            <div className="flex flex-col items-center gap-1 bg-background px-2 pb-2 pt-3">
+              <div className="size-7 rounded-full bg-muted-foreground/20" />
+              <div className="h-1 w-8 rounded-full bg-muted-foreground/15" />
+              <div className="h-1 w-5 rounded-full bg-muted-foreground/10" />
+            </div>
+          </button>
+
+          {/* 4. Banner-only — 배경만 크게, 아바타 없음 */}
+          <button
+            onClick={() => setHeaderLayout("banner-only")}
+            className={cn(
+              "group cursor-pointer overflow-hidden rounded-lg border-2 transition-all",
+              headerLayout === "banner-only"
+                ? "border-foreground"
+                : "border-border hover:border-muted-foreground/50",
+            )}
+          >
+            <div className="-mx-[2px] -mt-[2px] flex h-10 w-[calc(100%+4px)] items-center justify-center rounded-t-md bg-muted-foreground/10">
+              <ImageIcon className="size-4 text-muted-foreground/25" />
+            </div>
+            <div className="flex flex-col items-center gap-1 bg-background px-2 pb-2 pt-1.5">
+              <div className="h-1 w-8 rounded-full bg-muted-foreground/15" />
+              <div className="h-1 w-5 rounded-full bg-muted-foreground/10" />
+            </div>
+          </button>
+        </div>
+      </div>
 
       {/* Slug — top (matches mobile visual order: URL bar first) */}
       <div {...slugFocus}>
