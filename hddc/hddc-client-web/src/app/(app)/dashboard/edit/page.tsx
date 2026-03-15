@@ -33,9 +33,9 @@ export default function ProfileEditPage() {
 
   return (
     <EditFocusProvider>
-      <div className="flex h-full">
-        {/* Left: Editor (scrolls) */}
-        <div className="flex-1 overflow-y-auto lg:w-2/5 lg:flex-none">
+      <div className="mx-auto flex h-full w-full max-w-6xl">
+        {/* Left: Editor (scrolls, hidden scrollbar) */}
+        <div className="flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:w-2/5 lg:flex-none">
           <div className="mx-auto max-w-xl px-4 py-6 sm:px-6">
             <div className="mb-4 flex h-8 items-center gap-3">
               <h1 className="text-lg font-semibold">프로필 편집</h1>
