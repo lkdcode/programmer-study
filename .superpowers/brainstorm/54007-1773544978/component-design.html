@@ -1,0 +1,92 @@
+<h2>설계: 글로벌 컴포넌트 3종</h2>
+<p class="subtitle">헤더 확장 + 아이콘 사이드바 + FAB 상세 설계</p>
+
+<!-- 1. Header -->
+<div class="section">
+  <h3>1. SiteHeader 확장</h3>
+  <div class="mockup">
+    <div class="mockup-header">글로벌 헤더 (확장)</div>
+    <div class="mockup-body">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 1rem; background: var(--bg); border-bottom: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; gap: 0.8rem;">
+          <div style="font-weight: 700; font-size: 1.1rem; color: var(--primary);">HDDC</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <div style="width: 32px; height: 32px; border-radius: 6px; background: var(--bg-secondary); display: flex; align-items: center; justify-content: center; font-size: 0.8rem;">🌙</div>
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.7rem;">KL</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p style="font-size: 0.85rem; margin-top: 0.5rem; opacity: 0.7;">기존 SiteHeader에 유저 아바타/프로필 메뉴 추가. 메뉴 항목은 나중에 결정.</p>
+</div>
+
+<!-- 2. Sidebar -->
+<div class="section">
+  <h3>2. 아이콘 사이드바</h3>
+  <div class="split">
+    <div class="mockup">
+      <div class="mockup-header">기본 상태 (Collapsed)</div>
+      <div class="mockup-body" style="display: flex;">
+        <div style="width: 56px; background: var(--bg-secondary); border-right: 1px solid var(--border); padding: 0.8rem 0; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; min-height: 200px;">
+          <div style="width: 36px; height: 36px; border-radius: 8px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">📊</div>
+          <div style="width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">✏️</div>
+          <div style="width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">📈</div>
+          <div style="flex:1;"></div>
+          <div style="width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; opacity: 0.5;">⚙️</div>
+        </div>
+        <div style="flex:1; padding: 1rem; font-size: 0.75rem; color: var(--text-secondary);">콘텐츠 영역</div>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">호버 상태 (Tooltip)</div>
+      <div class="mockup-body" style="display: flex;">
+        <div style="width: 56px; background: var(--bg-secondary); border-right: 1px solid var(--border); padding: 0.8rem 0; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; min-height: 200px; position: relative;">
+          <div style="width: 36px; height: 36px; border-radius: 8px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">📊</div>
+          <!-- Tooltip -->
+          <div style="position: absolute; left: 52px; top: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.3rem 0.6rem; font-size: 0.75rem; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">대시보드</div>
+          <div style="width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">✏️</div>
+          <div style="width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">📈</div>
+          <div style="flex:1;"></div>
+          <div style="width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; opacity: 0.5;">⚙️</div>
+        </div>
+        <div style="flex:1; padding: 1rem; font-size: 0.75rem; color: var(--text-secondary);">콘텐츠 영역</div>
+      </div>
+    </div>
+  </div>
+  <p style="font-size: 0.85rem; margin-top: 0.5rem; opacity: 0.7;">너비 56px. 아이콘 호버 시 라벨 툴팁. 하단에 설정 아이콘 고정. Dashboard 계열에서만 표시.</p>
+</div>
+
+<!-- 3. FAB -->
+<div class="section">
+  <h3>3. FAB (Floating Action Button)</h3>
+  <div class="split">
+    <div class="mockup">
+      <div class="mockup-header">닫힌 상태</div>
+      <div class="mockup-body" style="position: relative; min-height: 180px; background: var(--bg-secondary);">
+        <div style="position: absolute; bottom: 1rem; right: 1rem; width: 52px; height: 52px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer;">
+          <span style="color: white; font-size: 1.4rem;">?</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">열린 상태 (클릭 후)</div>
+      <div class="mockup-body" style="position: relative; min-height: 180px; background: var(--bg-secondary);">
+        <!-- Expanded menu -->
+        <div style="position: absolute; bottom: 4.5rem; right: 1rem; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 0.5rem; box-shadow: 0 8px 24px rgba(0,0,0,0.15); min-width: 180px;">
+          <div style="padding: 0.5rem 0.7rem; border-radius: 8px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">💬 문의하기</div>
+          <div style="padding: 0.5rem 0.7rem; border-radius: 8px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">📖 FAQ / 가이드</div>
+          <div style="padding: 0.5rem 0.7rem; border-radius: 8px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">💡 피드백 보내기</div>
+          <div style="padding: 0.5rem 0.7rem; border-radius: 8px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">📢 공지사항 <span style="background: var(--primary); color: white; font-size: 0.6rem; padding: 1px 5px; border-radius: 10px; margin-left: auto;">NEW</span></div>
+        </div>
+        <!-- FAB button -->
+        <div style="position: absolute; bottom: 1rem; right: 1rem; width: 52px; height: 52px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer;">
+          <span style="color: white; font-size: 1.4rem;">✕</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p style="font-size: 0.85rem; margin-top: 0.5rem; opacity: 0.7;">우측 하단 고정. 클릭 시 4개 메뉴 팝업. 공지사항에 NEW 뱃지. /[username] 제외 전 페이지 표시.</p>
+</div>
