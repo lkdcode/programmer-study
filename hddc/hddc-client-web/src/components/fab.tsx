@@ -15,6 +15,16 @@ export function Fab() {
   return (
     <div className="fixed bottom-6 right-6 z-[60]">
       <Popover>
+        <PopoverTrigger asChild>
+          <button
+            aria-label="도움말 메뉴"
+            aria-haspopup="menu"
+            className="group flex size-[52px] cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform duration-150 hover:scale-105 active:scale-95"
+          >
+            <Question className="size-6 group-data-[state=open]:hidden" weight="bold" />
+            <X className="size-6 hidden group-data-[state=open]:block" weight="bold" />
+          </button>
+        </PopoverTrigger>
         <PopoverContent
           side="top"
           align="end"
@@ -34,16 +44,6 @@ export function Fab() {
             </a>
           ))}
         </PopoverContent>
-        <PopoverTrigger asChild>
-          <button
-            aria-label="도움말 메뉴"
-            aria-haspopup="menu"
-            className="group flex size-[52px] cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform duration-150 hover:scale-105 active:scale-95"
-          >
-            <Question className="size-6 group-data-[state=open]:hidden" weight="bold" />
-            <X className="size-6 hidden group-data-[state=open]:block" weight="bold" />
-          </button>
-        </PopoverTrigger>
       </Popover>
     </div>
   );
