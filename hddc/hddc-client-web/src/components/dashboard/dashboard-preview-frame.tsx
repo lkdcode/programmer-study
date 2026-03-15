@@ -88,7 +88,7 @@ export function PhonePreviewFrame({
           {/* Content area — click+drag to scroll, no text/image drag */}
           <div
             ref={scrollRef}
-            className="flex flex-1 flex-col cursor-grab select-none overflow-x-hidden overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="flex flex-1 flex-col cursor-grab select-none overflow-x-hidden overflow-y-auto overscroll-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             onMouseDown={onMouseDown}
             onMouseMove={onMouseMove}
             onMouseUp={onMouseUp}
@@ -156,7 +156,7 @@ export function BrowserPreviewFrame({
         </div>
 
         {/* Content area */}
-        <div className="flex flex-1 flex-col overflow-y-auto overscroll-contain bg-background">
+        <div className="flex flex-1 flex-col overflow-y-auto overscroll-none bg-background">
           <div className="flex-1 p-6">
             {children}
           </div>

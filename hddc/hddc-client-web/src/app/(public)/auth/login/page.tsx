@@ -82,7 +82,15 @@ export default function LoginPage() {
 
       {/* Password */}
       <div className="relative flex flex-col gap-1.5">
-        <Label htmlFor="password">비밀번호</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="password">비밀번호</Label>
+          <Link
+            href="/auth/forgot-password"
+            className="text-xs text-muted-foreground underline underline-offset-2 transition-colors hover:text-foreground"
+          >
+            비밀번호 찾기
+          </Link>
+        </div>
         <Input
           id="password"
           type="password"

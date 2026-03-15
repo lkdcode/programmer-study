@@ -19,6 +19,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
 import { useEditFocus, type EditSection } from "@/contexts/edit-focus-context";
 import { type ProfileData, type ProfileLink, type LinkLayout, type LinkStyle, type LinkAnimation } from "@/lib/profile-types";
+import { SponsorBanner } from "@/components/sponsor-banner";
 import {
   InstagramLogo,
   YoutubeLogo,
@@ -358,11 +359,15 @@ const SAMPLE_LINKS: ProfileLink[] = [
 ];
 
 export function ProfilePreviewContent({ profileData, variant, onReorderLinks }: Props) {
-  const { avatarUrl, backgroundUrl, backgroundColor, nickname, bio, links, socials, linkLayout, linkStyle, linkAnimation, headerLayout, colorTheme, customSecondaryColor } = profileData;
+  const { avatarUrl, backgroundUrl, backgroundColor, fontColor, nickname, bio, links, socials, linkLayout, linkStyle, linkAnimation, headerLayout, colorTheme, customSecondaryColor } = profileData;
   const isDefault = colorTheme === "default" || colorTheme === "white";
   const tint = colorTheme === "custom" && customSecondaryColor ? customSecondaryColor : undefined;
   const { activeSection, activeLinkId } = useEditFocus();
-  const bgStyle = backgroundColor ? { backgroundColor } : undefined;
+  const containerStyle: React.CSSProperties = {
+    ...(backgroundColor ? { backgroundColor } : {}),
+    ...(fontColor ? { color: fontColor } : {}),
+  };
+  const hasContainerStyle = backgroundColor || fontColor;
 
   // 섹션별 플레이스홀더 여부
   const isPlaceholderNickname = !nickname;
@@ -374,7 +379,7 @@ export function ProfilePreviewContent({ profileData, variant, onReorderLinks }: 
 
   if (variant === "mobile") {
     return (
-      <div className="flex min-h-full w-full flex-col items-center gap-4 px-4" style={bgStyle}>
+      <div className="flex min-h-full w-full flex-col items-center gap-4 px-4" style={hasContainerStyle ? containerStyle : undefined}>
         {/* Background — shown for center, left, banner-only */}
         {headerLayout !== "avatar-only" && (
           <HighlightWrapper
@@ -478,13 +483,16 @@ export function ProfilePreviewContent({ profileData, variant, onReorderLinks }: 
             </div>
           </HighlightWrapper>
         )}
+
+        {/* Sponsor banner for free plan */}
+        <SponsorBanner plan={profileData.plan} className="mt-auto -mx-4 -mb-4 border-t-0 rounded-b-lg" />
       </div>
     );
   }
 
   // Web variant — sidebar + content grid
   return (
-    <div className="flex min-h-full flex-col gap-4" style={bgStyle}>
+    <div className="flex min-h-full flex-col gap-4" style={hasContainerStyle ? containerStyle : undefined}>
       {/* Background — always rendered */}
       <HighlightWrapper section="background" activeSection={activeSection} overlay className="rounded-none -mx-6 -mt-6">
         {backgroundUrl ? (

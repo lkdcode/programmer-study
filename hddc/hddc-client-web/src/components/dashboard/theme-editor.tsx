@@ -104,24 +104,32 @@ const FONT_OPTIONS: ToggleGroupOption<FontFamily>[] = (Object.keys(FONT_FAMILY_L
 
 /* ─── Component ─── */
 
+const TEXT_PALETTE = [
+  "#000000", "#1e293b", "#334155", "#475569", "#64748b", "#94a3b8", "#e2e8f0", "#ffffff",
+  "#991b1b", "#b91c1c", "#dc2626", "#c2410c", "#ea580c", "#d97706", "#ca8a04", "#65a30d",
+  "#15803d", "#0d9488", "#0891b2", "#0284c7", "#2563eb", "#4f46e5", "#7c3aed", "#9333ea",
+];
+
 interface Props {
   colorTheme: ColorTheme;
   darkMode: boolean;
   backgroundColor: string | null;
+  fontColor: string | null;
   customPrimaryColor: string | null;
   customSecondaryColor: string | null;
   fontFamily: FontFamily;
   setColorTheme: (theme: ColorTheme) => void;
   setDarkMode: (dark: boolean) => void;
   setBackgroundColor: (color: string | null) => void;
+  setFontColor: (color: string | null) => void;
   setCustomColors: (primary: string, secondary: string) => void;
   setFontFamily: (font: FontFamily) => void;
 }
 
 export function ThemeEditor({
-  colorTheme, darkMode, backgroundColor,
+  colorTheme, darkMode, backgroundColor, fontColor,
   customPrimaryColor, customSecondaryColor, fontFamily,
-  setColorTheme, setDarkMode, setBackgroundColor, setCustomColors, setFontFamily,
+  setColorTheme, setDarkMode, setBackgroundColor, setFontColor, setCustomColors, setFontFamily,
 }: Props) {
   const sectionFocus = useSectionFocus("theme");
 
@@ -305,6 +313,38 @@ export function ThemeEditor({
         <ColorPickerPopover
           color={backgroundColor || "#ffffff"}
           onChange={(color) => setBackgroundColor(color)}
+        />
+      </div>
+
+      {/* Font color */}
+      <div>
+        <div className="mb-2 flex items-center justify-between">
+          <p className="text-xs text-muted-foreground">글자 색상</p>
+          {fontColor && (
+            <RemoveButton label="초기화" onClick={() => setFontColor(null)} />
+          )}
+        </div>
+        <div className="grid grid-cols-8 gap-1.5">
+          {TEXT_PALETTE.map((color) => (
+            <button
+              key={color}
+              onClick={() => setFontColor(color)}
+              className={cn(
+                "size-7 cursor-pointer rounded-full border transition-transform hover:scale-110",
+                fontColor === color
+                  ? "ring-2 ring-foreground ring-offset-2 ring-offset-background"
+                  : "",
+                color === "#ffffff" ? "border-border" : "border-transparent",
+              )}
+              style={{ backgroundColor: color }}
+              aria-label={color}
+            />
+          ))}
+        </div>
+
+        <ColorPickerPopover
+          color={fontColor || "#000000"}
+          onChange={(color) => setFontColor(color)}
         />
       </div>
 

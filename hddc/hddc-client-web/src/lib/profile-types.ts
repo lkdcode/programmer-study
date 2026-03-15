@@ -57,6 +57,8 @@ export interface SocialLink {
   url: string;
 }
 
+export type PlanType = "free" | "pro" | "business";
+
 export interface ProfileData {
   avatarUrl: string | null;
   backgroundUrl: string | null;
@@ -74,13 +76,16 @@ export interface ProfileData {
   colorTheme: "teal" | "orange" | "blue" | "violet" | "yellow" | "red" | "white" | "default" | "custom";
   customPrimaryColor: string | null;
   customSecondaryColor: string | null;
+  fontColor: string | null;
   darkMode: boolean;
+  plan: PlanType;
 }
 
 export const DEFAULT_PROFILE: ProfileData = {
   avatarUrl: null,
   backgroundUrl: null,
   backgroundColor: null,
+  fontColor: null,
   slug: "",
   nickname: "",
   bio: "",
@@ -95,6 +100,7 @@ export const DEFAULT_PROFILE: ProfileData = {
   customPrimaryColor: null,
   customSecondaryColor: null,
   darkMode: false,
+  plan: "free",
 };
 
 /**

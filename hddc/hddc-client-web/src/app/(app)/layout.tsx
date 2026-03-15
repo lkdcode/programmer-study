@@ -7,7 +7,6 @@ import { IconSidebar } from "@/components/icon-sidebar";
 import { Fab } from "@/components/fab";
 import { Button } from "@/components/ui/button";
 import { SignOut } from "@phosphor-icons/react";
-import { SiteFooter } from "@/components/site-footer";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -33,7 +32,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <IconSidebar />
         <main className="flex flex-1 flex-col overflow-y-auto">
           {children}
-          <SiteFooter />
         </main>
       </div>
       <Fab />

@@ -17,6 +17,7 @@ import {
   ArrowUpRight,
 } from "@phosphor-icons/react";
 import { toast } from "sonner";
+import { SiteFooter } from "@/components/site-footer";
 
 /* ─── Mock analytics data ─── */
 const MOCK_STATS = {
@@ -228,6 +229,8 @@ export default function DashboardPage() {
           </Link>
         </Button>
       </div>
+
+      <SiteFooter />
     </div>
   );
 }

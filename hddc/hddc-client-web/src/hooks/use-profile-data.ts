@@ -257,6 +257,10 @@ export function useProfileData() {
     setWithHistory((prev) => ({ ...prev, backgroundColor: color }), true);
   }, [setWithHistory]);
 
+  const setFontColor = useCallback((color: string | null) => {
+    setWithHistory((prev) => ({ ...prev, fontColor: color }), true);
+  }, [setWithHistory]);
+
   const setCustomColors = useCallback((primary: string, secondary: string) => {
     setWithHistory((prev) => ({ ...prev, customPrimaryColor: primary, customSecondaryColor: secondary }), true);
   }, [setWithHistory]);
@@ -309,6 +313,7 @@ export function useProfileData() {
     setHeaderLayout,
     setLinkAnimation,
     setBackgroundColor,
+    setFontColor,
     setCustomColors,
     reorderLinks,
     resetProfile,

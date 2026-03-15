@@ -100,6 +100,7 @@ function ToggleGroup<T extends string>({
             data-state={isActive ? "on" : "off"}
             onClick={() => onValueChange(option.value)}
             className={cn(
+              "cursor-pointer",
               renderItem
                 ? ""
                 : toggleGroupItemVariants({ variant, size, active: isActive }),

@@ -50,11 +50,12 @@ export function normalizeUrl(value: string): string {
 
 export function validatePassword(value: string): string | null {
   if (!value) return "비밀번호를 입력해주세요";
+  if (/\s/.test(value)) return "공백은 사용할 수 없습니다";
   if (value.length < 8) return "비밀번호는 8자 이상이어야 합니다";
-  if (value.length > 72) return "비밀번호는 72자 이하로 입력해주세요";
+  if (value.length > 20) return "비밀번호는 20자 이하로 입력해주세요";
   if (!/[a-zA-Z]/.test(value)) return "영문을 포함해야 합니다";
   if (!/[0-9]/.test(value)) return "숫자를 포함해야 합니다";
-  if (!/[^a-zA-Z0-9]/.test(value)) return "특수문자를 포함해야 합니다";
+  if (!/[!@#$%^&*()_=+.]/.test(value)) return "특수문자(!@#$%^&*()_=+.)를 포함해야 합니다";
   return null;
 }
 

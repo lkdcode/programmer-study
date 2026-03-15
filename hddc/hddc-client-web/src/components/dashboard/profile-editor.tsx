@@ -51,12 +51,14 @@ export function ProfileEditor(props: ProfileActions) {
         colorTheme={props.profileData.colorTheme}
         darkMode={props.profileData.darkMode}
         backgroundColor={props.profileData.backgroundColor}
+        fontColor={props.profileData.fontColor}
         customPrimaryColor={props.profileData.customPrimaryColor}
         customSecondaryColor={props.profileData.customSecondaryColor}
         fontFamily={props.profileData.fontFamily}
         setColorTheme={props.setColorTheme}
         setDarkMode={props.setDarkMode}
         setBackgroundColor={props.setBackgroundColor}
+        setFontColor={props.setFontColor}
         setCustomColors={props.setCustomColors}
         setFontFamily={props.setFontFamily}
       />

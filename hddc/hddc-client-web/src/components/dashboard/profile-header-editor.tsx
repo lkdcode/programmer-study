@@ -257,7 +257,7 @@ export function ProfileHeaderEditor({ profileData, updateProfile, headerLayout, 
         <Label htmlFor="bio" className="text-xs text-muted-foreground">한 줄 소개</Label>
         <textarea
           id="bio"
-          placeholder="자기소개를 입력하세요"
+          placeholder="한 줄 소개를 입력하세요"
           value={profileData.bio}
           onChange={(e) => {
             let val = e.target.value;
