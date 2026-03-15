@@ -70,9 +70,9 @@ export default function ProfileEditPage() {
             </div>
           </div>
 
-          {/* Right: Preview Column — sticky */}
-          <div className="hidden lg:block lg:flex-1">
-            <div className="sticky top-0">
+          {/* Right: Preview Column — sticky, negative margin cancels parent padding */}
+          <div className="hidden lg:block lg:flex-1 -my-6">
+            <div className="sticky top-0 py-6">
               <div className="mb-4 flex h-8 items-center justify-end gap-2">
                 <span className="text-xs text-muted-foreground">
                   {profile.saveStatus === "saving" && (
