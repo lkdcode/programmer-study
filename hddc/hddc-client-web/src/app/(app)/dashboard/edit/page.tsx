@@ -62,7 +62,7 @@ export default function ProfileEditPage() {
 
           {/* Center: Editor Column */}
           <div className="min-w-0 lg:w-2/5">
-            <div className="mb-4 flex items-center gap-3">
+            <div className="mb-4 flex h-8 items-center gap-3">
               <h1 className="text-lg font-semibold">프로필 편집</h1>
             </div>
             <div className="rounded-xl border border-border bg-card shadow-sm">
