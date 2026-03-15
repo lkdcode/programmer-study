@@ -70,8 +70,8 @@ export default function ProfileEditPage() {
             </div>
           </div>
 
-          {/* Right: Preview Column — sticky */}
-          <div className="hidden lg:block lg:flex-1">
+          {/* Right: Preview Column — sticky, pb ensures parent is taller than sticky content */}
+          <div className="hidden lg:block lg:flex-1 pb-20">
             <div className="sticky top-6">
               <div className="mb-4 flex h-8 items-center justify-end gap-2">
                 <span className="text-xs text-muted-foreground">
