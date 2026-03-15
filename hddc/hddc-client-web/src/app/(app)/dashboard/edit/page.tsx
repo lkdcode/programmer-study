@@ -70,9 +70,9 @@ export default function ProfileEditPage() {
             </div>
           </div>
 
-          {/* Right: Preview Column — sticky, negative margin cancels parent padding */}
-          <div className="hidden lg:block lg:flex-1 -my-6">
-            <div className="sticky top-0 py-6">
+          {/* Right: Preview Column — sticky */}
+          <div className="hidden lg:block lg:flex-1">
+            <div className="sticky top-6">
               <div className="mb-4 flex h-8 items-center justify-end gap-2">
                 <span className="text-xs text-muted-foreground">
                   {profile.saveStatus === "saving" && (
@@ -112,7 +112,7 @@ export default function ProfileEditPage() {
                   저장
                 </Button>
               </div>
-              <div className="h-[calc(100vh-8rem)] rounded-xl border border-border bg-card shadow-sm">
+              <div className="h-[calc(100vh-12rem)] rounded-xl border border-border bg-card shadow-sm">
                 <ProfilePreview
                   profileData={profile.profileData}
                   reorderLinks={profile.reorderLinks}
