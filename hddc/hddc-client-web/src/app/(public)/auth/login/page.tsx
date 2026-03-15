@@ -50,7 +50,7 @@ export default function LoginPage() {
 
     // MVP: set auth flag and redirect to dashboard
     localStorage.setItem("hddc-auth", "true");
-    router.push("/dashboard/edit");
+    router.push("/dashboard");
   }
 
   return (

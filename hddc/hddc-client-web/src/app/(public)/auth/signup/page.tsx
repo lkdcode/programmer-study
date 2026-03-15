@@ -89,7 +89,7 @@ export default function SignupPage() {
 
     // MVP: set auth flag and redirect to dashboard
     localStorage.setItem("hddc-auth", "true");
-    router.push("/dashboard/edit");
+    router.push("/dashboard");
   }
 
   function handleResend() {
