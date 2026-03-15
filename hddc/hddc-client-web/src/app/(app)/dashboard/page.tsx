@@ -3,6 +3,13 @@
 import { useProfileData } from "@/hooks/use-profile-data";
 import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/components/ui/section-header";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
+import { Bar, BarChart, Area, AreaChart, XAxis, YAxis, CartesianGrid } from "recharts";
 import Link from "next/link";
 import {
   PencilSimple, Copy, Eye, Link as LinkIcon,
@@ -16,8 +23,17 @@ const MOCK_STATS = {
   totalViews: 1_247,
   totalClicks: 389,
   clickRate: 31.2,
-  weeklyViews: [142, 178, 156, 203, 189, 211, 168],
 };
+
+const WEEKLY_DATA = [
+  { day: "월", views: 142, clicks: 45 },
+  { day: "화", views: 178, clicks: 62 },
+  { day: "수", views: 156, clicks: 48 },
+  { day: "목", views: 203, clicks: 71 },
+  { day: "금", views: 189, clicks: 58 },
+  { day: "토", views: 211, clicks: 67 },
+  { day: "일", views: 168, clicks: 38 },
+];
 
 const MOCK_TOP_LINKS = [
   { title: "포트폴리오", clicks: 142, url: "https://portfolio.dev" },
@@ -27,7 +43,10 @@ const MOCK_TOP_LINKS = [
   { title: "이력서 PDF", clicks: 20, url: "https://resume.dev" },
 ];
 
-const DAYS = ["월", "화", "수", "목", "금", "토", "일"];
+const viewsChartConfig = {
+  views: { label: "방문자", color: "var(--primary)" },
+  clicks: { label: "클릭", color: "var(--secondary)" },
+} satisfies ChartConfig;
 
 function StatCard({ icon: Icon, label, value, sub }: {
   icon: typeof Users;
@@ -47,23 +66,6 @@ function StatCard({ icon: Icon, label, value, sub }: {
   );
 }
 
-function MiniBarChart({ data, labels }: { data: number[]; labels: string[] }) {
-  const max = Math.max(...data);
-  return (
-    <div className="flex items-end gap-1.5">
-      {data.map((v, i) => (
-        <div key={labels[i]} className="flex flex-1 flex-col items-center gap-1">
-          <div
-            className="w-full rounded-sm bg-primary/80 transition-all hover:bg-primary"
-            style={{ height: `${Math.max((v / max) * 120, 4)}px` }}
-            title={`${labels[i]}: ${v}`}
-          />
-          <span className="text-[9px] text-muted-foreground">{labels[i]}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
 
 export default function DashboardPage() {
   const { profileData } = useProfileData();
@@ -130,16 +132,59 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* ─── Weekly Chart ─── */}
-      <div className="mb-8 rounded-xl border border-border bg-card p-5">
-        <div className="mb-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <ChartBar className="size-4 text-muted-foreground" />
-            <span className="text-sm font-semibold">주간 방문자</span>
+      {/* ─── Weekly Charts ─── */}
+      <div className="mb-8 grid gap-4 sm:grid-cols-2">
+        {/* Bar Chart — 방문자 */}
+        <div className="rounded-xl border border-border bg-card p-5">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <ChartBar className="size-4 text-muted-foreground" />
+              <span className="text-sm font-semibold">주간 방문자</span>
+            </div>
+            <span className="text-xs text-muted-foreground">목데이터</span>
           </div>
-          <span className="text-xs text-muted-foreground">목데이터</span>
+          <ChartContainer config={viewsChartConfig} className="h-[180px] w-full">
+            <BarChart data={WEEKLY_DATA} accessibilityLayer>
+              <CartesianGrid vertical={false} strokeDasharray="3 3" />
+              <XAxis dataKey="day" tickLine={false} axisLine={false} fontSize={11} />
+              <YAxis tickLine={false} axisLine={false} fontSize={10} width={30} />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Bar dataKey="views" fill="var(--color-views)" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ChartContainer>
         </div>
-        <MiniBarChart data={MOCK_STATS.weeklyViews} labels={DAYS} />
+
+        {/* Area Chart — 클릭 추이 */}
+        <div className="rounded-xl border border-border bg-card p-5">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CursorClick className="size-4 text-muted-foreground" />
+              <span className="text-sm font-semibold">클릭 추이</span>
+            </div>
+            <span className="text-xs text-muted-foreground">목데이터</span>
+          </div>
+          <ChartContainer config={viewsChartConfig} className="h-[180px] w-full">
+            <AreaChart data={WEEKLY_DATA} accessibilityLayer>
+              <CartesianGrid vertical={false} strokeDasharray="3 3" />
+              <XAxis dataKey="day" tickLine={false} axisLine={false} fontSize={11} />
+              <YAxis tickLine={false} axisLine={false} fontSize={10} width={30} />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <defs>
+                <linearGradient id="fillClicks" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="var(--color-clicks)" stopOpacity={0.3} />
+                  <stop offset="100%" stopColor="var(--color-clicks)" stopOpacity={0.02} />
+                </linearGradient>
+              </defs>
+              <Area
+                dataKey="clicks"
+                type="monotone"
+                fill="url(#fillClicks)"
+                stroke="var(--color-clicks)"
+                strokeWidth={2}
+              />
+            </AreaChart>
+          </ChartContainer>
+        </div>
       </div>
 
       {/* ─── Top Links ─── */}
