@@ -16,11 +16,25 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash } from "@phosphor-icons/react";
+import {
+  InstagramLogo,
+  YoutubeLogo,
+  XLogo,
+  TiktokLogo,
+  ThreadsLogo,
+  Envelope,
+  Globe,
+  Trash,
+  Plus,
+  Check,
+} from "@phosphor-icons/react";
+import { FacebookIcon } from "@/components/icons/facebook-icon";
+import { KakaoIcon } from "@/components/icons/kakao-icon";
+import { NaverIcon } from "@/components/icons/naver-icon";
 import { DragHandle } from "@/components/ui/drag-handle";
 import { useSectionFocus } from "@/contexts/edit-focus-context";
 import { SectionHeader } from "@/components/ui/section-header";
+import { cn } from "@/lib/utils";
 import {
   type SocialPlatform,
   type SocialLink,
@@ -29,6 +43,19 @@ import {
   SOCIAL_PLATFORM_BASE_URLS,
   normalizeSocialHandle,
 } from "@/lib/profile-types";
+
+const SOCIAL_ICONS: Record<SocialPlatform, typeof InstagramLogo> = {
+  instagram: InstagramLogo,
+  youtube: YoutubeLogo,
+  x: XLogo,
+  tiktok: TiktokLogo,
+  threads: ThreadsLogo,
+  facebook: FacebookIcon as unknown as typeof InstagramLogo,
+  kakaotalk: KakaoIcon as unknown as typeof InstagramLogo,
+  "naver-blog": NaverIcon as unknown as typeof InstagramLogo,
+  email: Envelope,
+  website: Globe,
+};
 
 interface Props {
   socials: SocialLink[];
@@ -131,8 +158,8 @@ function SocialInput({
 
 export function SocialEditor({ socials, addSocial, updateSocial, removeSocial, reorderSocials }: Props) {
   const usedPlatforms = new Set(socials.map((s) => s.platform));
-  const availablePlatforms = SOCIAL_PLATFORMS.filter((p) => !usedPlatforms.has(p));
   const sectionFocus = useSectionFocus("socials");
+  const isFull = socials.length >= 8;
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -150,32 +177,72 @@ export function SocialEditor({ socials, addSocial, updateSocial, removeSocial, r
   return (
     <section className="flex flex-col gap-3" {...sectionFocus}>
       <SectionHeader title="소셜 아이콘" badge={`${socials.length}/8`} />
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={socials.map((s) => s.id)} strategy={verticalListSortingStrategy}>
-          {socials.map((social) => (
-            <SortableSocialItem key={social.id} social={social}>
-              <div className="flex min-w-0 flex-1 items-center gap-2">
-                <span className="w-16 shrink-0 text-[11px] font-medium">{SOCIAL_PLATFORM_LABELS[social.platform]}</span>
-                <SocialInput social={social} updateSocial={updateSocial} />
-                <Button variant="ghost" size="icon-xs" onClick={() => removeSocial(social.id)} className="shrink-0 text-muted-foreground hover:text-destructive" aria-label="삭제">
-                  <Trash className="size-3.5" />
-                </Button>
+
+      {/* Platform icon grid */}
+      <div className="grid grid-cols-5 gap-2">
+        {SOCIAL_PLATFORMS.map((platform) => {
+          const Icon = SOCIAL_ICONS[platform];
+          const isAdded = usedPlatforms.has(platform);
+          const disabled = !isAdded && isFull;
+
+          return (
+            <button
+              key={platform}
+              type="button"
+              onClick={() => {
+                if (isAdded) {
+                  const social = socials.find((s) => s.platform === platform);
+                  if (social) removeSocial(social.id);
+                } else if (!disabled) {
+                  addSocial(platform);
+                }
+              }}
+              disabled={disabled}
+              title={isAdded ? `${SOCIAL_PLATFORM_LABELS[platform]} 제거` : `${SOCIAL_PLATFORM_LABELS[platform]} 추가`}
+              className={cn(
+                "relative flex cursor-pointer flex-col items-center gap-1 rounded-lg p-2 transition-colors",
+                isAdded
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                disabled && "cursor-not-allowed opacity-30",
+              )}
+            >
+              <div className="relative">
+                <Icon className="size-5" />
+                {isAdded ? (
+                  <Check weight="bold" className="absolute -right-1.5 -top-1.5 size-3 rounded-full bg-primary text-primary-foreground" />
+                ) : (
+                  <Plus weight="bold" className="absolute -right-1.5 -top-1.5 size-3 text-muted-foreground/50" />
+                )}
               </div>
-            </SortableSocialItem>
-          ))}
-        </SortableContext>
-      </DndContext>
-      {availablePlatforms.length > 0 && socials.length < 8 && (
-        <Select onValueChange={(val) => addSocial(val as SocialPlatform)}>
-          <SelectTrigger className="h-9 text-sm">
-            <SelectValue placeholder="소셜 추가..." />
-          </SelectTrigger>
-          <SelectContent>
-            {availablePlatforms.map((platform) => (
-              <SelectItem key={platform} value={platform}>{SOCIAL_PLATFORM_LABELS[platform]}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+              <span className="text-[9px] leading-tight">{SOCIAL_PLATFORM_LABELS[platform]}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Added socials — URL inputs with DnD */}
+      {socials.length > 0 && (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={socials.map((s) => s.id)} strategy={verticalListSortingStrategy}>
+            <div className="flex flex-col gap-2">
+              {socials.map((social) => {
+                const Icon = SOCIAL_ICONS[social.platform];
+                return (
+                  <SortableSocialItem key={social.id} social={social}>
+                    <div className="flex min-w-0 flex-1 items-center gap-2">
+                      <Icon className="size-4 shrink-0 text-muted-foreground" />
+                      <SocialInput social={social} updateSocial={updateSocial} />
+                      <Button variant="ghost" size="icon-xs" onClick={() => removeSocial(social.id)} className="shrink-0 text-muted-foreground hover:text-destructive" aria-label="삭제">
+                        <Trash className="size-3.5" />
+                      </Button>
+                    </div>
+                  </SortableSocialItem>
+                );
+              })}
+            </div>
+          </SortableContext>
+        </DndContext>
       )}
     </section>
   );

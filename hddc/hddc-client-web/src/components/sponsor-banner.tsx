@@ -16,7 +16,7 @@ export function SponsorBanner({ plan, className }: SponsorBannerProps) {
         className,
       )}
     >
-      <div className="mx-auto flex max-w-lg flex-col items-center gap-3">
+      <div className="mx-auto flex max-w-lg flex-col items-center gap-6">
         {/* Sponsor ad placeholder */}
         <div className="flex h-[60px] w-full items-center justify-center rounded-lg border border-dashed border-border bg-background text-xs text-muted-foreground">
           스폰서 광고 영역

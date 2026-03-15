@@ -388,7 +388,7 @@ export function ProfilePreviewContent({ profileData, variant, onReorderLinks }: 
             overlay
             className={cn(
               "rounded-none -mx-4 w-[calc(100%+2rem)]",
-              headerLayout === "banner-only" ? "mb-[-1rem]" : "mb-[calc(-2.5rem-1rem)]",
+              headerLayout === "banner-only" ? "mb-[-0.7rem]" : "mb-[calc(-2.5rem-1rem)]",
             )}
           >
             {backgroundUrl ? (

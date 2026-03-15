@@ -348,6 +348,26 @@ export function ThemeEditor({
         />
       </div>
 
+      {/* Font selector */}
+      <div>
+        <p className="mb-2 text-xs text-muted-foreground">폰트</p>
+        <ToggleGroup
+          variant="square"
+          value={fontFamily}
+          onValueChange={setFontFamily}
+          options={FONT_OPTIONS}
+          className="grid grid-cols-2 gap-1.5"
+          renderItem={(option, isActive) => (
+            <div className={cn("flex w-full flex-col rounded-lg px-3 py-2 text-left", isActive && "bg-muted ring-2 ring-foreground ring-offset-2 ring-offset-background")}>
+              <span className="text-xs font-medium">{option.label}</span>
+              <span className="mt-0.5 block text-[10px] text-muted-foreground" style={{ fontFamily: FONT_FAMILY_CSS[option.value] }}>
+                가나다 ABC 123
+              </span>
+            </div>
+          )}
+        />
+      </div>
+
       <div>
         <p className="mb-2 text-xs text-muted-foreground">모드</p>
         <ToggleGroup
@@ -370,26 +390,6 @@ export function ThemeEditor({
               </div>
             );
           }}
-        />
-      </div>
-
-      {/* Font selector */}
-      <div>
-        <p className="mb-2 text-xs text-muted-foreground">폰트</p>
-        <ToggleGroup
-          variant="square"
-          value={fontFamily}
-          onValueChange={setFontFamily}
-          options={FONT_OPTIONS}
-          className="grid grid-cols-2 gap-1.5"
-          renderItem={(option, isActive) => (
-            <div className={cn("flex w-full flex-col rounded-lg px-3 py-2 text-left", isActive && "bg-muted ring-2 ring-foreground ring-offset-2 ring-offset-background")}>
-              <span className="text-xs font-medium">{option.label}</span>
-              <span className="mt-0.5 block text-[10px] text-muted-foreground" style={{ fontFamily: FONT_FAMILY_CSS[option.value] }}>
-                가나다 ABC 123
-              </span>
-            </div>
-          )}
         />
       </div>
     </section>
