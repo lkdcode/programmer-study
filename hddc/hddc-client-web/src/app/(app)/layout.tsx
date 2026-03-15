@@ -28,9 +28,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       >
         <ThemeToggle />
       </SiteHeader>
-      <div className="flex flex-1">
+      <div className="flex flex-1 overflow-hidden">
         <IconSidebar />
-        <main className="flex flex-1 flex-col">{children}</main>
+        <main className="flex flex-1 flex-col overflow-y-auto">{children}</main>
       </div>
       <Fab />
     </div>

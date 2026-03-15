@@ -66,7 +66,7 @@ function SidebarIcon({ item }: { item: SidebarItem }) {
 
 export function IconSidebar() {
   return (
-    <aside className="hidden lg:flex sticky top-14 h-[calc(100svh-3.5rem)] w-14 flex-col items-center border-r border-border bg-background py-4 gap-1.5">
+    <aside className="hidden lg:flex w-14 shrink-0 flex-col items-center border-r border-border bg-background py-4 gap-1.5">
       <div className="flex flex-1 flex-col items-center gap-1.5">
         {SIDEBAR_ITEMS.map((item) => (
           <SidebarIcon key={item.href} item={item} />
