@@ -116,7 +116,7 @@ function SocialInput({
 
   // Platform with base URL: show prefix + handle input
   return (
-    <div className="flex h-7 flex-1 items-center overflow-hidden rounded-md border border-input text-sm">
+    <div className="flex h-7 min-w-0 flex-1 items-center overflow-hidden rounded-md border border-input text-sm">
       <span className="flex h-full shrink-0 items-center bg-muted px-2 text-[10px] text-muted-foreground">
         {baseUrl.replace("https://", "")}
       </span>
@@ -160,11 +160,13 @@ export function SocialEditor({ socials, addSocial, updateSocial, removeSocial, r
         <SortableContext items={socials.map((s) => s.id)} strategy={verticalListSortingStrategy}>
           {socials.map((social) => (
             <SortableSocialItem key={social.id} social={social}>
-              <span className="w-16 shrink-0 text-[11px] font-medium">{SOCIAL_PLATFORM_LABELS[social.platform]}</span>
-              <SocialInput social={social} updateSocial={updateSocial} />
-              <Button variant="ghost" size="icon-xs" onClick={() => removeSocial(social.id)} className="shrink-0 text-muted-foreground hover:text-destructive" aria-label="삭제">
-                <Trash className="size-3.5" />
-              </Button>
+              <div className="flex min-w-0 flex-1 items-center gap-2">
+                <span className="w-16 shrink-0 text-[11px] font-medium">{SOCIAL_PLATFORM_LABELS[social.platform]}</span>
+                <SocialInput social={social} updateSocial={updateSocial} />
+                <Button variant="ghost" size="icon-xs" onClick={() => removeSocial(social.id)} className="shrink-0 text-muted-foreground hover:text-destructive" aria-label="삭제">
+                  <Trash className="size-3.5" />
+                </Button>
+              </div>
             </SortableSocialItem>
           ))}
         </SortableContext>

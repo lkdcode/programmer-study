@@ -449,7 +449,7 @@ export function ProfilePreviewContent({ profileData, variant, onReorderLinks }: 
         )}
 
         {/* Links with DnD */}
-        <div className={cn(isPlaceholderLinks && "opacity-50")}>
+        <div className={cn("w-full", isPlaceholderLinks && "opacity-50")}>
           <LinksSection
             links={displayLinks}
             linkLayout={linkLayout}
@@ -527,7 +527,7 @@ export function ProfilePreviewContent({ profileData, variant, onReorderLinks }: 
         </div>
 
         {/* Links area */}
-        <div className={cn(isPlaceholderLinks && "opacity-50")}>
+        <div className={cn("w-full", isPlaceholderLinks && "opacity-50")}>
           <LinksSection
             links={displayLinks}
             linkLayout={linkLayout}
