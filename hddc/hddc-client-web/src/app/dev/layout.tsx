@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { SiteFooter } from "@/components/site-footer";
 
 export default function DevLayout({ children }: { children: React.ReactNode }) {
   if (process.env.NODE_ENV !== "development") {
@@ -16,6 +17,7 @@ export default function DevLayout({ children }: { children: React.ReactNode }) {
         </div>
       </header>
       {children}
+      <SiteFooter />
     </div>
   );
 }
