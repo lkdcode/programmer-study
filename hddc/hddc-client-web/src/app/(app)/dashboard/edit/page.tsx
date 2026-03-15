@@ -112,7 +112,7 @@ export default function ProfileEditPage() {
                   저장
                 </Button>
               </div>
-              <div className="h-[calc(100vh-8rem)] rounded-xl border border-border bg-card shadow-sm">
+              <div className="h-[calc(100vh-11rem)] rounded-xl border border-border bg-card shadow-sm">
                 <ProfilePreview
                   profileData={profile.profileData}
                   reorderLinks={profile.reorderLinks}
