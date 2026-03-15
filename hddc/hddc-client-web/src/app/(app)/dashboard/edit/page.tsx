@@ -72,7 +72,7 @@ export default function ProfileEditPage() {
 
           {/* Right: Preview Column */}
           <div className="hidden lg:block lg:flex-1">
-            <div className="sticky top-[calc(5rem+1px)]">
+            <div className="sticky top-0">
               <div className="mb-4 flex items-center justify-end gap-2">
                 <span className="text-xs text-muted-foreground">
                   {profile.saveStatus === "saving" && (
