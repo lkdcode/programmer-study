@@ -397,19 +397,13 @@ export function ImageCropModal({
 
               {/* Action row */}
               <div className="flex gap-3">
-                <button
-                  onClick={handleReset}
-                  className="flex cursor-pointer items-center gap-1 text-xs text-muted-foreground hover:text-foreground hover:underline"
-                >
+                <Button variant="ghost" size="sm" className="gap-1" onClick={handleReset}>
                   <ArrowsClockwise className="size-3" />
                   초기화
-                </button>
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="cursor-pointer text-xs text-muted-foreground hover:text-foreground hover:underline"
-                >
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => fileInputRef.current?.click()}>
                   다른 이미지 선택
-                </button>
+                </Button>
               </div>
             </>
           ) : (

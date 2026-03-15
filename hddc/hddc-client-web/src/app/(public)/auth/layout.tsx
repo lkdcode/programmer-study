@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { PhoneMockup, BrowserMockup } from "@/components/device-mockup";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import { COLOR_NAMES, getMockupColors, getPanelColors } from "@/lib/mockup-presets";
 
 function pickRandom(currentIndex: number) {
@@ -78,18 +79,17 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           </div>
 
           <div className="flex items-center gap-3">
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={goPrev}
               className={cn(
-                "cursor-pointer flex size-7 items-center justify-center rounded-full transition-colors duration-700",
-                panel.btnBg,
-                panel.btnText,
-                panel.btnHoverBg,
-                panel.btnHoverText,
+                "rounded-full transition-colors duration-700",
+                panel.btnBg, panel.btnText, panel.btnHoverBg, panel.btnHoverText,
               )}
             >
               <CaretLeft className="size-4" />
-            </button>
+            </Button>
             <p
               className={cn(
                 "text-center text-sm leading-relaxed transition-colors duration-700",
@@ -101,18 +101,17 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                 두 개의 완벽한 뷰
               </span>
             </p>
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={goNext}
               className={cn(
-                "cursor-pointer flex size-7 items-center justify-center rounded-full transition-colors duration-700",
-                panel.btnBg,
-                panel.btnText,
-                panel.btnHoverBg,
-                panel.btnHoverText,
+                "rounded-full transition-colors duration-700",
+                panel.btnBg, panel.btnText, panel.btnHoverBg, panel.btnHoverText,
               )}
             >
               <CaretRight className="size-4" />
-            </button>
+            </Button>
           </div>
         </div>
 

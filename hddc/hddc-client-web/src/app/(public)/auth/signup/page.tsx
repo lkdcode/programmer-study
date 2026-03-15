@@ -240,21 +240,23 @@ export default function SignupPage() {
               htmlFor="terms"
               className="text-sm leading-relaxed text-muted-foreground"
             >
-              <button
+              <Button
                 type="button"
+                variant="link"
+                className="h-auto p-0 text-sm text-foreground"
                 onClick={() => setTermsOpen(true)}
-                className="cursor-pointer underline text-foreground"
               >
                 이용약관
-              </button>{" "}
+              </Button>{" "}
               및{" "}
-              <button
+              <Button
                 type="button"
+                variant="link"
+                className="h-auto p-0 text-sm text-foreground"
                 onClick={() => setPrivacyOpen(true)}
-                className="cursor-pointer underline text-foreground"
               >
                 개인정보처리방침
-              </button>
+              </Button>
               에 동의합니다
             </label>
           </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useProfileData } from "@/hooks/use-profile-data";
 import { ProfileEditor } from "@/components/dashboard/profile-editor";
 import { ProfilePreview } from "@/components/dashboard/profile-preview";
@@ -13,9 +13,11 @@ import {
 } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 export default function ProfileEditPage() {
   const profile = useProfileData();
+  const [confirmResetOpen, setConfirmResetOpen] = useState(false);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -52,11 +54,7 @@ export default function ProfileEditPage() {
               <SidebarButton
                 icon={<Trash className="size-4" />}
                 label="초기화"
-                onClick={() => {
-                  if (window.confirm("모든 프로필 데이터가 삭제됩니다. 초기화하시겠습니까?")) {
-                    profile.resetProfile();
-                  }
-                }}
+                onClick={() => setConfirmResetOpen(true)}
                 variant="destructive"
               />
             </div>
@@ -124,6 +122,18 @@ export default function ProfileEditPage() {
           </div>
         </div>
       </div>
+      <ConfirmDialog
+        open={confirmResetOpen}
+        onOpenChange={setConfirmResetOpen}
+        title="프로필 초기화"
+        description="모든 프로필 데이터가 삭제됩니다. 초기화하시겠습니까?"
+        onConfirm={() => {
+          profile.resetProfile();
+          setConfirmResetOpen(false);
+        }}
+        confirmLabel="초기화"
+        variant="destructive"
+      />
     </EditFocusProvider>
   );
 }

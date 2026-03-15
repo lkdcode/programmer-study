@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import {
   useColorTheme,
   COLOR_THEMES,
@@ -8,6 +8,7 @@ import {
 } from "@/hooks/use-color-theme";
 import { Button } from "@/components/ui/button";
 import { ColorSwatch } from "@/components/ui/color-swatch";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Palette } from "@phosphor-icons/react";
 
 const PRESET_THEMES = COLOR_THEMES.filter((t) => t !== "custom");
@@ -37,48 +38,31 @@ const THEME_LABELS: Record<Exclude<ColorTheme, "custom">, string> = {
 export function ColorThemePicker() {
   const { colorTheme, setColorTheme } = useColorTheme();
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [open]);
 
   return (
-    <div className="relative" ref={ref}>
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => setOpen(!open)}
-        aria-label="색상 테마 선택"
-      >
-        <Palette className="size-4" />
-      </Button>
-      {open && (
-        <div className="absolute right-0 top-full mt-2 rounded-lg border border-border bg-popover p-2.5 shadow-md">
-          <div className="flex gap-2">
-            {PRESET_THEMES.map((theme) => (
-              <ColorSwatch
-                key={theme}
-                color={THEME_COLORS[theme as Exclude<ColorTheme, "custom">]}
-                selected={colorTheme === theme}
-                bordered={theme === "default" || theme === "white"}
-                onClick={() => {
-                  setColorTheme(theme);
-                  setOpen(false);
-                }}
-                label={THEME_LABELS[theme as Exclude<ColorTheme, "custom">]}
-              />
-            ))}
-          </div>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="ghost" size="icon" aria-label="색상 테마 선택">
+          <Palette className="size-4" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-2.5" align="end">
+        <div className="flex gap-2">
+          {PRESET_THEMES.map((theme) => (
+            <ColorSwatch
+              key={theme}
+              color={THEME_COLORS[theme as Exclude<ColorTheme, "custom">]}
+              selected={colorTheme === theme}
+              bordered={theme === "default" || theme === "white"}
+              onClick={() => {
+                setColorTheme(theme);
+                setOpen(false);
+              }}
+              label={THEME_LABELS[theme as Exclude<ColorTheme, "custom">]}
+            />
+          ))}
         </div>
-      )}
-    </div>
+      </PopoverContent>
+    </Popover>
   );
 }
