@@ -122,24 +122,21 @@ export function DealCard({ deal, comments = [] }: DealCardProps) {
               {deal.title}
             </h3>
             {deal.description && (
-              <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">{deal.description}</p>
+              <p className="mt-1 line-clamp-3 text-xs leading-relaxed text-muted-foreground">{deal.description}</p>
             )}
           </div>
 
-          {/* Price */}
-          <div className="mt-2 flex items-baseline gap-2">
+          {/* Price + source + time — always bottom-aligned */}
+          <div className="mt-1.5 flex items-center gap-2">
             <span className="text-base font-bold">{formatPrice(deal.salePrice)}원</span>
             {deal.originalPrice > deal.salePrice && (
               <span className="text-xs text-muted-foreground line-through">{formatPrice(deal.originalPrice)}원</span>
             )}
-          </div>
-
-          {/* Source + time */}
-          <div className="mt-1.5 flex items-center gap-3 text-[11px] text-muted-foreground">
-            <span>{deal.source}</span>
-            <span>·</span>
-            <span>{timeAgo(deal.postedAt)}</span>
-            <ArrowSquareOut className="ml-auto size-3 opacity-0 transition-opacity group-hover:opacity-100" />
+            <span className="text-[11px] text-muted-foreground">·</span>
+            <span className="text-[11px] text-muted-foreground">{deal.source}</span>
+            <span className="text-[11px] text-muted-foreground">·</span>
+            <span className="text-[11px] text-muted-foreground">{timeAgo(deal.postedAt)}</span>
+            <ArrowSquareOut className="ml-auto size-3 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
           </div>
         </div>
       </a>

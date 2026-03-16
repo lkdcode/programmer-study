@@ -15,8 +15,8 @@ import { buildFeed, type HotDeal, type FeedProfile, type DealComment } from "@/l
 const MOCK_DEALS: HotDeal[] = [
   {
     id: "1",
-    title: "Apple 에어팟 프로 2 (USB-C) — 역대 최저가",
-    description: "액티브 노이즈 캔슬링, 적응형 오디오, 맞춤형 공간 음향",
+    title: "[단독특가] Apple 에어팟 프로 2세대 (USB-C 충전 케이스 포함) — 2026년 역대 최저가 갱신! 쿠팡 로켓배송 단독 할인 + 카드사 즉시할인 중복 적용 가능한 미친 가격",
+    description: "액티브 노이즈 캔슬링(ANC) 2배 향상, 적응형 오디오, 맞춤형 공간 음향, IP54 방진방수, USB-C 충전, MagSafe 지원, 최대 30시간 배터리 — 애플 공식 리퍼비시 제품 아님 새제품 정품입니다",
     imageUrl: "",
     originalPrice: 299000,
     salePrice: 199000,
