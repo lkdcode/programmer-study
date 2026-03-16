@@ -16,6 +16,14 @@ export interface HotDeal {
   comments: number;
 }
 
+export interface DealComment {
+  id: string;
+  parentId: string | null;
+  author: string;
+  text: string;
+  createdAt: string;
+}
+
 export interface FeedProfile {
   slug: string;
   nickname: string;
