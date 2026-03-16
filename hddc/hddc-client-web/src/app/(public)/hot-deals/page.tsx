@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { Fire, CaretLeft, CaretRight, MagnifyingGlass, X } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup } from "@/components/ui/toggle-group";
@@ -193,6 +193,44 @@ const MOCK_DEALS: HotDeal[] = [
     likes: 156,
     comments: 19,
   },
+  ...(function generateMore(): HotDeal[] {
+    const titles = [
+      "로지텍 MX Master 3S 무선 마우스", "벨킨 3-in-1 무선 충전 스탠드",
+      "삼성 T7 Shield 외장 SSD 2TB", "애플 아이패드 미니 7세대 Wi-Fi 256GB",
+      "브리타 정수필터 맥스트라 프로 6개입", "필립스 원블레이드 면도기",
+      "캠핑문 경량 백패킹 텐트 2인용", "이케아 말름 서랍장 6칸 화이트",
+      "코스트코 커클랜드 견과류 믹스 1.13kg", "오뚜기 진라면 40봉 박스",
+      "LG 울트라기어 27인치 QHD 게이밍 모니터", "로보락 S8 Pro Ultra 로봇청소기",
+      "파타고니아 레트로 파일 플리스 자켓", "나이키 페가수스 41 러닝화",
+      "JBL Flip 6 블루투스 스피커", "앤커 나노 파워뱅크 10000mAh",
+      "무인양품 아로마 디퓨저 세트", "키친에이드 아티산 스탠드 믹서",
+      "삼성 비스포크 큐브 냉장고", "발뮤다 토스터 프로",
+      "몽벨 다운 재킷 슈퍼 메리노울", "아디다스 울트라부스트 라이트",
+      "구글 Pixel 9 Pro 자급제", "레고 테크닉 포르쉐 911 GT3 RS",
+      "마이크로소프트 서피스 프로 11", "데스커 모션 데스크 1400",
+      "바이레도 집시워터 EDP 100ml", "오설록 프리미엄 티세트",
+      "캐논 EOS R50 미러리스 바디", "보스 QuietComfort Ultra 이어버드",
+      "테팔 인덕션 냄비세트 6종", "에르메스 뚜 어 리에 실크스카프",
+      "쿠쿠 IH 전기밥솥 10인용", "위닉스 타워 공기청정기",
+      "헬리녹스 체어원 캠핑의자", "스노우피크 티타늄 싱글 머그",
+      "데카트론 포클라즈 등산배낭 40L", "일리 캡슐 커피머신 X1",
+    ];
+    return titles.map((title, i) => ({
+      id: String(13 + i),
+      title,
+      description: "",
+      imageUrl: "",
+      originalPrice: 50000 + Math.floor(Math.random() * 1500000),
+      salePrice: 30000 + Math.floor(Math.random() * 1000000),
+      discountRate: 10 + Math.floor(Math.random() * 50),
+      url: "#",
+      source: ["쿠팡", "네이버쇼핑", "11번가", "G마켓", "무신사", "SSG"][i % 6],
+      category: (["electronics", "fashion", "food", "living", "etc"] as const)[i % 5],
+      postedAt: new Date(Date.now() - (6 + i) * 24 * 60 * 60 * 1000).toISOString(),
+      likes: Math.floor(Math.random() * 300),
+      comments: Math.floor(Math.random() * 40),
+    }));
+  })(),
 ];
 
 const MOCK_PROFILES: FeedProfile[] = [
@@ -268,6 +306,19 @@ export default function HotDealsPage() {
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
 
+  /* ── Mobile infinite scroll ── */
+  const [loadedPages, setLoadedPages] = useState(1);
+  const [isMobile, setIsMobile] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 639px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
   const filtered = useMemo(() => {
     if (!query.trim()) return MOCK_DEALS;
     const q = query.trim().toLowerCase();
@@ -278,9 +329,39 @@ export default function HotDealsPage() {
 
   const sorted = useMemo(() => sortDeals(filtered, sortKey), [filtered, sortKey]);
   const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
-  const safePage = Math.min(page, totalPages);
-  const paged = useMemo(() => sorted.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE), [sorted, safePage]);
-  const feed = useMemo(() => buildFeed(paged, MOCK_PROFILES), [paged]);
+
+  /* Reset on filter/sort change */
+  useEffect(() => {
+    setLoadedPages(1);
+    setPage(1);
+  }, [sortKey, query]);
+
+  /* Items to display: mobile = cumulative, desktop = single page */
+  const displayItems = useMemo(() => {
+    if (isMobile) {
+      return sorted.slice(0, loadedPages * PAGE_SIZE);
+    }
+    const safePage = Math.min(page, totalPages);
+    return sorted.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+  }, [isMobile, sorted, loadedPages, page, totalPages]);
+
+  const feed = useMemo(() => buildFeed(displayItems, MOCK_PROFILES), [displayItems]);
+
+  /* Sentinel observer — auto-loads next page */
+  useEffect(() => {
+    if (!isMobile || !sentinelRef.current) return;
+    const el = sentinelRef.current;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && loadedPages < totalPages) {
+          setLoadedPages((p) => p + 1);
+        }
+      },
+      { rootMargin: "200px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [isMobile, loadedPages, totalPages]);
 
   function goTo(p: number) {
     setPage(p);
@@ -292,11 +373,11 @@ export default function HotDealsPage() {
       <div className="flex-1">
         {/* Sticky control bar */}
         <div className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
-          <div className="mx-auto flex w-full max-w-3xl flex-col gap-3 px-4 py-3 sm:px-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
+          <div className="mx-auto flex w-full max-w-3xl flex-col gap-2 px-3 py-2.5 sm:gap-3 sm:px-6 sm:py-3">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex shrink-0 items-center gap-2">
                 <Fire className="size-5 text-red-500" weight="fill" />
-                <h1 className="text-lg font-bold tracking-tight">핫딜</h1>
+                <h1 className="text-base font-bold tracking-tight sm:text-lg">핫딜</h1>
               </div>
               <ToggleGroup
                 variant="pill"
@@ -332,7 +413,7 @@ export default function HotDealsPage() {
         </div>
 
         {/* Feed */}
-        <div className="mx-auto w-full max-w-3xl px-4 pt-4 pb-8 sm:px-6">
+        <div className="mx-auto w-full max-w-3xl px-3 pt-3 pb-8 sm:px-6 sm:pt-4">
           {sorted.length === 0 ? (
             <div className="flex flex-col items-center gap-2 py-16 text-center">
               <MagnifyingGlass className="size-10 text-muted-foreground/30" />
@@ -355,8 +436,20 @@ export default function HotDealsPage() {
             </div>
           )}
 
-          {/* Pagination */}
-          {totalPages > 1 && (
+          {/* Mobile: infinite scroll sentinel */}
+          {isMobile && loadedPages < totalPages && (
+            <div ref={sentinelRef} className="flex items-center justify-center py-8">
+              <div className="size-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            </div>
+          )}
+          {isMobile && loadedPages >= totalPages && sorted.length > PAGE_SIZE && (
+            <p className="py-6 text-center text-[11px] text-muted-foreground/40">
+              모든 딜을 불러왔습니다
+            </p>
+          )}
+
+          {/* Desktop: Pagination */}
+          {!isMobile && totalPages > 1 && (
             <div className="mt-8 flex items-center justify-center gap-1">
               <Button
                 variant="ghost"
@@ -391,6 +484,7 @@ export default function HotDealsPage() {
       </div>
 
       <SiteFooter />
+
     </div>
   );
 }

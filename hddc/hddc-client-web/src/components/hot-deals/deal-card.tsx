@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Heart, ChatCircle, ArrowSquareOut, PaperPlaneTilt, ArrowBendDownRight } from "@phosphor-icons/react";
+import { Heart, ChatCircle, ArrowSquareOut, PaperPlaneTilt, ArrowBendDownRight, Flag, XCircle } from "@phosphor-icons/react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { HotDeal, DealComment } from "@/lib/hot-deal-types";
+import { ReportPopover } from "./report-popover";
 
 const GUEST_ANIMALS = [
   "🐨 코알라", "🐼 판다", "🦦 수달", "🐧 펭귄", "🦊 여우",
@@ -49,6 +51,8 @@ export function DealCard({ deal, comments = [] }: DealCardProps) {
   const guestDefault = useRef(getGuestName());
   const [replyTo, setReplyTo] = useState<{ id: string; author: string } | null>(null);
   const [localComments, setLocalComments] = useState<DealComment[]>(comments);
+  const [expired, setExpired] = useState(false);
+  const [expiredCount, setExpiredCount] = useState(0);
 
   // TODO: replace with real auth check
   const isLoggedIn = typeof window !== "undefined" && !!localStorage.getItem("hddc-auth");
@@ -65,6 +69,14 @@ export function DealCard({ deal, comments = [] }: DealCardProps) {
   function toggleLike() {
     setLiked((prev) => !prev);
     setLikeCount((prev) => prev + (liked ? -1 : 1));
+  }
+
+  function toggleExpired() {
+    setExpired((prev) => !prev);
+    setExpiredCount((prev) => prev + (expired ? -1 : 1));
+    if (!expired) {
+      toast.info("종료 투표가 반영되었습니다");
+    }
   }
 
   function submitComment() {
@@ -95,7 +107,7 @@ export function DealCard({ deal, comments = [] }: DealCardProps) {
         href={deal.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="group flex gap-4 p-4"
+        className="group flex gap-3 p-3 sm:gap-4 sm:p-4"
       >
         {/* Thumbnail */}
         <div className="relative size-24 shrink-0 overflow-hidden rounded-lg bg-muted sm:size-28">
@@ -127,22 +139,23 @@ export function DealCard({ deal, comments = [] }: DealCardProps) {
           </div>
 
           {/* Price + source + time — always bottom-aligned */}
-          <div className="mt-1.5 flex items-center gap-2">
+          <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
             <span className="text-base font-bold">{formatPrice(deal.salePrice)}원</span>
             {deal.originalPrice > deal.salePrice && (
               <span className="text-xs text-muted-foreground line-through">{formatPrice(deal.originalPrice)}원</span>
             )}
-            <span className="text-[11px] text-muted-foreground">·</span>
-            <span className="text-[11px] text-muted-foreground">{deal.source}</span>
-            <span className="text-[11px] text-muted-foreground">·</span>
-            <span className="text-[11px] text-muted-foreground">{timeAgo(deal.postedAt)}</span>
-            <ArrowSquareOut className="ml-auto size-3 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+            <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+              <span>{deal.source}</span>
+              <span>·</span>
+              <span suppressHydrationWarning>{timeAgo(deal.postedAt)}</span>
+            </span>
+            <ArrowSquareOut className="ml-auto size-3 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
           </div>
         </div>
       </a>
 
       {/* Action bar */}
-      <div className="flex items-center gap-4 border-t border-border px-4 py-2 text-[11px] text-muted-foreground">
+      <div className="flex items-center gap-2 border-t border-border px-3 py-2 text-[11px] text-muted-foreground sm:gap-4 sm:px-4">
         <button
           onClick={toggleLike}
           className="flex cursor-pointer items-center gap-1 transition-colors hover:text-red-500"
@@ -161,11 +174,31 @@ export function DealCard({ deal, comments = [] }: DealCardProps) {
           <ChatCircle className="size-3.5" weight={commentsOpen ? "fill" : "regular"} />
           <span>{localComments.length}</span>
         </button>
+        <button
+          onClick={toggleExpired}
+          className={cn(
+            "flex cursor-pointer items-center gap-1 transition-colors hover:text-orange-500",
+            expired && "text-orange-500",
+          )}
+        >
+          <XCircle className="size-3.5" weight={expired ? "fill" : "regular"} />
+          <span className={expired ? "font-semibold" : ""}>
+            <span className="hidden sm:inline">종료됐어요</span>
+            <span className="sm:hidden">종료</span>
+            {expiredCount > 0 && ` ${expiredCount}`}
+          </span>
+        </button>
+        <ReportPopover targetType="deal">
+          <button className="ml-auto flex cursor-pointer items-center gap-1 transition-colors hover:text-red-500">
+            <Flag className="size-3.5" />
+            <span className="hidden sm:inline">신고</span>
+          </button>
+        </ReportPopover>
       </div>
 
       {/* Comments accordion */}
       {commentsOpen && (
-        <div className="border-t border-border px-4 py-3">
+        <div className="border-t border-border px-3 py-3 sm:px-4">
           {rootComments.length > 0 ? (
             <div className="flex flex-col gap-3">
               {rootComments.map((c) => {
@@ -180,15 +213,18 @@ export function DealCard({ deal, comments = [] }: DealCardProps) {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-baseline gap-1.5">
                           <span className="font-semibold">{c.author}</span>
-                          <span className="text-[10px] text-muted-foreground/60">{timeAgo(c.createdAt)}</span>
+                          <span className="text-[10px] text-muted-foreground/60" suppressHydrationWarning>{timeAgo(c.createdAt)}</span>
                         </div>
                         <p className="mt-0.5 text-muted-foreground">{c.text}</p>
-                        <button
-                          onClick={() => startReply(c)}
-                          className="mt-1 cursor-pointer text-[10px] text-muted-foreground/60 transition-colors hover:text-foreground"
-                        >
-                          답글
-                        </button>
+                        <div className="mt-1 flex items-center gap-2">
+                          <button
+                            onClick={() => startReply(c)}
+                            className="cursor-pointer text-[10px] text-muted-foreground/60 transition-colors hover:text-foreground"
+                          >
+                            답글
+                          </button>
+                          <ReportPopover targetType="comment" />
+                        </div>
                       </div>
                     </div>
 
@@ -203,9 +239,12 @@ export function DealCard({ deal, comments = [] }: DealCardProps) {
                             <div className="min-w-0 flex-1">
                               <div className="flex items-baseline gap-1.5">
                                 <span className="font-semibold">{r.author}</span>
-                                <span className="text-[10px] text-muted-foreground/60">{timeAgo(r.createdAt)}</span>
+                                <span className="text-[10px] text-muted-foreground/60" suppressHydrationWarning>{timeAgo(r.createdAt)}</span>
                               </div>
                               <p className="mt-0.5 text-muted-foreground">{r.text}</p>
+                              <div className="mt-1">
+                                <ReportPopover targetType="comment" />
+                              </div>
                             </div>
                           </div>
                         ))}
@@ -236,7 +275,7 @@ export function DealCard({ deal, comments = [] }: DealCardProps) {
             )}
             {/* Guest nickname row */}
             {!isLoggedIn && (
-              <div className="mb-2 flex items-center gap-2">
+              <div className="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1">
                 <span className="shrink-0 text-[10px] text-muted-foreground">닉네임</span>
                 <input
                   type="text"
@@ -244,9 +283,9 @@ export function DealCard({ deal, comments = [] }: DealCardProps) {
                   value={guestName}
                   onChange={(e) => setGuestName(e.target.value)}
                   maxLength={12}
-                  className="h-7 w-32 rounded-md border border-input bg-transparent px-2 text-xs outline-none placeholder:text-muted-foreground/50 focus:border-primary focus:ring-1 focus:ring-primary/30"
+                  className="h-7 w-28 rounded-md border border-input bg-transparent px-2 text-xs outline-none placeholder:text-muted-foreground/50 focus:border-primary focus:ring-1 focus:ring-primary/30 sm:w-32"
                 />
-                <span className="text-[10px] text-muted-foreground/40">
+                <span className="hidden text-[10px] text-muted-foreground/40 sm:inline">
                   <a href="/auth/login" className="underline transition-colors hover:text-primary">로그인</a>하면 프로필이 표시됩니다
                 </span>
               </div>
