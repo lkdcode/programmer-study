@@ -22,6 +22,7 @@ export const RESERVED_SLUGS = new Set([
   "graphql",
 
   // ─── static / content ───
+  "hot-deals",
   "about",
   "terms",
   "privacy",
