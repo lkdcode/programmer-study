@@ -18,6 +18,7 @@ import {
   validatePassword,
   validatePasswordConfirm,
 } from "@/lib/validators";
+import { authApi, ApiError } from "@/lib/api";
 
 const CODE_LENGTH = 6;
 const COOLDOWN_SEC = 60;
@@ -70,7 +71,7 @@ export default function ForgotPasswordPage() {
   }, [step]);
 
   // ─── Step 1 handlers ───
-  function handleEmailSubmit(e: FormEvent) {
+  async function handleEmailSubmit(e: FormEvent) {
     e.preventDefault();
     setEmailTouched(true);
     const err = validateEmail(email);
@@ -78,15 +79,22 @@ export default function ForgotPasswordPage() {
     if (err) return;
 
     setSending(true);
-    // TODO: POST /api/auth/password-reset/email-verifications { email }
-    // On U002 (not registered): setEmailError("가입되지 않은 이메일입니다")
-    // On V007 (mail failure): setEmailError("메일 발송에 실패했습니다. 잠시 후 다시 시도해주세요")
-    setTimeout(() => {
-      setSending(false);
+    try {
+      await authApi.sendPasswordResetCode(email);
       setStep("verify");
       setCooldown(COOLDOWN_SEC);
       setCodeTimer(CODE_TTL_SEC);
-    }, 500);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        const msg: Record<string, string> = {
+          U002: "가입되지 않은 이메일입니다",
+          V007: "메일 발송에 실패했습니다. 잠시 후 다시 시도해주세요",
+        };
+        setEmailError(msg[err.code] ?? err.message);
+      }
+    } finally {
+      setSending(false);
+    }
   }
 
   // ─── Step 2 handlers ───
@@ -130,7 +138,7 @@ export default function ForgotPasswordPage() {
     inputRefs.current[focusIdx]?.focus();
   }, []);
 
-  function handleVerifySubmit(e: FormEvent) {
+  async function handleVerifySubmit(e: FormEvent) {
     e.preventDefault();
     const joined = code.join("");
     if (joined.length < CODE_LENGTH) {
@@ -143,22 +151,33 @@ export default function ForgotPasswordPage() {
     }
 
     setVerifying(true);
-    // TODO: POST /api/auth/password-reset/email-verifications/verify { email, code: joined }
-    // On V003: setCodeError("인증코드가 만료되었습니다")
-    // On V004: setCodeError("인증코드가 일치하지 않습니다")
-    // On V005: setCodeError("인증 시도 횟수를 초과했습니다. 코드를 재전송해주세요")
-    setTimeout(() => {
-      setVerifying(false);
+    try {
+      await authApi.verifyPasswordResetCode(email, joined);
       setStep("reset");
-    }, 500);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        const msg: Record<string, string> = {
+          V003: "인증코드가 만료되었습니다",
+          V004: "인증코드가 일치하지 않습니다",
+          V005: "인증 시도 횟수를 초과했습니다. 코드를 재전송해주세요",
+        };
+        setCodeError(msg[err.code] ?? err.message);
+      }
+    } finally {
+      setVerifying(false);
+    }
   }
 
-  function handleResend() {
+  async function handleResend() {
     setCode(Array(CODE_LENGTH).fill(""));
     setCodeError(null);
-    setCooldown(COOLDOWN_SEC);
-    setCodeTimer(CODE_TTL_SEC);
-    // TODO: POST /api/auth/password-reset/email-verifications { email }
+    try {
+      await authApi.sendPasswordResetCode(email);
+      setCooldown(COOLDOWN_SEC);
+      setCodeTimer(CODE_TTL_SEC);
+    } catch {
+      setCodeError("재전송에 실패했습니다. 잠시 후 다시 시도해주세요");
+    }
     requestAnimationFrame(() => inputRefs.current[0]?.focus());
   }
 
@@ -179,7 +198,7 @@ export default function ForgotPasswordPage() {
     setErrors((prev) => ({ ...prev, [field]: validate(field) }));
   }
 
-  function handleResetSubmit(e: FormEvent) {
+  async function handleResetSubmit(e: FormEvent) {
     e.preventDefault();
 
     const fields = ["password", "passwordConfirm"];
@@ -196,14 +215,25 @@ export default function ForgotPasswordPage() {
     if (hasErrors) return;
 
     setResetting(true);
-    // TODO: PUT /api/auth/password-reset { email, password, passwordConfirm }
-    // On V006: 인증 만료 → step을 "email"로 돌리고 안내
-    // On U003: setErrors({ password: "비밀번호 형식이 올바르지 않습니다" })
-    // On U002: setErrors({ password: "사용자를 찾을 수 없습니다" })
-    setTimeout(() => {
-      setResetting(false);
+    try {
+      await authApi.resetPassword(email, password, passwordConfirm);
       setStep("done");
-    }, 500);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        if (err.code === "V006") {
+          setStep("email");
+          setEmailError("인증이 만료되었습니다. 다시 인증해주세요");
+        } else {
+          const msg: Record<string, string> = {
+            U003: "비밀번호 형식이 올바르지 않습니다",
+            U002: "사용자를 찾을 수 없습니다",
+          };
+          setErrors({ password: msg[err.code] ?? err.message });
+        }
+      }
+    } finally {
+      setResetting(false);
+    }
   }
 
   function formatTime(seconds: number): string {

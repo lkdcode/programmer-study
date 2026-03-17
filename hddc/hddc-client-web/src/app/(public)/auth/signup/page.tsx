@@ -25,6 +25,7 @@ import {
   validatePassword,
   validatePasswordConfirm,
 } from "@/lib/validators";
+import { authApi, ApiError } from "@/lib/api";
 
 const CODE_LENGTH = 6;
 const COOLDOWN_SEC = 60;
@@ -83,7 +84,7 @@ export default function SignupPage() {
   }, [step]);
 
   // ─── Step 1 handlers ───
-  function handleEmailSubmit(e: FormEvent) {
+  async function handleEmailSubmit(e: FormEvent) {
     e.preventDefault();
     setEmailTouched(true);
     const err = validateEmail(email);
@@ -91,14 +92,21 @@ export default function SignupPage() {
     if (err) return;
 
     setSending(true);
-    // TODO: POST /api/auth/email-verifications { email }
-    // On U001 (already registered): setEmailError("이미 가입된 이메일입니다")
-    setTimeout(() => {
-      setSending(false);
+    try {
+      await authApi.sendVerificationCode(email);
       setStep("verify");
       setCooldown(COOLDOWN_SEC);
       setCodeTimer(CODE_TTL_SEC);
-    }, 500);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        const msg: Record<string, string> = {
+          U001: "이미 가입된 이메일입니다",
+        };
+        setEmailError(msg[err.code] ?? err.message);
+      }
+    } finally {
+      setSending(false);
+    }
   }
 
   // ─── Step 2 handlers ───
@@ -142,7 +150,7 @@ export default function SignupPage() {
     inputRefs.current[focusIdx]?.focus();
   }, []);
 
-  function handleVerifySubmit(e: FormEvent) {
+  async function handleVerifySubmit(e: FormEvent) {
     e.preventDefault();
     const joined = code.join("");
     if (joined.length < CODE_LENGTH) {
@@ -155,21 +163,33 @@ export default function SignupPage() {
     }
 
     setVerifying(true);
-    // TODO: POST /api/auth/email-verifications/verify { email, code: joined }
-    // On V003 (expired): setCodeError("인증코드가 만료되었습니다")
-    // On V005 (locked): setCodeError("인증 시도 횟수를 초과했습니다")
-    setTimeout(() => {
-      setVerifying(false);
+    try {
+      await authApi.verifyCode(email, joined);
       setStep("register");
-    }, 500);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        const msg: Record<string, string> = {
+          V003: "인증코드가 만료되었습니다",
+          V004: "인증코드가 일치하지 않습니다",
+          V005: "인증 시도 횟수를 초과했습니다",
+        };
+        setCodeError(msg[err.code] ?? err.message);
+      }
+    } finally {
+      setVerifying(false);
+    }
   }
 
-  function handleResend() {
+  async function handleResend() {
     setCode(Array(CODE_LENGTH).fill(""));
     setCodeError(null);
-    setCooldown(COOLDOWN_SEC);
-    setCodeTimer(CODE_TTL_SEC);
-    // TODO: POST /api/auth/email-verifications { email }
+    try {
+      await authApi.sendVerificationCode(email);
+      setCooldown(COOLDOWN_SEC);
+      setCodeTimer(CODE_TTL_SEC);
+    } catch {
+      setCodeError("재전송에 실패했습니다. 잠시 후 다시 시도해주세요");
+    }
     requestAnimationFrame(() => inputRefs.current[0]?.focus());
   }
 
@@ -192,7 +212,7 @@ export default function SignupPage() {
     setErrors((prev) => ({ ...prev, [field]: validate(field) }));
   }
 
-  function handleRegisterSubmit(e: FormEvent) {
+  async function handleRegisterSubmit(e: FormEvent) {
     e.preventDefault();
 
     const fields = ["nickname", "password", "passwordConfirm"];
@@ -212,13 +232,25 @@ export default function SignupPage() {
     if (hasErrors) return;
 
     setRegistering(true);
-    // TODO: POST /api/auth/sign-up { email, password, nickname }
-    // On V006 (not verified): 인증 만료 안내, step을 "email"로 돌리기
-    // On U001 (duplicate): setErrors({ ...errors, nickname: "이미 가입된 이메일입니다" })
-    setTimeout(() => {
-      localStorage.setItem("hddc-auth", "true");
+    try {
+      await authApi.signUp(email, password, nickname);
+      // 가입 성공 → 자동 로그인
+      await authApi.login(email, password);
       router.push("/dashboard");
-    }, 500);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        if (err.code === "V006") {
+          setStep("email");
+          setEmailError("인증이 만료되었습니다. 다시 인증해주세요");
+        } else if (err.code === "U001") {
+          setErrors((prev) => ({ ...prev, nickname: "이미 가입된 이메일입니다" }));
+        } else {
+          setErrors((prev) => ({ ...prev, nickname: err.message }));
+        }
+      }
+    } finally {
+      setRegistering(false);
+    }
   }
 
   function formatTime(seconds: number): string {

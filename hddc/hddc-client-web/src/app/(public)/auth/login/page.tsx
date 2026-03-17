@@ -6,12 +6,15 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SpinnerGap } from "@phosphor-icons/react";
 import { validateEmail } from "@/lib/validators";
+import { authApi, ApiError } from "@/lib/api";
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -32,7 +35,7 @@ export default function LoginPage() {
     setErrors((prev) => ({ ...prev, [field]: validate(field) }));
   }
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
     const fields = ["email", "password"];
@@ -48,9 +51,23 @@ export default function LoginPage() {
     const hasErrors = Object.values(newErrors).some((e) => e !== null);
     if (hasErrors) return;
 
-    // MVP: set auth flag and redirect to dashboard
-    localStorage.setItem("hddc-auth", "true");
-    router.push("/dashboard");
+    setSubmitting(true);
+    try {
+      await authApi.login(email, password);
+      router.push("/dashboard");
+    } catch (err) {
+      if (err instanceof ApiError) {
+        const msg: Record<string, string> = {
+          SC001: "이메일 또는 비밀번호가 올바르지 않습니다",
+          SC004: "계정이 잠겼습니다. 비밀번호를 재설정해주세요",
+          U002: "가입되지 않은 이메일입니다",
+          U005: "삭제된 계정입니다",
+        };
+        setErrors({ password: msg[err.code] ?? err.message });
+      }
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -106,8 +123,12 @@ export default function LoginPage() {
       </div>
 
       {/* Submit */}
-      <Button type="submit" className="h-11 text-sm font-semibold">
-        로그인
+      <Button type="submit" className="h-11 text-sm font-semibold" disabled={submitting}>
+        {submitting ? (
+          <><SpinnerGap className="size-4 animate-spin" />로그인 중...</>
+        ) : (
+          "로그인"
+        )}
       </Button>
 
       {/* Signup Link */}
