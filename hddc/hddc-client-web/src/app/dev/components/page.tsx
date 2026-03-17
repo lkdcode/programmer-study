@@ -109,9 +109,9 @@ export default function ComponentShowcasePage() {
             <Button variant="destructive"><Trash className="mr-1" />삭제</Button>
           </Row>
           <Row label="Active (selected state)">
-            <Button variant="ghost" active>Active Ghost</Button>
+            <Button variant="ghost" aria-expanded>Active Ghost</Button>
             <Button variant="ghost">Inactive Ghost</Button>
-            <Button variant="outline" active>Active Outline</Button>
+            <Button variant="outline" aria-expanded>Active Outline</Button>
             <Button variant="outline">Inactive Outline</Button>
           </Row>
           <Row label="Disabled">

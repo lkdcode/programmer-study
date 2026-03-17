@@ -43,6 +43,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# mock data (API 연동 전까지만 사용)
+src/lib/admin-mock-data.ts
+
 # ─── OS ──────────────────────────────────────
 # macOS
 .DS_Store

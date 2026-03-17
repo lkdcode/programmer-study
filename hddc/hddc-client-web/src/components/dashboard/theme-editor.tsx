@@ -154,7 +154,7 @@ export function ThemeEditor({
             <Button
               key={theme}
               variant="ghost"
-              active={colorTheme === theme}
+              aria-expanded={colorTheme === theme}
               onClick={() => setColorTheme(theme)}
               aria-label={THEME_LABELS[theme]}
               className="!h-auto flex flex-col items-center gap-1 rounded-lg p-2"
@@ -183,7 +183,7 @@ export function ThemeEditor({
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              active={colorTheme === "custom"}
+              aria-expanded={colorTheme === "custom"}
               className="mt-2 w-full justify-center gap-1.5 text-xs font-medium"
             >
               {colorTheme === "custom" && customPrimaryColor ? (
